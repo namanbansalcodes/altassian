@@ -3,7 +3,7 @@ from django.utils.text import slugify
 
 class Page(models.Model):
     title = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=220)
+    slug = models.SlugField(max_length=220, null=True, blank=True)
     space = models.ForeignKey('spaces.Space', on_delete=models.CASCADE)
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
     body_markdown = models.TextField()
