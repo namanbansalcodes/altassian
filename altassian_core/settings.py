@@ -4,9 +4,9 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-altassian-dev-key-change-in-production'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-altassian-dev-key-change-in-production')
 
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', '1') in ('1', 'true', 'True')
 
 ALLOWED_HOSTS = ['*']
 
@@ -58,8 +58,12 @@ WSGI_APPLICATION = 'altassian_core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DATABASE_NAME', os.getenv('POSTGRES_DB', 'altassian')),
+        'USER': os.getenv('DATABASE_USER', os.getenv('POSTGRES_USER', 'altassian')),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', os.getenv('POSTGRES_PASSWORD', 'altassian')),
+        'HOST': os.getenv('DATABASE_HOST', 'localhost'),
+        'PORT': int(os.getenv('DATABASE_PORT', '5432')),
     }
 }
 
