@@ -40,9 +40,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'spaces',
     'pages',
-    'accounts',
-    'djangorestframework_simplejwt',
-    'django_cors_headers',
+    'user_accounts',
+    
+    
     'django_filters',
 ]
 
