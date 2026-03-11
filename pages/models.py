@@ -1,7 +1,9 @@
 from django.db import models
+from django.utils.text import slugify
 
 class Page(models.Model):
     title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=220)
     space = models.ForeignKey('spaces.Space', on_delete=models.CASCADE)
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
     body_markdown = models.TextField()
@@ -12,6 +14,22 @@ class Page(models.Model):
     is_draft = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['space', 'slug'], name='unique_page_slug_per_space')
+        ]
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.title)[:200] or 'page'
+            candidate = base
+            i = 2
+            while Page.objects.filter(space=self.space, slug=candidate).exclude(pk=self.pk).exists():
+                candidate = f"{base}-{i}"
+                i += 1
+            self.slug = candidate
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title

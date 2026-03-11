@@ -54,11 +54,11 @@ class PageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Page
         fields = [
-            'id', 'title', 'space', 'space_name', 'parent', 'body_markdown', 'body_html',
+            'id', 'title', 'slug', 'space', 'space_name', 'parent', 'body_markdown', 'body_html',
             'created_by', 'created_by_username', 'updated_by', 'updated_by_username',
             'position', 'is_draft', 'created_at', 'updated_at',
         ]
-        read_only_fields = ['id', 'created_by', 'updated_by', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'slug', 'created_by', 'updated_by', 'created_at', 'updated_at']
 
     def create(self, validated_data: Dict[str, Any]) -> Page:
         user = self.context['request'].user
@@ -87,7 +87,7 @@ class PageTreeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Page
-        fields = ['id', 'title', 'position', 'is_draft', 'children']
+        fields = ['id', 'title', 'slug', 'position', 'is_draft', 'children']
 
     def get_children(self, obj: Page) -> List[Dict[str, Any]]:
         children = Page.objects.filter(parent=obj).order_by('position')

@@ -13,3 +13,4 @@ class SpaceViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'key', 'description']
     ordering_fields = ['name', 'created_at']
     ordering = ['-created_at']
+    lookup_field = 'key'
