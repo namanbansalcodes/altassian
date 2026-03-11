@@ -1,10 +1,10 @@
 from django.db import models
 
 class Space(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=100)
     key = models.CharField(max_length=10, unique=True)
-    description = models.TextField(blank=True)
-    owner = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name='owned_spaces')
+    description = models.TextField(blank=True, null=True)
+    owner = models.ForeignKey('user_accounts.CustomUser', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     is_archived = models.BooleanField(default=False)
 
