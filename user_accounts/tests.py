@@ -22,3 +22,47 @@ class AuthTests(TestCase):
         me = self.client.get('/api/users/me/')
         self.assertEqual(me.status_code, status.HTTP_200_OK)
         self.assertEqual(me.data['username'], 'charlie')
+
+    def test_jwt_token_refresh(self):
+        CustomUser.objects.create_user(username='dave', password='Password123!', email='d@example.com')
+        login = self.client.post('/api/auth/login/', {'username': 'dave', 'password': 'Password123!'})
+        self.assertEqual(login.status_code, status.HTTP_200_OK)
+        self.assertIn('access', login.data)
+        self.assertIn('refresh', login.data)
+        # Refresh the token
+        refresh = self.client.post('/api/auth/token/refresh/', {'refresh': login.data['refresh']})
+        self.assertEqual(refresh.status_code, status.HTTP_200_OK)
+        self.assertIn('access', refresh.data)
+
+    def test_login_invalid_credentials(self):
+        CustomUser.objects.create_user(username='eve', password='Password123!', email='e@example.com')
+        resp = self.client.post('/api/auth/login/', {'username': 'eve', 'password': 'WrongPass!'})
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_me_unauthenticated(self):
+        resp = self.client.get('/api/users/me/')
+        self.assertIn(resp.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+
+
+class APISmokeTests(TestCase):
+    """Basic smoke tests to verify all API endpoints are reachable."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(username='smoke', password='Password123!', email='smoke@example.com')
+        resp = self.client.post('/api/auth/login/', {'username': 'smoke', 'password': 'Password123!'}, format='json')
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {resp.data['access']}")
+
+    def test_list_endpoints_return_200(self):
+        for url in ['/api/users/', '/api/spaces/', '/api/pages/', '/api/page-versions/', '/api/comments/', '/api/attachments/']:
+            resp = self.client.get(url)
+            self.assertEqual(resp.status_code, status.HTTP_200_OK, f'{url} returned {resp.status_code}')
+
+    def test_register_duplicate_username_rejected(self):
+        self.client.credentials()  # clear auth
+        payload = {
+            'username': 'smoke', 'email': 'smoke2@example.com',
+            'password': 'Password123!', 'password_confirm': 'Password123!',
+        }
+        resp = self.client.post('/api/users/register/', payload)
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)

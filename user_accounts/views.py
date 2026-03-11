@@ -16,7 +16,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
     ordering_fields = ['username', 'date_joined']
     ordering = ['username']
 
-    @action(detail=False, methods=['get'], url_path='me')
+    @action(detail=False, methods=['get'], url_path='me', permission_classes=[IsAuthenticated])
     def me(self, request: Request) -> Response:
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)

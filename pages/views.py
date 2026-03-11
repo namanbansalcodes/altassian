@@ -65,7 +65,7 @@ class PageViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'q query param is required.'}, status=status.HTTP_400_BAD_REQUEST)
         pages = Page.objects.filter(
             Q(title__icontains=q) | Q(body_markdown__icontains=q)
-        ).select_related('space', 'created_by')
+        ).select_related('space', 'created_by').order_by('-updated_at')
         page = self.paginate_queryset(pages)
         serializer = PageSerializer(page, many=True, context={'request': request})
         return self.get_paginated_response(serializer.data)
