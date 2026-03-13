@@ -8,7 +8,7 @@
  *   - Seed data loaded (python manage.py seed_demo)
  *
  * Usage:
- *   cd altassian_frontend && npx tsx scripts/screenshots.ts
+ *   cd altassian_backend/frontend && npx tsx scripts/screenshots.ts
  *
  * Output:
  *   frontend/screenshots/{desktop,mobile,dark}/
@@ -372,10 +372,10 @@ async function main() {
     'python manage.py runserver 0.0.0.0:8001',
     '',
     '# 2. Start frontend (port 5173)',
-    'cd altassian_frontend && npm run dev',
+    'cd altassian_backend/frontend && npm run dev',
     '',
     '# 3. Run screenshot script',
-    'cd altassian_frontend && npx tsx scripts/screenshots.ts',
+    'cd altassian_backend/frontend && npx tsx scripts/screenshots.ts',
     '```',
     '',
     '## Seed data',

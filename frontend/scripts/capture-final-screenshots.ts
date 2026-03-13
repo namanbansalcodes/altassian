@@ -298,7 +298,7 @@ async function main(): Promise<void> {
   readme.push('python manage.py runserver 0.0.0.0:8001')
   readme.push('')
   readme.push('# 2. Start frontend')
-  readme.push('cd ~/.openclaw/workspace/altassian_frontend')
+  readme.push('cd ~/.openclaw/workspace/altassian_backend/frontend')
   readme.push('npm run dev')
   readme.push('')
   readme.push('# 3. Capture screenshots')

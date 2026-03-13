@@ -170,10 +170,10 @@ python manage.py migrate && python manage.py seed_demo
 python manage.py runserver 0.0.0.0:8001
 
 # 2. Start frontend
-cd altassian_frontend && npm run dev
+cd altassian_backend/frontend && npm run dev
 
 # 3. Capture
-cd altassian_frontend && npx tsx scripts/screenshots-organized.ts
+cd altassian_backend/frontend && npx tsx scripts/screenshots-organized.ts
 ```
 
 ## Seed Data
