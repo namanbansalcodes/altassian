@@ -305,7 +305,7 @@ html.no-transitions * {
     display: block;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    max-width: calc(100vw - 2rem);
+    max-width: calc(100vw - 2rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
   }
 }
 
@@ -331,7 +331,9 @@ html {
   button,
   [role="button"],
   a,
-  select {
+  select,
+  input,
+  textarea {
     min-height: 44px;
     min-width: 44px;
   }
@@ -578,7 +580,7 @@ textarea {
 /* ─── Mobile: prevent fixed / absolute positioned elements from causing overflow ── */
 @media (max-width: 767px) {
   .prose-responsive pre {
-    max-width: calc(100vw - 2rem);
+    max-width: calc(100vw - 2rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
   }
 }
 
