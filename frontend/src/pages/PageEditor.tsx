@@ -16,8 +16,8 @@ import { EditorSkeleton } from '../components/Skeleton'
 
 function ToolbarButton({ onClick, active, children, title }: { onClick: () => void; active?: boolean; children: React.ReactNode; title?: string }) {
   return (
-    <button type="button" onClick={onClick} title={title}
-      className={`p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${active ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 dark:text-gray-400'}`}>
+    <button type="button" onClick={onClick} title={title} data-compact-touch
+      className={`p-2 sm:p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${active ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 dark:text-gray-400'}`}>
       {children}
     </button>
   )

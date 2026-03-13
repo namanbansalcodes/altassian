@@ -31,7 +31,7 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 overflow-y-auto shrink-0">
+    <aside className="w-64 h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 overflow-y-auto shrink-0">
       <div className="p-3" role="tree" aria-label="Spaces and pages">
         {isLoading ? (
           <SidebarSkeleton />
