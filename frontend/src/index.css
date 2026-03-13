@@ -286,9 +286,25 @@ html.no-transitions * {
 }
 
 .prose-responsive table {
-  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Wrap prose tables in a scrollable container to prevent layout breakage */
+.prose-responsive .table-scroll-wrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  margin: 1rem 0;
+}
+
+/* Standalone tables in prose get auto-scroll via wrapper */
+@media (max-width: 767px) {
+  .prose-responsive > table,
+  .prose-responsive .tiptap-table-wrap {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 /* ─── Mobile-friendly defaults ──────────────────────────── */
@@ -445,6 +461,23 @@ textarea {
   min-height: 100dvh;
 }
 
+/* ─── Mobile bottom nav: active state highlight ─────────── */
+.mobile-bottom-nav .nav-active {
+  position: relative;
+}
+
+.mobile-bottom-nav .nav-active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2rem;
+  height: 2px;
+  background: var(--color-accent, #2563eb);
+  border-radius: 0 0 2px 2px;
+}
+
 /* ─── Landscape: compact bottom nav ──────────────────────── */
 @media (max-width: 767px) and (orientation: landscape) {
   .mobile-bottom-nav {
@@ -476,4 +509,38 @@ textarea {
 
 :where(.dark) .editor-actions-sticky {
   border-top-color: var(--color-border, #374151);
+}
+
+/* ─── Mobile: attachment list touch targets ──────────────── */
+@media (pointer: coarse) {
+  .attachment-row {
+    min-height: 44px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}
+
+/* ─── Mobile: toolbar scroll fade (visible when toolbar overflows) ── */
+.toolbar-scroll-fade {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 1.5rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ─── Mobile: prevent content jump when virtual keyboard opens ── */
+@media (max-width: 767px) {
+  .mobile-bottom-nav {
+    transition: transform 150ms ease-out;
+  }
+}
+
+/* ─── Mobile: improve form field spacing for thumb reach ── */
+@media (max-width: 639px) {
+  .form-field-mobile {
+    margin-bottom: 1rem;
+  }
 }

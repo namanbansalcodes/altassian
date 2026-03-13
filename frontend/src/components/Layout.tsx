@@ -215,19 +215,19 @@ export default function Layout() {
       {/* Mobile bottom navigation bar (< md) — compact in landscape via CSS */}
       <nav className="mobile-bottom-nav md:hidden fixed bottom-0 inset-x-0 z-30 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }} aria-label="Mobile navigation">
         <div className="flex items-center justify-around h-14">
-          <Link to="/" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isHome ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+          <Link to="/" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isHome ? 'text-blue-600 dark:text-blue-400 nav-active font-medium' : 'text-gray-500 dark:text-gray-400'}`}>
             <Home size={20} />
             <span className="nav-label">Home</span>
           </Link>
-          <Link to="/spaces" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isSpaces ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+          <Link to="/spaces" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isSpaces ? 'text-blue-600 dark:text-blue-400 nav-active font-medium' : 'text-gray-500 dark:text-gray-400'}`}>
             <BookOpen size={20} />
             <span className="nav-label">Spaces</span>
           </Link>
-          <Link to="/spaces/create" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isCreate ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+          <Link to="/spaces/create" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isCreate ? 'text-blue-600 dark:text-blue-400 nav-active font-medium' : 'text-gray-500 dark:text-gray-400'}`}>
             <Plus size={20} />
             <span className="nav-label">Create</span>
           </Link>
-          <Link to="/search" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isSearch ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+          <Link to="/search" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isSearch ? 'text-blue-600 dark:text-blue-400 nav-active font-medium' : 'text-gray-500 dark:text-gray-400'}`}>
             <Search size={20} />
             <span className="nav-label">Search</span>
           </Link>

@@ -137,7 +137,7 @@ export default function PageView() {
         {attachments?.length ? (
           <ul className="divide-y divide-gray-100 dark:divide-gray-800">
             {attachments.map(att => (
-              <li key={att.id} className="flex items-center gap-2 py-2 min-w-0">
+              <li key={att.id} className="attachment-row flex items-center gap-2 py-2.5 min-w-0">
                 <FileText size={14} className="text-gray-400 shrink-0" />
                 <a href={att.file} target="_blank" rel="noreferrer" className="text-sm text-blue-600 dark:text-blue-400 hover:underline truncate flex-1 min-w-0">{att.filename}</a>
                 <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">{(((att.file_size ?? 0) / 1024).toFixed(1))} KB</span>
@@ -152,19 +152,19 @@ export default function PageView() {
         <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2 mb-4"><MessageSquare size={18} /> Comments</h3>
         <div className="space-y-4 mb-6">
           {comments?.map(c => (
-            <div key={c.id} className="flex gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center text-sm font-medium shrink-0">
+            <div key={c.id} className="flex gap-2 sm:gap-3">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center text-xs sm:text-sm font-medium shrink-0">
                 {c.author?.first_name?.[0] || c.author?.username?.[0] || '?'}
               </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                   <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{c.author?.first_name || c.author?.username}</span>
                   <span className="text-xs text-gray-400 dark:text-gray-500">{new Date(c.created_at).toLocaleDateString()}</span>
                   {c.author?.id === user?.id && (
                     <button data-compact-touch onClick={() => deleteCommentMut.mutate(c.id)} className="text-xs text-red-400 hover:text-red-600 dark:hover:text-red-300 px-1.5 py-0.5 rounded">Delete</button>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{c.content}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 break-words">{c.content}</p>
               </div>
             </div>
           ))}
