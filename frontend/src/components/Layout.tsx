@@ -126,7 +126,7 @@ export default function Layout() {
             <span className="hidden md:block text-sm text-gray-700 dark:text-gray-300 max-w-[120px] truncate">{user?.first_name || user?.username}</span>
             <ChevronDown size={14} className="hidden sm:block text-gray-400" />
           </MenuButton>
-          <MenuItems className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-30">
+          <MenuItems className="absolute right-0 mt-1 w-48 max-w-[calc(100vw-1rem)] bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-30">
             <div className="px-3 py-2 border-b border-gray-100 dark:border-gray-700">
               <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{user?.first_name} {user?.last_name}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
@@ -190,7 +190,7 @@ export default function Layout() {
                 </nav>
 
                 {/* Sidebar content */}
-                <div className="flex-1 overflow-y-auto" onClick={closeMobileDrawer}>
+                <div className="flex-1 overflow-y-auto overscroll-y-contain" onClick={closeMobileDrawer}>
                   <Sidebar />
                 </div>
               </DialogPanel>
@@ -207,29 +207,29 @@ export default function Layout() {
             <Sidebar />
           </div>
         )}
-        <main id="main-content" className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 pb-20 md:pb-6 bg-gray-50 dark:bg-gray-950">
+        <main id="main-content" className="flex-1 overflow-y-auto overscroll-y-contain p-3 sm:p-4 md:p-6 pb-20 md:pb-6 bg-gray-50 dark:bg-gray-950">
           <Outlet />
         </main>
       </div>
 
-      {/* Mobile bottom navigation bar (< md) */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }} aria-label="Mobile navigation">
+      {/* Mobile bottom navigation bar (< md) — compact in landscape via CSS */}
+      <nav className="mobile-bottom-nav md:hidden fixed bottom-0 inset-x-0 z-30 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }} aria-label="Mobile navigation">
         <div className="flex items-center justify-around h-14">
           <Link to="/" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isHome ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
             <Home size={20} />
-            <span>Home</span>
+            <span className="nav-label">Home</span>
           </Link>
           <Link to="/spaces" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isSpaces ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
             <BookOpen size={20} />
-            <span>Spaces</span>
+            <span className="nav-label">Spaces</span>
           </Link>
           <Link to="/spaces/create" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isCreate ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
             <Plus size={20} />
-            <span>Create</span>
+            <span className="nav-label">Create</span>
           </Link>
           <Link to="/search" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isSearch ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
             <Search size={20} />
-            <span>Search</span>
+            <span className="nav-label">Search</span>
           </Link>
         </div>
       </nav>

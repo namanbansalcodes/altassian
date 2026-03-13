@@ -96,7 +96,7 @@ export default function PageView() {
             By {page.author?.first_name || page.author?.username} · Updated {new Date(page.updated_at).toLocaleDateString()}
           </p>
         </div>
-        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-wrap">
           <Link to={`/spaces/${spaceKey}/pages/${pageSlug}/edit`}
             className="flex items-center gap-1.5 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
             <Edit size={14} /> Edit
@@ -137,12 +137,10 @@ export default function PageView() {
         {attachments?.length ? (
           <ul className="divide-y divide-gray-100 dark:divide-gray-800">
             {attachments.map(att => (
-              <li key={att.id} className="flex items-center justify-between py-2">
-                <div className="flex items-center gap-2 min-w-0">
-                  <FileText size={14} className="text-gray-400 shrink-0" />
-                  <a href={att.file} target="_blank" rel="noreferrer" className="text-sm text-blue-600 dark:text-blue-400 hover:underline truncate">{att.filename}</a>
-                  <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">{(((att.file_size ?? 0) / 1024).toFixed(1))} KB</span>
-                </div>
+              <li key={att.id} className="flex items-center gap-2 py-2 min-w-0">
+                <FileText size={14} className="text-gray-400 shrink-0" />
+                <a href={att.file} target="_blank" rel="noreferrer" className="text-sm text-blue-600 dark:text-blue-400 hover:underline truncate flex-1 min-w-0">{att.filename}</a>
+                <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">{(((att.file_size ?? 0) / 1024).toFixed(1))} KB</span>
               </li>
             ))}
           </ul>

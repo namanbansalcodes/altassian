@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Search, FileText, BookOpen } from 'lucide-react'
@@ -10,6 +10,14 @@ export default function SearchPage() {
   const initialQuery = searchParams.get('q') || ''
   const [query, setQuery] = useState(initialQuery)
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Only autofocus on non-touch devices to avoid mobile keyboard pop-up
+  useEffect(() => {
+    if (window.matchMedia('(pointer: fine)').matches) {
+      inputRef.current?.focus()
+    }
+  }, [])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -36,7 +44,7 @@ export default function SearchPage() {
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Search pages, spaces..."
-          autoFocus
+          ref={inputRef}
           className="w-full pl-11 pr-4 py-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl text-base text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
         />
       </div>

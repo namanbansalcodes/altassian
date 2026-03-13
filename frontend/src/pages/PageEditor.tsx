@@ -114,7 +114,7 @@ export default function PageEditor() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+      <div className="editor-actions-sticky flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2 bg-gray-50 dark:bg-gray-950">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">{isEditing ? 'Edit Page' : 'New Page'}</h2>
         <div className="flex gap-2">
           <button onClick={() => navigate(-1)}
@@ -139,7 +139,8 @@ export default function PageEditor() {
         />
 
         {/* Static Toolbar */}
-        <div className="flex items-center gap-0.5 px-3 sm:px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-x-auto flex-nowrap sm:flex-wrap scrollbar-thin">
+        <div className="relative border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-0.5 px-3 sm:px-4 py-2 bg-gray-50 dark:bg-gray-800 overflow-x-auto flex-nowrap sm:flex-wrap scrollbar-thin">
           <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} title="Bold (Ctrl+B)">
             <Bold size={16} />
           </ToolbarButton>
@@ -205,6 +206,9 @@ export default function PageEditor() {
           <ToolbarButton onClick={() => editor.chain().focus().redo().run()} title="Redo (Ctrl+Shift+Z)">
             <Redo size={16} />
           </ToolbarButton>
+        </div>
+        {/* Scroll fade hint — visible only on mobile when toolbar overflows */}
+        <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-gray-50 dark:from-gray-800 to-transparent pointer-events-none sm:hidden" />
         </div>
 
         {/* Editor with overlays */}

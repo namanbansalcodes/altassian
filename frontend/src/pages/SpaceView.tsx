@@ -36,7 +36,7 @@ export default function SpaceView() {
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 truncate">{space.description || 'No description'}</p>
           </div>
         </div>
-        <div className="flex gap-2 shrink-0">
+        <div className="flex gap-2 shrink-0 flex-wrap">
           <Link to={`/spaces/${spaceKey}/pages/new`}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
             <Plus size={14} /> New page
@@ -76,7 +76,7 @@ function PageRow({ page, spaceKey, depth }: { page: any; spaceKey: string; depth
     <>
       <Link to={`/spaces/${spaceKey}/pages/${page.slug}`}
         className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800"
-        style={{ paddingLeft: `${Math.min(depth * 24, 96) + 16}px` }}>
+        style={{ paddingLeft: `${Math.min(depth * 16, 64) + 16}px` }}>
         <FileText size={16} className="text-blue-500 shrink-0" />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{page.title}</p>

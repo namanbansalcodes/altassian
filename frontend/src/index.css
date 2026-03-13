@@ -55,10 +55,15 @@ html.dark {
 }
 
 html:not(.no-transitions),
-html:not(.no-transitions) * {
+html:not(.no-transitions) *:not(img):not(svg):not(canvas):not(video) {
   transition-property: background-color, border-color, color;
   transition-duration: 200ms;
   transition-timing-function: ease-in-out;
+}
+
+/* Disable theme transitions during page load for performance */
+html.no-transitions * {
+  transition: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -293,6 +298,7 @@ html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
   scroll-padding-top: 4rem;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Touch-friendly tap targets for coarse pointers (touch devices) */
@@ -342,6 +348,7 @@ html {
 /* Prevent horizontal overflow at the page level */
 html, body {
   overflow-x: hidden;
+  overscroll-behavior-x: none;
 }
 
 /* Safe-area insets for notched / rounded-corner devices */
@@ -415,4 +422,58 @@ h1, h2, h3, h4, h5, h6 {
   .overflow-x-auto {
     scroll-snap-type: x proximity;
   }
+}
+
+/* ─── Overscroll containment for drawers / modals ──────── */
+[role="dialog"] {
+  overscroll-behavior: contain;
+}
+
+/* ─── Touch-action: remove 300ms tap delay on interactive elements ── */
+button,
+[role="button"],
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+/* ─── Dynamic viewport height (accounts for mobile browser chrome) ── */
+.min-h-dvh {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* ─── Landscape: compact bottom nav ──────────────────────── */
+@media (max-width: 767px) and (orientation: landscape) {
+  .mobile-bottom-nav {
+    height: 2.5rem;
+  }
+  .mobile-bottom-nav .nav-label {
+    display: none;
+  }
+}
+
+/* ─── Long URLs / unbreakable strings in prose content ─── */
+.prose-responsive a,
+.prose-responsive code {
+  word-break: break-all;
+}
+
+/* ─── Sticky mobile save bar for editor ──────────────────── */
+@media (max-width: 639px) {
+  .editor-actions-sticky {
+    position: sticky;
+    bottom: 3.75rem;
+    z-index: 10;
+    background: inherit;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-top: 1px solid var(--color-border, #e5e7eb);
+  }
+}
+
+:where(.dark) .editor-actions-sticky {
+  border-top-color: var(--color-border, #374151);
 }
