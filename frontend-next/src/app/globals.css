@@ -228,3 +228,16 @@ body {
   user-select: none;
   touch-action: pan-y;
 }
+
+/* ─── Mobile bottom nav styles ──────────────────────── */
+@media (max-width: 767px) and (orientation: landscape) {
+  nav[aria-label="Mobile navigation"] {
+    height: 2.5rem;
+  }
+  nav[aria-label="Mobile navigation"] span {
+    display: none;
+  }
+  main {
+    padding-bottom: 2.5rem;
+  }
+}

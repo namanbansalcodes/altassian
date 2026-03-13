@@ -34,7 +34,7 @@ export default function RootLayout({
       >
         <ReactQueryProvider>
           <MobileNav />
-          <main className="pb-20 md:pb-6">
+          <main className="pb-16 md:pb-6">
             {children}
           </main>
         </ReactQueryProvider>
