@@ -55,7 +55,7 @@ export default function LandingPage() {
             </div>
             <div className="mt-6 text-xs text-gray-500 dark:text-gray-400">Open source · Git-native · SSO ready</div>
           </div>
-          <div className="relative overflow-hidden rounded-2xl isolate">
+          <div className="relative overflow-hidden rounded-2xl isolate min-w-0">
             <div className="absolute -inset-6 bg-gradient-to-tr from-blue-200 to-purple-200 dark:from-blue-900/40 dark:to-purple-900/30 blur-3xl rounded-3xl -z-10"/>
             <div className="relative rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-xl bg-white/70 dark:bg-gray-950/60">
               <img src="/hero.png" alt="Altassian preview" className="w-full" />

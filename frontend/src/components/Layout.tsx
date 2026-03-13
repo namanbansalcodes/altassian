@@ -52,7 +52,7 @@ export default function Layout() {
   const isSearch = pathname.startsWith('/search')
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950">
+    <div className="min-h-dvh flex flex-col bg-white dark:bg-gray-950">
       <RouteLoadingBar />
 
       {/* Skip to content — accessibility */}
@@ -203,7 +203,7 @@ export default function Layout() {
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop sidebar (lg+) */}
         {sidebarOpen && (
-          <div className="hidden lg:flex lg:flex-col lg:h-[calc(100vh-3.5rem)]">
+          <div className="hidden lg:flex lg:flex-col lg:h-[calc(100dvh-3.5rem)]">
             <Sidebar />
           </div>
         )}

@@ -320,7 +320,7 @@ function PageTreeRow({ node, isFocused, onToggle, onFocus }: PageTreeRowProps) {
         ${isFocused ? 'ring-1 ring-blue-400/50' : ''}
         ${isDragOver ? 'bg-blue-100 dark:bg-blue-900/50' : ''}
         ${isDragging ? 'opacity-50' : ''}`}
-      style={{ paddingLeft: `${node.depth * 12 + 8}px` }}
+      style={{ paddingLeft: `${Math.min(node.depth * 12, 48) + 8}px` }}
       tabIndex={isFocused ? 0 : -1}
       onFocus={onFocus}
       onClick={() => navigate(`/spaces/${node.spaceKey}/pages/${node.page.slug}`)}
@@ -333,7 +333,7 @@ function PageTreeRow({ node, isFocused, onToggle, onFocus }: PageTreeRowProps) {
     >
       {/* Drag handle */}
       {ENABLE_DND && (
-        <span className="opacity-0 group-hover:opacity-60 hover:opacity-100 cursor-grab text-gray-400 -ml-1 mr-0.5 touch-none">
+        <span className="opacity-0 group-hover:opacity-60 hover:opacity-100 cursor-grab text-gray-400 -ml-1 mr-0.5 touch-none drag-handle-touch">
           <GripVertical size={12} />
         </span>
       )}

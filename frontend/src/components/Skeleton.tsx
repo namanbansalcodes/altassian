@@ -214,11 +214,11 @@ export function PageViewSkeleton() {
         <SkeletonText lines={3} />
       </div>
       {/* Attachments */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-8">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 mb-8">
         <SkeletonLine width={120} size="lg" />
       </div>
       {/* Comments */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 space-y-4">
         <SkeletonLine width={110} size="lg" />
         <SkeletonListItem />
         <SkeletonListItem />
@@ -319,9 +319,9 @@ export function DashboardSkeleton() {
 export function SpaceListSkeleton() {
   return (
     <div className="max-w-4xl mx-auto" role="status" aria-label="Loading spaces">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <SkeletonTitle width={100} size="lg" />
-        <Skeleton width={120} height={36} rounded="rounded-lg" />
+        <Skeleton width={120} height={36} rounded="rounded-lg" className="self-start" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[1, 2, 3, 4].map(i => <SkeletonCard key={i} />)}
@@ -394,7 +394,7 @@ export function HistorySkeleton() {
           <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
             <SkeletonLine width={160} />
           </div>
-          <div className="p-6 space-y-3">
+          <div className="p-4 sm:p-6 space-y-3">
             <SkeletonText lines={5} />
           </div>
         </div>
@@ -407,7 +407,7 @@ export function SearchResultsSkeleton() {
   return (
     <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-800 overflow-hidden" role="status" aria-label="Loading search results">
       {[1, 2, 3].map(i => (
-        <div key={i} className="flex items-start gap-3 px-5 py-4">
+        <div key={i} className="flex items-start gap-3 px-4 sm:px-5 py-3 sm:py-4">
           <SkeletonIcon size="md" />
           <div className="flex-1 space-y-2">
             <SkeletonLine width={`${40 + i * 10}%`} />
@@ -427,7 +427,7 @@ export function SettingsSkeleton() {
         <SkeletonIcon size="md" />
         <SkeletonTitle width={140} size="md" />
       </div>
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-5">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 space-y-5">
         {[1, 2, 3].map(i => (
           <div key={i} className="space-y-1.5">
             <SkeletonLine width={90} size="sm" />

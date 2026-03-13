@@ -581,3 +581,23 @@ textarea {
     max-width: calc(100vw - 2rem);
   }
 }
+
+/* ─── Mobile: constrain table cell content ────────────────── */
+@media (max-width: 767px) {
+  .tiptap table td,
+  .tiptap table th {
+    word-break: break-word;
+  }
+}
+
+/* ─── Prevent flex children from overflowing parent ──────── */
+.min-w-0 {
+  overflow-wrap: break-word;
+}
+
+/* ─── Touch devices: always show drag handles (no hover) ── */
+@media (pointer: coarse) {
+  .drag-handle-touch {
+    opacity: 0.5;
+  }
+}

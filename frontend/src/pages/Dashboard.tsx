@@ -78,7 +78,7 @@ export default function Dashboard() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-gray-700 dark:text-gray-300 break-words">
                       <span className="font-medium">{a.user?.first_name || a.user?.username}</span>{' '}
-                      {a.action} <span className="font-medium">{a.target_title}</span>
+                      {a.action} <span className="font-medium break-words">{a.target_title}</span>
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{new Date(a.created_at).toLocaleString()}</p>
                   </div>

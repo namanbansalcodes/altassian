@@ -38,7 +38,7 @@ function LoginForm() {
           <h1 className="text-3xl font-bold text-blue-700 dark:text-blue-400">Altassian</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">Your team's knowledge base</p>
         </div>
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-900 rounded-xl shadow-lg dark:shadow-gray-900/50 p-5 sm:p-8 space-y-5 border border-transparent dark:border-gray-700">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-900 rounded-xl shadow-lg dark:shadow-gray-900/50 p-5 sm:p-8 space-y-5 border border-transparent dark:border-gray-700 form-mobile-spaced">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Sign in</h2>
           {error && <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm p-3 rounded-lg">{error}</div>}
           <div>

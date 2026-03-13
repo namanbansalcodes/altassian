@@ -26,7 +26,7 @@ export default function SpaceList() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {spaces.map(space => (
             <Link key={space.id} to={`/spaces/${space.key}`}
-              className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm transition-all">
+              className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-5 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm transition-all">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center text-lg font-bold shrink-0">
                   {space.key.slice(0, 2)}
