@@ -38,11 +38,18 @@ services:
   frontend-svelte:
     build:
       context: ./frontend-svelte
-      dockerfile: Dockerfile
     environment:
       - VITE_API_BASE=/api
     expose:
       - "5173"
+
+  frontend-next:
+    build:
+      context: ./frontend-next
+    environment:
+      - NEXT_PUBLIC_API_BASE=/api
+    expose:
+      - "3000"
 
   nginx:
     image: nginx:alpine
@@ -54,7 +61,7 @@ services:
       - media_files:/app/media:ro
     depends_on:
       - backend
-      - frontend-svelte
+      - frontend-next
 
 volumes:
   pgdata:
