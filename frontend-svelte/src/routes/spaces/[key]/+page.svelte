@@ -24,7 +24,7 @@
     <ul class="space-y-2">
       {#each $pagesQuery.data as p}
         <li>
-          <button class="link" on:click={() => goto(`/spaces/${key}/pages/${p.slug}`)}>{p.title}</button>
+          <button class="text-blue-600 underline" on:click={() => goto(`/spaces/${key}/pages/${p.slug}`)}>{p.title}</button>
         </li>
       {/each}
     </ul>

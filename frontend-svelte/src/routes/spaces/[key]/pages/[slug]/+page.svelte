@@ -32,7 +32,7 @@
   {:else}
     <h1 class="text-2xl font-semibold">{$pageQuery.data.title}</h1>
     <textarea class="w-full h-64 p-2 rounded border border-neutral-400 bg-transparent" bind:value={content} />
-    <button class="btn btn-primary" disabled={saveMutation.isPending} on:click={() => saveMutation.mutate()}>
+    <button class="px-4 py-2 rounded bg-blue-600 text-white disabled:opacity-60" disabled={saveMutation.isPending} on:click={() => saveMutation.mutate()}>
       Save
     </button>
     {#if saveMutation.isSuccess}
