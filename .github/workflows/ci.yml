@@ -1,0 +1,40 @@
+name: CI
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: altassian
+          POSTGRES_USER: altassian
+          POSTGRES_PASSWORD: altassian
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U altassian" --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_NAME: altassian
+      DATABASE_USER: altassian
+      DATABASE_PASSWORD: altassian
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+      DJANGO_SECRET_KEY: ci-secret
+      DJANGO_DEBUG: 0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Migrate
+        run: python manage.py migrate --noinput
+      - name: Run tests
+        run: python manage.py test -v 2

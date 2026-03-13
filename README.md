@@ -1,3 +1,5 @@
+![Build Status](https://img.shields.io/github/actions/workflow/status/namanbansalcodes/altassian_backend/python.yml?branch=master) ![License](https://img.shields.io/badge/license-MIT-green) ![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen)
+
 # Altassian Backend
 
 Altassian is an open-source Confluence alternative — a wiki platform for teams to create, organize, and collaborate on documentation.
