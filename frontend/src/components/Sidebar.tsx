@@ -168,6 +168,7 @@ function SpaceItem({ spaceKey, spaceName, isExpanded, onToggle }: SpaceItemProps
     >
       {/* Space header row */}
       <div
+        data-compact-touch
         className={`flex items-center gap-1 px-2 py-1.5 rounded-md cursor-pointer text-sm
           hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors
           ${isActiveSpace ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'}
@@ -176,6 +177,7 @@ function SpaceItem({ spaceKey, spaceName, isExpanded, onToggle }: SpaceItemProps
         onFocus={() => setFocusIdx(-1)}
       >
         <button
+          data-compact-touch
           onClick={onToggle}
           className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
           aria-label={isExpanded ? `Collapse ${spaceName}` : `Expand ${spaceName}`}
@@ -183,7 +185,7 @@ function SpaceItem({ spaceKey, spaceName, isExpanded, onToggle }: SpaceItemProps
           {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
         </button>
         <BookOpen size={14} className="shrink-0" />
-        <Link to={`/spaces/${spaceKey}`} className="truncate flex-1 font-medium">
+        <Link data-compact-touch to={`/spaces/${spaceKey}`} className="truncate flex-1 font-medium">
           {spaceName}
         </Link>
       </div>
@@ -311,7 +313,8 @@ function PageTreeRow({ node, isFocused, onToggle, onFocus }: PageTreeRowProps) {
       aria-expanded={node.hasChildren ? node.isExpanded : undefined}
       aria-level={node.depth + 2}
       aria-selected={isActive}
-      className={`flex items-center gap-1 px-2 py-1 rounded text-sm transition-colors
+      data-compact-touch
+      className={`group flex items-center gap-1 px-2 py-1 rounded text-sm transition-colors
         hover:bg-gray-100 dark:hover:bg-gray-800
         ${isActive ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-semibold' : 'text-gray-600 dark:text-gray-400'}
         ${isFocused ? 'ring-1 ring-blue-400/50' : ''}
@@ -338,6 +341,7 @@ function PageTreeRow({ node, isFocused, onToggle, onFocus }: PageTreeRowProps) {
       {/* Chevron toggle */}
       {node.hasChildren ? (
         <button
+          data-compact-touch
           onClick={e => {
             e.stopPropagation()
             onToggle()
@@ -353,6 +357,7 @@ function PageTreeRow({ node, isFocused, onToggle, onFocus }: PageTreeRowProps) {
 
       <FileText size={13} className="shrink-0" />
       <Link
+        data-compact-touch
         to={`/spaces/${node.spaceKey}/pages/${node.page.slug}`}
         className="truncate flex-1"
         onClick={e => e.stopPropagation()}

@@ -38,7 +38,7 @@ export default function PageHistory() {
           <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Versions</h3>
           </div>
-          <div className="divide-y divide-gray-100 dark:divide-gray-800 max-h-[300px] md:max-h-[600px] overflow-y-auto">
+          <div className="divide-y divide-gray-100 dark:divide-gray-800 max-h-[50vh] md:max-h-[600px] overflow-y-auto">
             {versions?.map(v => (
               <button
                 key={v.id}

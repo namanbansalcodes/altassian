@@ -163,7 +163,7 @@ export default function Layout() {
                 </div>
 
                 {/* Mobile nav links */}
-                <nav className="flex flex-col px-3 py-2 border-b border-gray-200 dark:border-gray-700 gap-0.5 md:hidden">
+                <nav className="flex flex-col px-3 py-2 border-b border-gray-200 dark:border-gray-700 gap-0.5 lg:hidden">
                   <Link to="/" onClick={closeMobileDrawer} className="px-3 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 rounded-md flex items-center gap-2">
                     <Home size={16} /> Home
                   </Link>
