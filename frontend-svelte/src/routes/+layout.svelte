@@ -63,7 +63,7 @@
     on:click={closeDrawer}
     role="presentation"
   ></div>
-  <div class="drawer-panel bg-white dark:bg-neutral-900 shadow-xl flex flex-col" class:open={mobileDrawerOpen}>
+  <div class="drawer-panel bg-white dark:bg-neutral-900 shadow-xl flex flex-col overflow-y-auto overscroll-y-contain" class:open={mobileDrawerOpen}>
     <div class="flex items-center justify-between h-14 px-4 border-b border-neutral-300 dark:border-neutral-700 shrink-0">
       <span class="text-lg font-bold text-blue-600 dark:text-blue-400">Altassian</span>
       <button
@@ -85,7 +85,29 @@
   </div>
 
   <!-- Main content -->
-  <main class="flex-1 p-3 sm:p-4 md:p-6">
+  <main class="flex-1 p-3 sm:p-4 md:p-6 pb-20 md:pb-6">
     <slot />
   </main>
+
+  <!-- Mobile bottom navigation bar (< md) -->
+  <nav class="mobile-bottom-nav md:hidden fixed bottom-0 inset-x-0 z-30 bg-white dark:bg-neutral-900 border-t border-neutral-300 dark:border-neutral-700 safe-area-bottom" aria-label="Mobile navigation">
+    <div class="flex items-center justify-around h-14">
+      <a href="/" class="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs text-neutral-500 dark:text-neutral-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z" /></svg>
+        <span class="nav-label">Home</span>
+      </a>
+      <a href="/spaces" class="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs text-neutral-500 dark:text-neutral-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+        <span class="nav-label">Spaces</span>
+      </a>
+      <a href="/login" class="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs text-neutral-500 dark:text-neutral-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+        <span class="nav-label">Login</span>
+      </a>
+      <a href="/register" class="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs text-neutral-500 dark:text-neutral-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
+        <span class="nav-label">Register</span>
+      </a>
+    </div>
+  </nav>
 </QueryClientProvider>
