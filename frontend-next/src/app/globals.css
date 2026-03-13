@@ -23,6 +23,7 @@ html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
+  scroll-padding-top: 4rem;
 }
 
 html, body {
@@ -44,6 +45,12 @@ body {
   select {
     min-height: 44px;
     min-width: 44px;
+  }
+
+  /* Opt-out for compact elements (sidebar items, tree nodes, etc.) */
+  [data-compact-touch] {
+    min-height: unset;
+    min-width: unset;
   }
 }
 
@@ -92,8 +99,130 @@ h1, h2, h3, h4, h5, h6 {
   overflow-x: auto;
 }
 
+/* Safe-area insets for notched / rounded-corner devices */
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+@media (max-width: 767px) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Momentum scrolling for overflow containers on iOS */
+.overflow-y-auto,
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Overscroll containment for drawers / modals */
+[role="dialog"] {
+  overscroll-behavior: contain;
+}
+
 /* Dynamic viewport height (accounts for mobile browser chrome) */
 .min-h-dvh {
   min-height: 100vh;
   min-height: 100dvh;
+}
+
+/* ─── Mobile: form action buttons stack full-width ───── */
+@media (max-width: 639px) {
+  .form-actions-responsive {
+    flex-direction: column;
+  }
+  .form-actions-responsive > button,
+  .form-actions-responsive > a {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ─── Mobile: constrain code blocks and embeds ───────── */
+@media (max-width: 767px) {
+  .prose pre {
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+/* ─── Prose responsive embeds ────────────────────────── */
+.prose iframe,
+.prose video,
+.prose embed,
+.prose object {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ─── Prose responsive figures ───────────────────────── */
+.prose figure {
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* ─── Prose long URLs / unbreakable strings ──────────── */
+.prose a,
+.prose code {
+  word-break: break-all;
+}
+
+/* ─── Thin scrollbar for horizontal scroll containers ── */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 2px;
+}
+
+/* ─── Prevent flex children from overflowing parent ──── */
+.min-w-0 {
+  overflow-wrap: break-word;
+}
+
+/* ─── Safe-area utility classes ──────────────────────── */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ─── Mobile: improve form field spacing for thumb reach ── */
+@media (max-width: 639px) {
+  .form-mobile-spaced > div {
+    margin-bottom: 1rem;
+  }
+}
+
+/* ─── Mobile: smooth horizontal scroll containers ────── */
+@media (max-width: 767px) {
+  .overflow-x-auto {
+    scroll-snap-type: x proximity;
+  }
+}
+
+/* ─── Reduced motion: disable animations ─────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Prevent text selection on draggable elements ───── */
+[draggable="true"] {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: pan-y;
 }
