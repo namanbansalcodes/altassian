@@ -333,7 +333,7 @@ function PageTreeRow({ node, isFocused, onToggle, onFocus }: PageTreeRowProps) {
     >
       {/* Drag handle */}
       {ENABLE_DND && (
-        <span className="opacity-0 group-hover:opacity-60 hover:opacity-100 cursor-grab text-gray-400 -ml-1 mr-0.5">
+        <span className="opacity-0 group-hover:opacity-60 hover:opacity-100 cursor-grab text-gray-400 -ml-1 mr-0.5 touch-none">
           <GripVertical size={12} />
         </span>
       )}

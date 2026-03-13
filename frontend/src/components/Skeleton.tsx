@@ -196,18 +196,18 @@ export function PageViewSkeleton() {
         <SkeletonLine width={120} size="sm" />
       </div>
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
-        <div className="space-y-2 flex-1">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-6 gap-3">
+        <div className="space-y-2 flex-1 min-w-0">
           <SkeletonTitle width="55%" size="lg" />
           <SkeletonLine width="30%" size="sm" />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 shrink-0 flex-wrap">
           <Skeleton width={70} height={32} rounded="rounded-lg" />
           <Skeleton width={80} height={32} rounded="rounded-lg" />
         </div>
       </div>
       {/* Content block */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-8 mb-8 space-y-4">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 md:p-8 mb-8 space-y-4">
         <SkeletonTitle width="80%" size="md" />
         <SkeletonText lines={4} />
         <SkeletonLine width="45%" />
@@ -256,12 +256,12 @@ export function EditorSkeleton() {
 export function DashboardSkeleton() {
   return (
     <div className="max-w-6xl mx-auto" role="status" aria-label="Loading dashboard">
-      <div className="mb-8 space-y-2">
+      <div className="mb-6 sm:mb-8 space-y-2">
         <SkeletonTitle width={250} size="lg" />
         <SkeletonLine width={200} size="md" />
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="md:col-span-2 lg:col-span-2 space-y-6">
           {/* Recent pages */}
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -333,15 +333,15 @@ export function SpaceListSkeleton() {
 export function SpaceViewSkeleton() {
   return (
     <div className="max-w-4xl mx-auto" role="status" aria-label="Loading space">
-      <div className="flex items-start justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <Skeleton width={56} height={56} rounded="rounded-xl" className="shrink-0" />
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-6 gap-3">
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+          <Skeleton width={44} height={44} rounded="rounded-xl" className="shrink-0 sm:w-14 sm:h-14" />
           <div className="space-y-2">
             <SkeletonTitle width={180} size="md" />
             <SkeletonLine width={120} size="sm" />
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 shrink-0 flex-wrap">
           <Skeleton width={90} height={32} rounded="rounded-lg" />
           <Skeleton width={36} height={32} rounded="rounded-lg" />
         </div>
