@@ -32,12 +32,12 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Welcome back, {user?.first_name || user?.username}</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-1">Here's what's happening in your wiki</p>
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Welcome back, {user?.first_name || user?.username}</h1>
+        <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mt-1">Here's what's happening in your wiki</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Recent pages */}
         <div className="lg:col-span-2">
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">

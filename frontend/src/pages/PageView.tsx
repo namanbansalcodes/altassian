@@ -96,13 +96,13 @@ export default function PageView() {
             By {page.author?.first_name || page.author?.username} · Updated {new Date(page.updated_at).toLocaleDateString()}
           </p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
           <Link to={`/spaces/${spaceKey}/pages/${pageSlug}/edit`}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
+            className="flex items-center gap-1.5 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
             <Edit size={14} /> Edit
           </Link>
           <Link to={`/spaces/${spaceKey}/pages/${pageSlug}/history`}
-            className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-800">
+            className="flex items-center gap-1.5 px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-800">
             <Clock size={14} /> <span className="hidden sm:inline">History</span>
           </Link>
           <button onClick={() => {
@@ -110,12 +110,12 @@ export default function PageView() {
               .then(() => toast.success('Link copied'))
               .catch(() => toast.error('Failed to copy link'))
           }}
-            className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-800"
+            className="flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-800"
             title="Copy page link">
             <Link2 size={14} />
           </button>
           <button onClick={() => { if (confirm('Delete this page?')) deleteMut.mutate() }}
-            className="flex items-center gap-1.5 px-3 py-1.5 border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 rounded-lg text-sm hover:bg-red-50 dark:hover:bg-red-900/20">
+            className="flex items-center justify-center px-3 py-2 border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 rounded-lg text-sm hover:bg-red-50 dark:hover:bg-red-900/20">
             <Trash2 size={14} />
           </button>
         </div>

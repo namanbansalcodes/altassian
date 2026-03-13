@@ -47,11 +47,11 @@ export default function Layout() {
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950">
       <RouteLoadingBar />
       {/* Top navbar */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-4 shrink-0 z-20">
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-4 shrink-0 z-20" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         {/* Mobile hamburger (< lg) */}
         <button
           onClick={() => setMobileDrawerOpen(true)}
-          className="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1"
+          className="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-2 -ml-1 rounded-lg active:bg-gray-100 dark:active:bg-gray-800"
           aria-label="Open navigation menu"
         >
           <MenuIcon size={20} />
@@ -60,7 +60,7 @@ export default function Layout() {
         {/* Desktop sidebar toggle (lg+) */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="hidden lg:block text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1"
+          className="hidden lg:flex items-center justify-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-2 -ml-1 rounded-lg"
           aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
         >
           {sidebarOpen ? <X size={20} /> : <MenuIcon size={20} />}
@@ -155,7 +155,7 @@ export default function Layout() {
                   <span className="text-lg font-bold text-blue-700 dark:text-blue-400">Altassian</span>
                   <button
                     onClick={closeMobileDrawer}
-                    className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+                    className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700"
                     aria-label="Close navigation menu"
                   >
                     <X size={20} />
@@ -164,13 +164,13 @@ export default function Layout() {
 
                 {/* Mobile nav links */}
                 <nav className="flex flex-col px-3 py-2 border-b border-gray-200 dark:border-gray-700 gap-0.5 md:hidden">
-                  <Link to="/" onClick={closeMobileDrawer} className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md flex items-center gap-2">
+                  <Link to="/" onClick={closeMobileDrawer} className="px-3 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 rounded-md flex items-center gap-2">
                     <Home size={16} /> Home
                   </Link>
-                  <Link to="/spaces" onClick={closeMobileDrawer} className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md flex items-center gap-2">
+                  <Link to="/spaces" onClick={closeMobileDrawer} className="px-3 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 rounded-md flex items-center gap-2">
                     <BookOpen size={16} /> Spaces
                   </Link>
-                  <Link to="/spaces/create" onClick={closeMobileDrawer} className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md flex items-center gap-2">
+                  <Link to="/spaces/create" onClick={closeMobileDrawer} className="px-3 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 rounded-md flex items-center gap-2">
                     <Plus size={16} /> Create
                   </Link>
                 </nav>

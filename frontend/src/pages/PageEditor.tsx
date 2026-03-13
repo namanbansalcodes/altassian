@@ -139,7 +139,7 @@ export default function PageEditor() {
         />
 
         {/* Static Toolbar */}
-        <div className="flex items-center gap-0.5 px-3 sm:px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-x-auto flex-nowrap sm:flex-wrap">
+        <div className="flex items-center gap-0.5 px-3 sm:px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-x-auto flex-nowrap sm:flex-wrap scrollbar-thin">
           <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} title="Bold (Ctrl+B)">
             <Bold size={16} />
           </ToolbarButton>

@@ -292,14 +292,22 @@ html:not(.no-transitions) * {
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 4rem;
 }
 
 /* Touch-friendly tap targets for coarse pointers (touch devices) */
 @media (pointer: coarse) {
   button,
   [role="button"],
+  a,
   select {
     min-height: 44px;
+    min-width: 44px;
+  }
+
+  [data-compact-touch] {
+    min-height: unset;
+    min-width: unset;
   }
 }
 
@@ -309,9 +317,38 @@ html {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Thin scrollbar for horizontal scroll containers */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+:where(.dark) .scrollbar-thin {
+  scrollbar-color: #4b5563 transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 2px;
+}
+:where(.dark) .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
 /* Prevent horizontal overflow at the page level */
 html, body {
   overflow-x: hidden;
+}
+
+/* Safe-area insets for notched / rounded-corner devices */
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Focus-visible ring for keyboard navigation */
