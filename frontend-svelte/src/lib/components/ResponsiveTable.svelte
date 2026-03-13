@@ -6,6 +6,19 @@
   import { onMount } from 'svelte';
 
   export let className: string = '';
+  /** Label for screen-reader users describing the scrollable region */
+  export let label: string = 'Scrollable table';
+  /**
+   * Background variant for gradient overlays — must match the parent surface.
+   * 'card' (default) = white / neutral-900 card backgrounds
+   * 'surface' = neutral-50 / neutral-950 page backgrounds
+   */
+  export let bg: 'card' | 'surface' = 'card';
+
+  const gradientColors: Record<string, string> = {
+    card: 'from-white dark:from-neutral-900',
+    surface: 'from-neutral-50 dark:from-neutral-950',
+  };
 
   let scrollEl: HTMLDivElement;
   let canScrollLeft = false;
@@ -27,16 +40,27 @@
       scrollEl.removeEventListener('scroll', updateScrollState);
     };
   });
+
+  $: from = gradientColors[bg];
+  $: scrollHint = canScrollLeft || canScrollRight
+    ? `${label} — scroll horizontally to see more`
+    : label;
 </script>
 
-<div class="relative {className}">
+<div class="relative {className}" role="region" aria-label={label}>
   {#if canScrollLeft}
-    <div class="absolute left-0 top-0 bottom-0 w-6 sm:w-8 bg-gradient-to-r from-white dark:from-neutral-900 to-transparent z-10 pointer-events-none md:hidden" />
+    <div class="absolute left-0 top-0 bottom-0 w-4 sm:w-6 bg-gradient-to-r {from} to-transparent z-10 pointer-events-none" />
   {/if}
   {#if canScrollRight}
-    <div class="absolute right-0 top-0 bottom-0 w-6 sm:w-8 bg-gradient-to-l from-white dark:from-neutral-900 to-transparent z-10 pointer-events-none md:hidden" />
+    <div class="absolute right-0 top-0 bottom-0 w-4 sm:w-6 bg-gradient-to-l {from} to-transparent z-10 pointer-events-none" />
   {/if}
-  <div bind:this={scrollEl} class="overflow-x-auto -mx-4 sm:-mx-6 md:mx-0 scrollbar-thin">
+  <div
+    bind:this={scrollEl}
+    tabindex="0"
+    class="overflow-x-auto -mx-4 sm:-mx-6 md:mx-0 scrollbar-thin"
+    style="-webkit-overflow-scrolling: touch;"
+    aria-label={scrollHint}
+  >
     <div class="inline-block min-w-full px-4 sm:px-6 md:px-0 align-middle">
       <slot />
     </div>

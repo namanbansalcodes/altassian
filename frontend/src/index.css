@@ -682,3 +682,47 @@ textarea {
     padding-bottom: 2.5rem;
   }
 }
+
+/* ─── PWA standalone mode: safe-area padding for bottom nav ── */
+@media (display-mode: standalone) {
+  .mobile-bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ─── Print styles: hide navigation, full-width content ────── */
+@media print {
+  .mobile-bottom-nav,
+  nav[aria-label="Mobile navigation"],
+  header,
+  aside,
+  .skip-to-content,
+  .editor-actions-sticky {
+    display: none !important;
+  }
+
+  main,
+  #main-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  body {
+    padding: 0 !important;
+  }
+
+  .prose-responsive,
+  article {
+    max-width: 100% !important;
+  }
+}
+
+/* ─── Mobile: constrain dialog/modal height ────────────────── */
+@media (max-width: 767px) {
+  [role="dialog"] .dialog-content,
+  [role="dialog"] [data-dialog-content] {
+    max-height: calc(100dvh - 4rem);
+    overflow-y: auto;
+  }
+}

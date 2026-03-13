@@ -326,3 +326,126 @@ html:not(.no-transitions) * {
     transition-duration: 0ms !important;
   }
 }
+
+/* ─── Mobile: horizontal card scroller ─────────────────── */
+@media (max-width: 767px) {
+  .mobile-card-scroll {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    gap: 0.75rem;
+    padding-bottom: 0.25rem;
+  }
+  .mobile-card-scroll > * {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 75vw;
+    max-width: 280px;
+  }
+  .mobile-card-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .mobile-card-scroll {
+    scrollbar-width: none;
+  }
+}
+
+/* ─── Mobile: version list height constraint ───────────── */
+@media (max-width: 767px) {
+  .version-list-mobile {
+    max-height: 35vh;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+}
+
+/* ─── Breadcrumb scroll container with gradient fades ──── */
+.breadcrumb-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  white-space: nowrap;
+  position: relative;
+  mask-image: linear-gradient(to right, transparent 0, black 0.5rem, black calc(100% - 1.5rem), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 0.5rem, black calc(100% - 1.5rem), transparent 100%);
+}
+.breadcrumb-scroll::-webkit-scrollbar {
+  display: none;
+}
+.breadcrumb-scroll:not([data-scrollable]) {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+/* ─── Mobile: sticky editor save bar ───────────────────── */
+@media (max-width: 639px) {
+  .editor-actions-sticky {
+    position: sticky;
+    bottom: 3.75rem;
+    z-index: 10;
+    background: inherit;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-top: 1px solid var(--color-border, #e5e7eb);
+  }
+}
+
+/* ─── Mobile: attachment list touch targets ────────────── */
+@media (pointer: coarse) {
+  .attachment-row {
+    min-height: 44px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}
+
+/* ─── Mobile: constrain code blocks with safe-area ─────── */
+@media (max-width: 767px) {
+  .prose-responsive pre {
+    max-width: calc(100vw - 2rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+  }
+}
+
+/* ─── Mobile: constrain table cell content ─────────────── */
+@media (max-width: 767px) {
+  table td,
+  table th {
+    word-break: break-word;
+  }
+}
+
+/* ─── Touch devices: always show drag handles (no hover) ── */
+@media (pointer: coarse) {
+  .drag-handle-touch {
+    opacity: 0.5;
+  }
+}
+
+/* ─── PWA standalone mode: safe-area for bottom nav ────── */
+@media (display-mode: standalone) {
+  .mobile-bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ─── Print styles: hide navigation ────────────────────── */
+@media print {
+  .mobile-bottom-nav,
+  nav[aria-label="Mobile navigation"],
+  header,
+  aside,
+  .editor-actions-sticky {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  body {
+    padding: 0 !important;
+  }
+}

@@ -44,21 +44,24 @@ export default function ResponsiveTable({ children, className = '', label = 'Scr
   }, [updateScrollState])
 
   const from = gradientColors[bg]
+  const scrollHint = canScrollLeft || canScrollRight
+    ? `${label} — scroll horizontally to see more`
+    : label
 
   return (
     <div className={`relative ${className}`} role="region" aria-label={label}>
       {canScrollLeft && (
-        <div className={`absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r ${from} to-transparent z-10 pointer-events-none`} />
+        <div className={`absolute left-0 top-0 bottom-0 w-4 sm:w-6 bg-gradient-to-r ${from} to-transparent z-10 pointer-events-none`} />
       )}
       {canScrollRight && (
-        <div className={`absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l ${from} to-transparent z-10 pointer-events-none`} />
+        <div className={`absolute right-0 top-0 bottom-0 w-4 sm:w-6 bg-gradient-to-l ${from} to-transparent z-10 pointer-events-none`} />
       )}
       <div
         ref={scrollRef}
         tabIndex={0}
         className="overflow-x-auto -mx-4 sm:-mx-6 md:mx-0 scrollbar-thin"
         style={{ WebkitOverflowScrolling: 'touch' }}
-        aria-label={`${label} — scroll horizontally to see more`}
+        aria-label={scrollHint}
       >
         <div className="inline-block min-w-full px-4 sm:px-6 md:px-0 align-middle">
           {children}

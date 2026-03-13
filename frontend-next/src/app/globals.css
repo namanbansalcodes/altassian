@@ -241,3 +241,157 @@ body {
     padding-bottom: 2.5rem;
   }
 }
+
+/* ─── Mobile bottom nav: active state indicator ──────── */
+nav[aria-label="Mobile navigation"] .nav-active {
+  position: relative;
+}
+
+nav[aria-label="Mobile navigation"] .nav-active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2rem;
+  height: 2px;
+  background: #2563eb;
+  border-radius: 0 0 2px 2px;
+}
+
+/* ─── Mobile bottom nav: prevent content jump ────────── */
+@media (max-width: 767px) {
+  nav[aria-label="Mobile navigation"] {
+    transition: transform 150ms ease-out;
+  }
+}
+
+/* ─── Mobile: horizontal card scroller ─────────────────── */
+@media (max-width: 767px) {
+  .mobile-card-scroll {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    gap: 0.75rem;
+    padding-bottom: 0.25rem;
+  }
+  .mobile-card-scroll > * {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 75vw;
+    max-width: 280px;
+  }
+  .mobile-card-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .mobile-card-scroll {
+    scrollbar-width: none;
+  }
+}
+
+/* ─── Mobile: version list height constraint ───────────── */
+@media (max-width: 767px) {
+  .version-list-mobile {
+    max-height: 35vh;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+}
+
+/* ─── Breadcrumb scroll container with gradient fades ──── */
+.breadcrumb-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  white-space: nowrap;
+  position: relative;
+  mask-image: linear-gradient(to right, transparent 0, black 0.5rem, black calc(100% - 1.5rem), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 0.5rem, black calc(100% - 1.5rem), transparent 100%);
+}
+.breadcrumb-scroll::-webkit-scrollbar {
+  display: none;
+}
+.breadcrumb-scroll:not([data-scrollable]) {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+/* ─── Mobile: sticky editor save bar ───────────────────── */
+@media (max-width: 639px) {
+  .editor-actions-sticky {
+    position: sticky;
+    bottom: 3.75rem;
+    z-index: 10;
+    background: inherit;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-top: 1px solid #e5e7eb;
+  }
+}
+
+/* ─── Mobile: attachment list touch targets ────────────── */
+@media (pointer: coarse) {
+  .attachment-row {
+    min-height: 44px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}
+
+/* ─── Mobile: constrain table cell content ─────────────── */
+@media (max-width: 767px) {
+  table td,
+  table th {
+    word-break: break-word;
+  }
+}
+
+/* ─── Touch devices: always show drag handles (no hover) ── */
+@media (pointer: coarse) {
+  .drag-handle-touch {
+    opacity: 0.5;
+  }
+}
+
+/* ─── Dark mode: scrollbar colors ──────────────────────── */
+@media (prefers-color-scheme: dark) {
+  .scrollbar-thin {
+    scrollbar-color: #525252 transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #525252;
+  }
+}
+
+/* ─── PWA standalone mode: safe-area for bottom nav ────── */
+@media (display-mode: standalone) {
+  nav[aria-label="Mobile navigation"] {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ─── Print styles: hide navigation ────────────────────── */
+@media print {
+  nav[aria-label="Mobile navigation"],
+  header,
+  aside,
+  .editor-actions-sticky {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  body {
+    padding: 0 !important;
+  }
+
+  .prose,
+  article {
+    max-width: 100% !important;
+  }
+}
