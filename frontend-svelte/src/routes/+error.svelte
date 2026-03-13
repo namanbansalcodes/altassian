@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let error: Error & { status?: number };
+  const { error } = $props<{ error: Error & { status?: number } }>();
 </script>
 
 <div class="p-6">

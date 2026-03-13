@@ -9,7 +9,7 @@ Altassian is an open-source Confluence alternative — a wiki platform for teams
 - **Backend:** Python 3.11, Django 5.2, Django REST Framework
 - **Auth:** JWT via djangorestframework-simplejwt
 - **Database:** SQLite (dev), PostgreSQL (prod/Docker)
-- **Frontend:** Vite + React (separate repo at `./frontend`)
+- **Frontend:** SvelteKit (monorepo at `./frontend-svelte`)
 
 ## Features
 
@@ -30,6 +30,7 @@ altassian_core/   # Django project settings, root URL config
 user_accounts/    # CustomUser model (extends AbstractUser)
 spaces/           # Space model (wiki namespaces)
 pages/            # Page, PageVersion, Comment, Attachment models
+frontend-svelte/  # SvelteKit app (SSR dev server)
 ```
 
 ## Local Development
@@ -38,6 +39,7 @@ pages/            # Page, PageVersion, Comment, Attachment models
 
 - Python 3.11+
 - pip
+- Node 20+
 
 ### Setup
 
@@ -46,24 +48,21 @@ pages/            # Page, PageVersion, Comment, Attachment models
 git clone <repo-url>
 cd altassian_backend
 
-# Create and activate virtual environment
+# Backend
 python -m venv venv
 source ./venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Run migrations
 python manage.py migrate
-
-# (Optional) Load sample data
-python manage.py seed
-
-# Start the dev server
 python manage.py runserver 0.0.0.0:8000
+
+# Frontend (in another terminal)
+cd frontend-svelte
+npm i
+npm run dev -- --host 0.0.0.0 --port 5173
 ```
 
-The API is available at `http://localhost:8000/api/`.
+- API: `http://localhost:8000/api/`
+- Frontend: `http://localhost:5173/`
 
 ### Seed Data
 
@@ -75,12 +74,11 @@ The API is available at `http://localhost:8000/api/`.
 | Spaces | Engineering (`ENG`), Product (`PROD`), Onboarding (`ONB`) |
 | Pages  | Architecture Overview, API Reference, Development Setup, Q1 Roadmap, Welcome to Altassian |
 
-## Docker (Production)
+## Docker (Reverse Proxy + Services)
 
 ### Prerequisites
 
 - Docker and Docker Compose
-- Frontend repo at `./frontend`
 
 ### Start
 
@@ -90,19 +88,22 @@ docker compose up --build -d
 
 This launches four services:
 
-| Service    | Description                     | Port |
-|------------|---------------------------------|------|
-| `db`       | PostgreSQL 16                   | —    |
-| `backend`  | Django + Gunicorn               | 8000 (internal) |
-| `frontend` | Vite build served by nginx      | 80 (internal) |
-| `nginx`    | Reverse proxy                   | **80** |
+| Service           | Description                  | Port |
+|-------------------|------------------------------|------|
+| `db`              | PostgreSQL 16                | —    |
+| `backend`         | Django + Gunicorn            | 8000 (internal) |
+| `frontend-svelte` | SvelteKit dev server (SSR)   | 5173 (internal) |
+| `nginx`           | Reverse proxy                | **8080 -> 80** |
+
+Open: http://localhost:8080
 
 ### Routing
 
 - `/api/*` and `/admin/*` → Django backend
-- `/static/*` → collected static files
-- `/media/*` → user uploads
-- `/*` → frontend SPA
+- `/static/*` → collected static files (cached 7d)
+- `/media/*` → user uploads (short cache)
+- `/*` → SvelteKit app (HTML `Cache-Control: no-store`)
+- `/assets/*` → SvelteKit assets (immutable cache)
 
 ### Run Migrations & Seed in Docker
 
@@ -135,6 +136,14 @@ docker compose down -v       # remove volumes (fresh start)
 | `/api/comments/`          | GET, POST            | Auth     |
 | `/api/comments/{id}/`     | GET, PUT, DELETE      | Auth     |
 | `/api/attachments/`       | GET, POST            | Auth     |
+
+## Migration Note (Rollback)
+
+If you need to temporarily restore the old React frontend:
+
+1. Revert `docker-compose.yml` to the `frontend` service pointing at `./frontend`
+2. Update `nginx.conf` upstream `frontend` to `frontend:80` and default `location /` to that upstream
+3. Rebuild and up: `docker compose up --build -d`
 
 ## License
 
