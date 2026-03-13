@@ -14,13 +14,13 @@ export default function MarkdownEditor({ value = "", onChange }: Props) {
     <div className="border rounded-md">
       <div className="flex gap-2 border-b px-2 sm:px-3 py-1.5 sm:py-2 text-sm">
         <button
-          className={`px-3 py-1.5 rounded min-h-[44px] sm:min-h-[36px] ${tab === "edit" ? "bg-gray-200" : ""}`}
+          className={`px-3 py-2 rounded min-h-[44px] ${tab === "edit" ? "bg-gray-200 dark:bg-gray-700" : ""}`}
           onClick={() => setTab("edit")}
         >
           Edit
         </button>
         <button
-          className={`px-3 py-1.5 rounded min-h-[44px] sm:min-h-[36px] ${tab === "preview" ? "bg-gray-200" : ""}`}
+          className={`px-3 py-2 rounded min-h-[44px] ${tab === "preview" ? "bg-gray-200 dark:bg-gray-700" : ""}`}
           onClick={() => setTab("preview")}
         >
           Preview
@@ -28,7 +28,7 @@ export default function MarkdownEditor({ value = "", onChange }: Props) {
       </div>
       {tab === "edit" ? (
         <textarea
-          className="w-full h-40 sm:h-48 md:h-64 p-3 outline-none text-base"
+          className="w-full h-48 sm:h-56 md:h-64 p-3 outline-none text-base"
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
           placeholder="Write markdown..."

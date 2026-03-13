@@ -26,10 +26,10 @@ export default function RegisterPage() {
       <h1 className="text-lg sm:text-xl font-semibold">Register</h1>
       {error && <p className="text-red-600 text-sm">{error}</p>}
       <form className="space-y-4" onSubmit={onSubmit}>
-        <input className="w-full border border-zinc-300 dark:border-zinc-600 p-3 rounded-lg text-base bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Username" value={username} onChange={e=>setUsername(e.target.value)} />
-        <input className="w-full border border-zinc-300 dark:border-zinc-600 p-3 rounded-lg text-base bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Email" type="email" value={email} onChange={e=>setEmail(e.target.value)} />
-        <input className="w-full border border-zinc-300 dark:border-zinc-600 p-3 rounded-lg text-base bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} />
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg w-full sm:w-auto font-medium disabled:opacity-50" type="submit">Create account</button>
+        <input className="w-full border border-zinc-300 dark:border-zinc-600 p-3 rounded-lg text-base bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none min-h-[44px]" placeholder="Username" value={username} onChange={e=>setUsername(e.target.value)} />
+        <input className="w-full border border-zinc-300 dark:border-zinc-600 p-3 rounded-lg text-base bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none min-h-[44px]" placeholder="Email" type="email" value={email} onChange={e=>setEmail(e.target.value)} />
+        <input className="w-full border border-zinc-300 dark:border-zinc-600 p-3 rounded-lg text-base bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none min-h-[44px]" type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} />
+        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg w-full font-medium disabled:opacity-50 min-h-[44px]" type="submit">Create account</button>
       </form>
     </main>
   );
