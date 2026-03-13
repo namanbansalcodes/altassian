@@ -10,7 +10,7 @@
   });
 </script>
 
-<div class="max-w-3xl mx-auto">
+<div class="max-w-4xl mx-auto">
   <h1 class="text-xl sm:text-2xl font-semibold mb-4">Spaces</h1>
   {#if $spacesQuery.isLoading}
     <p class="text-neutral-500">Loading...</p>

@@ -25,7 +25,7 @@
   });
 </script>
 
-<div class="max-w-3xl mx-auto space-y-3">
+<div class="max-w-4xl mx-auto space-y-3">
   {#if $pageQuery.isLoading}
     <p class="text-neutral-500">Loading...</p>
   {:else if $pageQuery.isError}

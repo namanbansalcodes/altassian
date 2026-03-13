@@ -14,7 +14,7 @@
   });
 </script>
 
-<div class="max-w-3xl mx-auto">
+<div class="max-w-4xl mx-auto">
   <h1 class="text-xl sm:text-2xl font-semibold mb-4">Space: {key}</h1>
   {#if $pagesQuery.isLoading}
     <p class="text-neutral-500">Loading...</p>
