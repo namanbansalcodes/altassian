@@ -79,7 +79,7 @@ function PageRow({ page, spaceKey, depth }: { page: any; spaceKey: string; depth
         style={{ paddingLeft: `${Math.min(depth * 16, 64) + 16}px` }}>
         <FileText size={16} className="text-blue-500 shrink-0" />
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{page.title}</p>
+          <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{page.title}</p>
           <p className="text-xs text-gray-400 dark:text-gray-500">
             {page.author?.first_name || page.author?.username} · {new Date(page.updated_at).toLocaleDateString()}
           </p>

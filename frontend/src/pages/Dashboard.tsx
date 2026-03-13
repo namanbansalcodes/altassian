@@ -76,7 +76,7 @@ export default function Dashboard() {
                     {a.user?.first_name?.[0] || a.user?.username?.[0] || '?'}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                    <p className="text-sm text-gray-700 dark:text-gray-300 break-words">
                       <span className="font-medium">{a.user?.first_name || a.user?.username}</span>{' '}
                       {a.action} <span className="font-medium">{a.target_title}</span>
                     </p>

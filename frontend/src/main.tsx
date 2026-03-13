@@ -33,7 +33,7 @@ createRoot(document.getElementById('root')!).render(
           theme="system"
           visibleToasts={3}
           offset="16px"
-          mobileOffset="12px"
+          mobileOffset="72px"
         />
       </BrowserRouter>
     </QueryClientProvider>
