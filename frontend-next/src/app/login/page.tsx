@@ -29,13 +29,13 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="p-6 max-w-sm mx-auto space-y-4">
-      <h1 className="text-xl font-semibold">Login</h1>
+    <main className="p-4 sm:p-6 max-w-sm mx-auto space-y-4">
+      <h1 className="text-lg sm:text-xl font-semibold">Login</h1>
       {error && <p className="text-red-600 text-sm">{error}</p>}
-      <form className="space-y-3" onSubmit={onSubmit}>
-        <input className="w-full border p-2 rounded" placeholder="Username" value={username} onChange={e=>setUsername(e.target.value)} />
-        <input className="w-full border p-2 rounded" type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} />
-        <button className="bg-black text-white px-4 py-2 rounded" type="submit">Sign in</button>
+      <form className="space-y-4" onSubmit={onSubmit}>
+        <input className="w-full border p-3 rounded text-base" placeholder="Username" value={username} onChange={e=>setUsername(e.target.value)} />
+        <input className="w-full border p-3 rounded text-base" type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} />
+        <button className="bg-black text-white px-4 py-3 rounded w-full sm:w-auto font-medium" type="submit">Sign in</button>
       </form>
     </main>
   );

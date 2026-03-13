@@ -43,6 +43,7 @@ html {
 /* Prevent horizontal overflow at the page level */
 html, body {
   overflow-x: hidden;
+  overscroll-behavior-x: none;
 }
 
 /* Touch-friendly tap targets for coarse pointers (touch devices) */
@@ -101,6 +102,28 @@ h1, h2, h3, h4, h5, h6 {
 pre {
   max-width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Remove 300ms tap delay on interactive elements */
+button,
+[role="button"],
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+/* Dynamic viewport height (accounts for mobile browser chrome) */
+.min-h-dvh {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Overscroll containment for drawers / modals */
+[role="dialog"] {
+  overscroll-behavior: contain;
 }
 
 /* ─── Theme transition ────────────────────────────────────── */

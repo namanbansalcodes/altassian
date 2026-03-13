@@ -16,13 +16,13 @@ export default function PageDetail() {
     enabled: !!key && !!slug,
   });
 
-  if (isLoading) return <main className="p-6">Loading...</main>;
-  if (error || !data) return <main className="p-6">Not found</main>;
+  if (isLoading) return <main className="p-4 sm:p-6">Loading...</main>;
+  if (error || !data) return <main className="p-4 sm:p-6">Not found</main>;
 
   return (
-    <main className="p-6 space-y-4">
-      <h1 className="text-2xl font-semibold">{data.title}</h1>
-      <div className="prose max-w-none">
+    <main className="p-4 sm:p-6 space-y-4">
+      <h1 className="text-xl sm:text-2xl font-semibold">{data.title}</h1>
+      <div className="prose max-w-none overflow-x-auto">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
           {data.body_markdown || ""}
         </ReactMarkdown>

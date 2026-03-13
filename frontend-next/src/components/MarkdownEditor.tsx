@@ -12,15 +12,15 @@ export default function MarkdownEditor({ value = "", onChange }: Props) {
   const [tab, setTab] = useState<"edit" | "preview">("edit");
   return (
     <div className="border rounded-md">
-      <div className="flex gap-2 border-b px-2 py-1 text-sm">
+      <div className="flex gap-2 border-b px-2 sm:px-3 py-1.5 sm:py-2 text-sm">
         <button
-          className={`px-2 py-1 rounded ${tab === "edit" ? "bg-gray-200" : ""}`}
+          className={`px-3 py-1.5 rounded min-h-[36px] ${tab === "edit" ? "bg-gray-200" : ""}`}
           onClick={() => setTab("edit")}
         >
           Edit
         </button>
         <button
-          className={`px-2 py-1 rounded ${tab === "preview" ? "bg-gray-200" : ""}`}
+          className={`px-3 py-1.5 rounded min-h-[36px] ${tab === "preview" ? "bg-gray-200" : ""}`}
           onClick={() => setTab("preview")}
         >
           Preview
@@ -28,13 +28,13 @@ export default function MarkdownEditor({ value = "", onChange }: Props) {
       </div>
       {tab === "edit" ? (
         <textarea
-          className="w-full h-64 p-3 outline-none"
+          className="w-full h-40 sm:h-48 md:h-64 p-3 outline-none text-base"
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
           placeholder="Write markdown..."
         />
       ) : (
-        <div className="prose max-w-none p-3">
+        <div className="prose max-w-none p-3 overflow-x-auto">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>
         </div>
       )}

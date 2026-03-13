@@ -135,7 +135,7 @@ export default function PageEditor() {
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder="Page title"
-          className="w-full px-4 sm:px-6 py-3 sm:py-4 text-xl sm:text-2xl font-bold border-b border-gray-200 dark:border-gray-700 outline-none placeholder-gray-300 dark:placeholder-gray-600 bg-transparent text-gray-900 dark:text-gray-100"
+          className="w-full px-4 sm:px-6 py-3.5 sm:py-4 text-xl sm:text-2xl font-bold border-b border-gray-200 dark:border-gray-700 outline-none placeholder-gray-300 dark:placeholder-gray-600 bg-transparent text-gray-900 dark:text-gray-100"
         />
 
         {/* Static Toolbar */}

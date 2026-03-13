@@ -17,15 +17,15 @@ export default function SpaceDetailPage() {
     enabled: !!key,
   });
 
-  if (!space) return <main className="p-6">Loading...</main>;
+  if (!space) return <main className="p-4 sm:p-6">Loading...</main>;
 
   return (
-    <main className="p-6 space-y-4">
-      <h1 className="text-xl font-semibold">{space.name} ({space.key})</h1>
+    <main className="p-4 sm:p-6 space-y-4">
+      <h1 className="text-lg sm:text-xl font-semibold">{space.name} <span className="text-zinc-500 text-sm">({space.key})</span></h1>
       <ul className="space-y-1">
         {pages?.map((p) => (
           <li key={p.id}>
-            <Link className="underline" href={`/spaces/${space.key}/pages/${p.slug}`}>{p.title}</Link>
+            <Link className="underline py-1 inline-block" href={`/spaces/${space.key}/pages/${p.slug}`}>{p.title}</Link>
           </li>
         ))}
       </ul>
