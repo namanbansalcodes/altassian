@@ -45,7 +45,7 @@ export default function PageHistory() {
               {mobileListExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </span>
           </button>
-          <div className={`divide-y divide-gray-100 dark:divide-gray-800 max-h-[40vh] md:max-h-[600px] overflow-y-auto ${mobileListExpanded ? '' : 'hidden md:block'}`}>
+          <div className={`divide-y divide-gray-100 dark:divide-gray-800 max-h-[50vh] md:max-h-[600px] overflow-y-auto overscroll-y-contain ${mobileListExpanded ? '' : 'hidden md:block'}`}>
             {versions?.map(v => (
               <button
                 key={v.id}
@@ -75,8 +75,8 @@ export default function PageHistory() {
 
         {/* Version content */}
         <div className="md:col-span-2 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-between gap-2">
+            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 truncate min-w-0">
               {versionDetail ? `Version ${versionDetail.version_number} — ${versionDetail.title}` : 'Select a version'}
             </h3>
             {versionDetail && (

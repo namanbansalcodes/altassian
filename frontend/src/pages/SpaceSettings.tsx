@@ -59,7 +59,7 @@ export default function SpaceSettings() {
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Space Settings</h1>
       </div>
 
-      <form onSubmit={e => { e.preventDefault(); updateMut.mutate() }} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 space-y-5 mb-6">
+      <form onSubmit={e => { e.preventDefault(); updateMut.mutate() }} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 space-y-5 mb-6 form-mobile-spaced">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Space name</label>
           <input type="text" value={name} onChange={e => setName(e.target.value)}

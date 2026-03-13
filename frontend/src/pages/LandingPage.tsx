@@ -27,16 +27,17 @@ export default function LandingPage() {
             </button>
           </div>
         </div>
-        {/* Mobile nav dropdown */}
-        {mobileNavOpen && (
-          <nav className="md:hidden border-t border-gray-100 dark:border-gray-800 bg-white/90 dark:bg-gray-950/90 backdrop-blur">
-            <div className="mx-auto max-w-7xl px-4 py-3 flex flex-col gap-1">
-              <a href="#features" onClick={() => setMobileNavOpen(false)} className="px-3 py-2.5 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700">Features</a>
-              <a href="#pricing" onClick={() => setMobileNavOpen(false)} className="px-3 py-2.5 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700">Pricing</a>
-              <a href="#security" onClick={() => setMobileNavOpen(false)} className="px-3 py-2.5 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700">Security</a>
-            </div>
-          </nav>
-        )}
+        {/* Mobile nav dropdown — animated slide-down */}
+        <nav
+          className={`md:hidden border-t border-gray-100 dark:border-gray-800 bg-white/90 dark:bg-gray-950/90 backdrop-blur overflow-hidden transition-[max-height,opacity] duration-200 ease-out ${mobileNavOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}
+          aria-hidden={!mobileNavOpen}
+        >
+          <div className="mx-auto max-w-7xl px-4 py-3 flex flex-col gap-1">
+            <a href="#features" onClick={() => setMobileNavOpen(false)} className="px-3 py-2.5 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700">Features</a>
+            <a href="#pricing" onClick={() => setMobileNavOpen(false)} className="px-3 py-2.5 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700">Pricing</a>
+            <a href="#security" onClick={() => setMobileNavOpen(false)} className="px-3 py-2.5 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700">Security</a>
+          </div>
+        </nav>
       </header>
 
       <main>

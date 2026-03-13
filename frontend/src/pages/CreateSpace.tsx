@@ -36,7 +36,7 @@ export default function CreateSpace() {
   return (
     <div className="max-w-lg mx-auto">
       <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Create a Space</h1>
-      <form onSubmit={e => { e.preventDefault(); mutation.mutate() }} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 space-y-5">
+      <form onSubmit={e => { e.preventDefault(); mutation.mutate() }} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 space-y-5 form-mobile-spaced">
         {error && <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm p-3 rounded-lg">{error}</div>}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Space name</label>

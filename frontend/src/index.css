@@ -297,14 +297,23 @@ html.no-transitions * {
   margin: 1rem 0;
 }
 
-/* Standalone tables in prose get auto-scroll via wrapper */
+/* Standalone tables in prose get auto-scroll via wrapper — match any nesting depth */
 @media (max-width: 767px) {
   .prose-responsive > table,
+  .prose-responsive table,
   .prose-responsive .tiptap-table-wrap {
     display: block;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    max-width: calc(100vw - 2rem);
   }
+}
+
+/* Prevent tables from inflating their parent container */
+.prose-responsive table {
+  table-layout: auto;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 /* ─── Mobile-friendly defaults ──────────────────────────── */
@@ -542,5 +551,33 @@ textarea {
 @media (max-width: 639px) {
   .form-field-mobile {
     margin-bottom: 1rem;
+  }
+
+  /* Auto-apply mobile field spacing inside tagged form containers */
+  .form-mobile-spaced > div {
+    margin-bottom: 1rem;
+  }
+}
+
+/* ─── Mobile: ensure iframes / embeds don't overflow ──────── */
+.prose-responsive iframe,
+.prose-responsive video,
+.prose-responsive embed,
+.prose-responsive object {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ─── Mobile: image captions and figures ──────────────────── */
+.prose-responsive figure {
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* ─── Mobile: prevent fixed / absolute positioned elements from causing overflow ── */
+@media (max-width: 767px) {
+  .prose-responsive pre {
+    max-width: calc(100vw - 2rem);
   }
 }

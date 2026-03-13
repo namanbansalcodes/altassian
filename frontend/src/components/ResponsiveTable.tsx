@@ -5,9 +5,20 @@ interface ResponsiveTableProps {
   className?: string
   /** Label for screen-reader users describing the scrollable region */
   label?: string
+  /**
+   * Background variant for gradient overlays — must match the parent surface.
+   * 'card' (default) = white / gray-900 card backgrounds
+   * 'surface' = gray-50 / gray-950 page backgrounds
+   */
+  bg?: 'card' | 'surface'
 }
 
-export default function ResponsiveTable({ children, className = '', label = 'Scrollable table' }: ResponsiveTableProps) {
+const gradientColors = {
+  card: 'from-white dark:from-gray-900',
+  surface: 'from-gray-50 dark:from-gray-950',
+}
+
+export default function ResponsiveTable({ children, className = '', label = 'Scrollable table', bg = 'card' }: ResponsiveTableProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
@@ -32,19 +43,22 @@ export default function ResponsiveTable({ children, className = '', label = 'Scr
     }
   }, [updateScrollState])
 
+  const from = gradientColors[bg]
+
   return (
     <div className={`relative ${className}`} role="region" aria-label={label}>
       {canScrollLeft && (
-        <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-gray-50 dark:from-gray-950 to-transparent z-10 pointer-events-none" />
+        <div className={`absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r ${from} to-transparent z-10 pointer-events-none`} />
       )}
       {canScrollRight && (
-        <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-gray-50 dark:from-gray-950 to-transparent z-10 pointer-events-none" />
+        <div className={`absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l ${from} to-transparent z-10 pointer-events-none`} />
       )}
       <div
         ref={scrollRef}
         tabIndex={0}
         className="overflow-x-auto -mx-4 sm:-mx-6 md:mx-0 scrollbar-thin"
         style={{ WebkitOverflowScrolling: 'touch' }}
+        aria-label={`${label} — scroll horizontally to see more`}
       >
         <div className="inline-block min-w-full px-4 sm:px-6 md:px-0 align-middle">
           {children}

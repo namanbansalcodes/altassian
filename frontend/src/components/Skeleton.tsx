@@ -151,8 +151,8 @@ export function SidebarSkeleton() {
 export function AppChromeSkeleton() {
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950" role="status" aria-label="Loading application">
-      {/* Top navbar skeleton */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 h-14 flex items-center px-4 gap-4 shrink-0">
+      {/* Top navbar skeleton — responsive padding matches Layout.tsx */}
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-4 shrink-0">
         <SkeletonIcon size="md" />
         <Skeleton width={100} height={22} rounded="rounded" />
         <div className="hidden md:flex items-center gap-2 ml-2">
@@ -160,19 +160,19 @@ export function AppChromeSkeleton() {
           <Skeleton width={60} height={28} rounded="rounded-md" />
           <Skeleton width={60} height={28} rounded="rounded-md" />
         </div>
-        <div className="flex-1 max-w-xl mx-4">
+        <div className="flex-1 max-w-xl mx-2 sm:mx-4">
           <Skeleton width="100%" height={32} rounded="rounded-lg" />
         </div>
         <SkeletonIcon size="md" />
         <SkeletonCircle size="sm" />
       </header>
 
-      {/* Body: sidebar + content */}
+      {/* Body: sidebar + content — responsive padding matches Layout.tsx */}
       <div className="flex flex-1 overflow-hidden">
         <aside className="hidden lg:block w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 shrink-0">
           <SidebarSkeleton />
         </aside>
-        <main className="flex-1 p-6 bg-gray-50 dark:bg-gray-950">
+        <main className="flex-1 p-3 sm:p-4 md:p-6 pb-20 md:pb-6 bg-gray-50 dark:bg-gray-950">
           <div className="max-w-4xl mx-auto space-y-4">
             <SkeletonTitle width={250} size="lg" />
             <SkeletonLine width={200} size="sm" />
@@ -230,7 +230,7 @@ export function PageViewSkeleton() {
 export function EditorSkeleton() {
   return (
     <div className="max-w-4xl mx-auto" role="status" aria-label="Loading editor">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
         <SkeletonTitle width={100} size="sm" />
         <div className="flex gap-2">
           <Skeleton width={70} height={36} rounded="rounded-lg" />
@@ -238,14 +238,14 @@ export function EditorSkeleton() {
         </div>
       </div>
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-        {/* Title area */}
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        {/* Title area — matches PageEditor responsive padding */}
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700">
           <SkeletonTitle width="40%" size="lg" />
         </div>
         {/* Toolbar */}
         <SkeletonToolbar />
         {/* Content area */}
-        <div className="p-6 space-y-4">
+        <div className="p-4 sm:p-6 space-y-4">
           <SkeletonText lines={6} />
         </div>
       </div>
