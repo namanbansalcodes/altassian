@@ -156,7 +156,7 @@ html.no-transitions * {
   border-collapse: collapse;
   width: 100%;
   margin: 1rem 0;
-  min-width: 400px;
+  min-width: min(100%, 400px);
 }
 
 .tiptap table td,
@@ -671,5 +671,12 @@ textarea {
     max-height: 35vh;
     overflow-y: auto;
     overscroll-behavior-y: contain;
+  }
+}
+
+/* ─── Landscape: reduce bottom padding for main content ────── */
+@media (max-width: 767px) and (orientation: landscape) {
+  #main-content {
+    padding-bottom: 2.5rem;
   }
 }

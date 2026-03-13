@@ -290,7 +290,7 @@ export default function BubbleToolbar({ editor }: BubbleToolbarProps) {
             placeholder="https://…"
             aria-label="Link URL"
             autoFocus
-            className="w-28 sm:w-44 md:w-48 min-w-0 px-2 py-1 text-xs bg-white/10 text-white rounded border border-white/20 outline-none focus:border-blue-400 placeholder-gray-400"
+            className="w-20 sm:w-44 md:w-48 min-w-0 flex-1 px-2 py-1 text-xs bg-white/10 text-white rounded border border-white/20 outline-none focus:border-blue-400 placeholder-gray-400"
           />
           <button
             type="button"

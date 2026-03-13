@@ -298,7 +298,7 @@ export default function SlashMenu({ editor }: SlashMenuProps) {
       ref={menuRef}
       role="listbox"
       aria-label="Slash commands"
-      className="absolute z-50 w-64 sm:w-72 max-w-[calc(100vw-1rem)] max-h-80 overflow-y-auto bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1"
+      className="absolute z-50 w-64 sm:w-72 max-w-[calc(100vw-1rem)] max-h-[min(80vh,20rem)] overflow-y-auto bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1"
       style={{ top: position.top, left: position.left }}
     >
       {filtered.map((cmd, index) => {

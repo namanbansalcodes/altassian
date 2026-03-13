@@ -139,7 +139,7 @@ export default function PageView() {
             {attachments.map(att => (
               <li key={att.id} className="attachment-row flex items-center gap-2 py-2.5 min-w-0 flex-wrap sm:flex-nowrap">
                 <FileText size={14} className="text-gray-400 shrink-0" />
-                <a href={att.file} target="_blank" rel="noreferrer" className="text-sm text-blue-600 dark:text-blue-400 hover:underline truncate flex-1 min-w-0">{att.filename}</a>
+                <a href={att.file} target="_blank" rel="noreferrer" className="text-sm text-blue-600 dark:text-blue-400 hover:underline truncate flex-1 min-w-0 break-all">{att.filename}</a>
                 <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">{(((att.file_size ?? 0) / 1024).toFixed(1))} KB</span>
               </li>
             ))}

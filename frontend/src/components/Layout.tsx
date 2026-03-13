@@ -203,11 +203,11 @@ export default function Layout() {
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop sidebar (lg+) */}
         {sidebarOpen && (
-          <div className="hidden lg:flex lg:flex-col lg:h-[calc(100dvh-3.5rem)]">
+          <div className="hidden lg:flex lg:flex-col lg:h-[calc(100dvh-3.5rem)] overscroll-y-contain">
             <Sidebar />
           </div>
         )}
-        <main id="main-content" className="flex-1 overflow-y-auto overscroll-y-contain p-3 sm:p-4 md:p-6 pb-20 md:pb-6 bg-gray-50 dark:bg-gray-950">
+        <main id="main-content" className="flex-1 overflow-y-auto overscroll-y-contain p-3 sm:p-4 md:p-6 pb-16 md:pb-6 bg-gray-50 dark:bg-gray-950">
           <Outlet />
         </main>
       </div>
