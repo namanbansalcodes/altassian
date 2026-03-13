@@ -320,7 +320,7 @@ function PageTreeRow({ node, isFocused, onToggle, onFocus }: PageTreeRowProps) {
         ${isFocused ? 'ring-1 ring-blue-400/50' : ''}
         ${isDragOver ? 'bg-blue-100 dark:bg-blue-900/50' : ''}
         ${isDragging ? 'opacity-50' : ''}`}
-      style={{ paddingLeft: `${Math.min(node.depth * 12, 48) + 8}px` }}
+      style={{ paddingLeft: `${Math.min(node.depth * 10, 40) + 8}px` }}
       tabIndex={isFocused ? 0 : -1}
       onFocus={onFocus}
       onClick={() => navigate(`/spaces/${node.spaceKey}/pages/${node.page.slug}`)}

@@ -63,18 +63,18 @@ export default function SpaceSettings() {
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Space name</label>
           <input type="text" value={name} onChange={e => setName(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+            className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-base text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Space key</label>
           <input type="text" value={space.key} disabled
-            className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-mono" />
+            className="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-base bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-mono" />
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Space key cannot be changed</p>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
           <textarea value={description} onChange={e => setDescription(e.target.value)}
-            rows={3} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none" />
+            rows={3} className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-base text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none" />
         </div>
         <div className="flex justify-end form-actions-responsive">
           <button type="submit" disabled={!name.trim() || updateMut.isPending}

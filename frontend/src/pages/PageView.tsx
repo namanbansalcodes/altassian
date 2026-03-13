@@ -96,7 +96,7 @@ export default function PageView() {
             By {page.author?.first_name || page.author?.username} · Updated {new Date(page.updated_at).toLocaleDateString()}
           </p>
         </div>
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-wrap">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-wrap sm:flex-nowrap">
           <Link to={`/spaces/${spaceKey}/pages/${pageSlug}/edit`}
             className="flex items-center gap-1.5 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
             <Edit size={14} /> Edit
@@ -137,7 +137,7 @@ export default function PageView() {
         {attachments?.length ? (
           <ul className="divide-y divide-gray-100 dark:divide-gray-800">
             {attachments.map(att => (
-              <li key={att.id} className="attachment-row flex items-center gap-2 py-2.5 min-w-0">
+              <li key={att.id} className="attachment-row flex items-center gap-2 py-2.5 min-w-0 flex-wrap sm:flex-nowrap">
                 <FileText size={14} className="text-gray-400 shrink-0" />
                 <a href={att.file} target="_blank" rel="noreferrer" className="text-sm text-blue-600 dark:text-blue-400 hover:underline truncate flex-1 min-w-0">{att.filename}</a>
                 <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">{(((att.file_size ?? 0) / 1024).toFixed(1))} KB</span>
@@ -172,7 +172,7 @@ export default function PageView() {
         </div>
         <form onSubmit={e => { e.preventDefault(); if (comment.trim()) commentMut.mutate(comment.trim()) }} className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <input value={comment} onChange={e => setComment(e.target.value)} placeholder="Add a comment..."
-            className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 outline-none" />
+            className="flex-1 px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-base sm:text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 outline-none" />
           <button type="submit" disabled={!comment.trim() || commentMut.isPending}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50 shrink-0">
             Comment
