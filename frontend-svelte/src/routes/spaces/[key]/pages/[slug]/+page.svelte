@@ -31,9 +31,9 @@
   {:else if $pageQuery.isError}
     <p class="text-red-500">Error loading page</p>
   {:else}
-    <h1 class="text-xl sm:text-2xl font-semibold">{$pageQuery.data.title}</h1>
+    <h1 class="text-xl sm:text-2xl font-semibold break-words">{$pageQuery.data.title}</h1>
     <textarea
-      class="w-full min-w-0 min-h-[12rem] sm:min-h-[14rem] md:min-h-[18rem] p-2.5 rounded border border-neutral-300 dark:border-neutral-600 bg-transparent text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y"
+      class="w-full min-w-0 min-h-[10rem] sm:min-h-[14rem] md:min-h-[18rem] max-h-[60vh] p-2.5 rounded border border-neutral-300 dark:border-neutral-600 bg-transparent text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y"
       bind:value={content}
     />
     <div class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">

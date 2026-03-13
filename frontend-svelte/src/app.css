@@ -57,11 +57,19 @@ html, body {
   input,
   textarea {
     min-height: 44px;
+    min-width: 44px;
   }
 
   [data-compact-touch] {
     min-height: unset;
     min-width: unset;
+  }
+}
+
+/* Touch devices: always show drag handles (no hover) */
+@media (pointer: coarse) {
+  .drag-handle-touch {
+    opacity: 0.5;
   }
 }
 

@@ -79,7 +79,7 @@ function PageRow({ page, spaceKey, depth }: { page: any; spaceKey: string; depth
     <>
       <Link to={`/spaces/${spaceKey}/pages/${page.slug}`}
         className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800"
-        style={{ paddingLeft: `${Math.min(depth * 10, 40) + 16}px` }}>
+        style={{ paddingLeft: `${Math.min(depth * 8, 32) + 16}px` }}>
         <FileText size={16} className="text-blue-500 shrink-0" />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{page.title}</p>

@@ -231,10 +231,10 @@ body {
 
 /* ─── Mobile bottom nav styles ──────────────────────── */
 @media (max-width: 767px) and (orientation: landscape) {
-  nav[aria-label="Mobile navigation"] {
+  .mobile-bottom-nav {
     height: 2.5rem;
   }
-  nav[aria-label="Mobile navigation"] span {
+  .mobile-bottom-nav span {
     display: none;
   }
   main {
@@ -243,11 +243,11 @@ body {
 }
 
 /* ─── Mobile bottom nav: active state indicator ──────── */
-nav[aria-label="Mobile navigation"] .nav-active {
+.mobile-bottom-nav .nav-active {
   position: relative;
 }
 
-nav[aria-label="Mobile navigation"] .nav-active::before {
+.mobile-bottom-nav .nav-active::before {
   content: '';
   position: absolute;
   top: 0;
@@ -261,7 +261,7 @@ nav[aria-label="Mobile navigation"] .nav-active::before {
 
 /* ─── Mobile bottom nav: prevent content jump ────────── */
 @media (max-width: 767px) {
-  nav[aria-label="Mobile navigation"] {
+  .mobile-bottom-nav {
     transition: transform 150ms ease-out;
   }
 }
@@ -366,14 +366,14 @@ nav[aria-label="Mobile navigation"] .nav-active::before {
 
 /* ─── PWA standalone mode: safe-area for bottom nav ────── */
 @media (display-mode: standalone) {
-  nav[aria-label="Mobile navigation"] {
+  .mobile-bottom-nav {
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
 /* ─── Print styles: hide navigation ────────────────────── */
 @media print {
-  nav[aria-label="Mobile navigation"],
+  .mobile-bottom-nav,
   header,
   aside,
   .editor-actions-sticky {

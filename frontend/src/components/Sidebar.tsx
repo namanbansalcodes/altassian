@@ -43,7 +43,8 @@ export default function Sidebar() {
               </span>
               <Link
                 to="/spaces/create"
-                className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                data-compact-touch
+                className="p-1.5 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 rounded"
                 aria-label="Create space"
               >
                 <Plus size={14} />
@@ -179,7 +180,7 @@ function SpaceItem({ spaceKey, spaceName, isExpanded, onToggle }: SpaceItemProps
         <button
           data-compact-touch
           onClick={onToggle}
-          className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+          className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
           aria-label={isExpanded ? `Collapse ${spaceName}` : `Expand ${spaceName}`}
         >
           {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
@@ -320,7 +321,7 @@ function PageTreeRow({ node, isFocused, onToggle, onFocus }: PageTreeRowProps) {
         ${isFocused ? 'ring-1 ring-blue-400/50' : ''}
         ${isDragOver ? 'bg-blue-100 dark:bg-blue-900/50' : ''}
         ${isDragging ? 'opacity-50' : ''}`}
-      style={{ paddingLeft: `${Math.min(node.depth * 10, 40) + 8}px` }}
+      style={{ paddingLeft: `${Math.min(node.depth * 8, 32) + 8}px` }}
       tabIndex={isFocused ? 0 : -1}
       onFocus={onFocus}
       onClick={() => navigate(`/spaces/${node.spaceKey}/pages/${node.page.slug}`)}
@@ -346,7 +347,7 @@ function PageTreeRow({ node, isFocused, onToggle, onFocus }: PageTreeRowProps) {
             e.stopPropagation()
             onToggle()
           }}
-          className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+          className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
           aria-label={node.isExpanded ? 'Collapse' : 'Expand'}
         >
           {node.isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
