@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Outlet, Link, useNavigate } from 'react-router-dom'
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import {
   Menu, MenuButton, MenuItems, MenuItem,
   Dialog, DialogPanel, DialogBackdrop,
@@ -19,6 +19,7 @@ export default function Layout() {
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchQuery, setSearchQuery] = useState('')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
@@ -43,9 +44,22 @@ export default function Layout() {
     return () => mql.removeEventListener('change', handler)
   }, [])
 
+  // Determine active tab for bottom nav
+  const pathname = location.pathname
+  const isHome = pathname === '/' || pathname === ''
+  const isSpaces = pathname.startsWith('/spaces') && !pathname.includes('/create')
+  const isCreate = pathname === '/spaces/create'
+  const isSearch = pathname.startsWith('/search')
+
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950">
       <RouteLoadingBar />
+
+      {/* Skip to content — accessibility */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg focus:text-sm focus:font-medium">
+        Skip to content
+      </a>
+
       {/* Top navbar */}
       <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-4 shrink-0 z-20" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         {/* Mobile hamburger (< lg) */}
@@ -189,14 +203,36 @@ export default function Layout() {
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop sidebar (lg+) */}
         {sidebarOpen && (
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex lg:flex-col lg:h-[calc(100vh-3.5rem)]">
             <Sidebar />
           </div>
         )}
-        <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 bg-gray-50 dark:bg-gray-950">
+        <main id="main-content" className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 pb-20 md:pb-6 bg-gray-50 dark:bg-gray-950">
           <Outlet />
         </main>
       </div>
+
+      {/* Mobile bottom navigation bar (< md) */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }} aria-label="Mobile navigation">
+        <div className="flex items-center justify-around h-14">
+          <Link to="/" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isHome ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+            <Home size={20} />
+            <span>Home</span>
+          </Link>
+          <Link to="/spaces" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isSpaces ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+            <BookOpen size={20} />
+            <span>Spaces</span>
+          </Link>
+          <Link to="/spaces/create" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isCreate ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+            <Plus size={20} />
+            <span>Create</span>
+          </Link>
+          <Link to="/search" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isSearch ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+            <Search size={20} />
+            <span>Search</span>
+          </Link>
+        </div>
+      </nav>
     </div>
   )
 }

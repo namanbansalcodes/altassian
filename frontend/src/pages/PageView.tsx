@@ -76,7 +76,7 @@ export default function PageView() {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mb-4 overflow-x-auto">
+      <nav className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mb-4 overflow-x-auto scrollbar-thin whitespace-nowrap pb-1">
         <Link to={`/spaces/${spaceKey}`} className="hover:text-blue-600 dark:hover:text-blue-400 shrink-0">{page.space_detail?.name || spaceKey}</Link>
         {page.parent_detail && (
           <>
@@ -163,7 +163,7 @@ export default function PageView() {
                   <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{c.author?.first_name || c.author?.username}</span>
                   <span className="text-xs text-gray-400 dark:text-gray-500">{new Date(c.created_at).toLocaleDateString()}</span>
                   {c.author?.id === user?.id && (
-                    <button onClick={() => deleteCommentMut.mutate(c.id)} className="text-xs text-red-400 hover:text-red-600 dark:hover:text-red-300">Delete</button>
+                    <button data-compact-touch onClick={() => deleteCommentMut.mutate(c.id)} className="text-xs text-red-400 hover:text-red-600 dark:hover:text-red-300 px-1.5 py-0.5 rounded">Delete</button>
                   )}
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{c.content}</p>

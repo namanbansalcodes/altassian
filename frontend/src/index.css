@@ -348,7 +348,13 @@ html, body {
 body {
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
-  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Bottom-nav clearance: ensure scrollable content isn't hidden behind fixed bottom nav on mobile */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 /* Focus-visible ring for keyboard navigation */

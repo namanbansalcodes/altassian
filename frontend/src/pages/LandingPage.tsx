@@ -1,4 +1,9 @@
+import { useState } from 'react'
+import { Menu, X } from 'lucide-react'
+
 export default function LandingPage() {
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-950 dark:to-gray-900 text-gray-900 dark:text-gray-50">
       <header className="sticky top-0 backdrop-blur bg-white/70 dark:bg-gray-950/60 border-b border-gray-100 dark:border-gray-800 z-10">
@@ -12,15 +17,33 @@ export default function LandingPage() {
           <div className="flex items-center gap-2 sm:gap-3">
             <a href="/login" className="text-sm font-medium hover:opacity-80">Sign in</a>
             <a href="/register" className="inline-flex items-center rounded-full bg-black text-white dark:bg-white dark:text-black px-3 sm:px-4 py-2 text-sm font-semibold shadow hover:scale-[1.01] transition">Get started</a>
+            <button
+              onClick={() => setMobileNavOpen(!mobileNavOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+              aria-label={mobileNavOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileNavOpen}
+            >
+              {mobileNavOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
         </div>
+        {/* Mobile nav dropdown */}
+        {mobileNavOpen && (
+          <nav className="md:hidden border-t border-gray-100 dark:border-gray-800 bg-white/90 dark:bg-gray-950/90 backdrop-blur">
+            <div className="mx-auto max-w-7xl px-4 py-3 flex flex-col gap-1">
+              <a href="#features" onClick={() => setMobileNavOpen(false)} className="px-3 py-2.5 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700">Features</a>
+              <a href="#pricing" onClick={() => setMobileNavOpen(false)} className="px-3 py-2.5 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700">Pricing</a>
+              <a href="#security" onClick={() => setMobileNavOpen(false)} className="px-3 py-2.5 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700">Security</a>
+            </div>
+          </nav>
+        )}
       </header>
 
       <main>
         <section className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24 md:py-32 grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 items-center">
           <div>
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold leading-tight tracking-tight">
-              Your team’s knowledge, beautifully organized
+              Your team's knowledge, beautifully organized
             </h1>
             <p className="mt-5 text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-prose">
               Altassian is a Git-powered workspace for docs, decisions, and discovery. Blazing-fast search, version history, and a modern editor — without the bloat.
@@ -29,7 +52,7 @@ export default function LandingPage() {
               <a href="/register" className="inline-flex items-center rounded-full bg-black text-white dark:bg-white dark:text-black px-5 py-3 text-sm font-semibold shadow hover:scale-[1.01] transition">Create free account</a>
               <a href="#demo" className="inline-flex items-center rounded-full border border-gray-300 dark:border-gray-700 px-5 py-3 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-900 transition">Watch demo</a>
             </div>
-            <div className="mt-6 text-xs text-gray-500 dark:text-gray-400">Open source • Git-native • SSO ready</div>
+            <div className="mt-6 text-xs text-gray-500 dark:text-gray-400">Open source · Git-native · SSO ready</div>
           </div>
           <div className="relative">
             <div className="absolute -inset-6 bg-gradient-to-tr from-blue-200 to-purple-200 dark:from-blue-900/40 dark:to-purple-900/30 blur-3xl rounded-3xl"/>

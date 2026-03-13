@@ -373,8 +373,8 @@ export function HistorySkeleton() {
         <SkeletonIcon size="md" />
         <SkeletonTitle width={140} size="md" />
       </div>
-      <div className="grid grid-cols-3 gap-6">
-        <div className="col-span-1 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="md:col-span-1 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
             <SkeletonLine width={60} />
           </div>
@@ -390,7 +390,7 @@ export function HistorySkeleton() {
             ))}
           </div>
         </div>
-        <div className="col-span-2 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="md:col-span-2 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
             <SkeletonLine width={160} />
           </div>

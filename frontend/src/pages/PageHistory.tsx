@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, Clock, User } from 'lucide-react'
+import { ArrowLeft, Clock, User, ChevronDown, ChevronUp } from 'lucide-react'
 import * as api from '../api'
 import { HistorySkeleton } from '../components/Skeleton'
 
 export default function PageHistory() {
   const { spaceKey, pageSlug } = useParams<{ spaceKey: string; pageSlug: string }>()
   const [selectedVersion, setSelectedVersion] = useState<number | null>(null)
+  const [mobileListExpanded, setMobileListExpanded] = useState(true)
 
   const { data: versions, isLoading } = useQuery({
     queryKey: ['versions', spaceKey, pageSlug],
@@ -35,14 +36,23 @@ export default function PageHistory() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         {/* Version list */}
         <div className="md:col-span-1 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+          <button
+            onClick={() => setMobileListExpanded(!mobileListExpanded)}
+            className="w-full p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-between md:cursor-default"
+          >
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Versions</h3>
-          </div>
-          <div className="divide-y divide-gray-100 dark:divide-gray-800 max-h-[50vh] md:max-h-[600px] overflow-y-auto">
+            <span className="md:hidden text-gray-400">
+              {mobileListExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </span>
+          </button>
+          <div className={`divide-y divide-gray-100 dark:divide-gray-800 max-h-[40vh] md:max-h-[600px] overflow-y-auto ${mobileListExpanded ? '' : 'hidden md:block'}`}>
             {versions?.map(v => (
               <button
                 key={v.id}
-                onClick={() => setSelectedVersion(v.id)}
+                onClick={() => {
+                  setSelectedVersion(v.id)
+                  setMobileListExpanded(false)
+                }}
                 className={`w-full text-left p-3 hover:bg-gray-50 dark:hover:bg-gray-800 ${selectedVersion === v.id ? 'bg-blue-50 dark:bg-blue-900/30 border-l-2 border-blue-600' : ''}`}
               >
                 <div className="flex items-center gap-2 mb-1">
@@ -65,10 +75,18 @@ export default function PageHistory() {
 
         {/* Version content */}
         <div className="md:col-span-2 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
               {versionDetail ? `Version ${versionDetail.version_number} — ${versionDetail.title}` : 'Select a version'}
             </h3>
+            {versionDetail && (
+              <button
+                onClick={() => setMobileListExpanded(true)}
+                className="md:hidden text-xs text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                Show versions
+              </button>
+            )}
           </div>
           {versionDetail ? (
             <div className="p-4 sm:p-6 prose prose-blue dark:prose-invert max-w-none prose-responsive" dangerouslySetInnerHTML={{ __html: versionDetail.content ?? '' }} />

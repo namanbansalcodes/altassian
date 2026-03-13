@@ -37,9 +37,9 @@ export default function Dashboard() {
         <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mt-1">Here's what's happening in your wiki</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Recent pages */}
-        <div className="lg:col-span-2">
+        <div className="md:col-span-2 lg:col-span-2">
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
               <h2 className="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2"><Clock size={18} /> Recent Pages</h2>

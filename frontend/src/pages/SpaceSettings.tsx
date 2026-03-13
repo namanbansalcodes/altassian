@@ -56,10 +56,10 @@ export default function SpaceSettings() {
         <button onClick={() => navigate(`/spaces/${spaceKey}`)} className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Space Settings</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Space Settings</h1>
       </div>
 
-      <form onSubmit={e => { e.preventDefault(); updateMut.mutate() }} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-5 mb-6">
+      <form onSubmit={e => { e.preventDefault(); updateMut.mutate() }} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 space-y-5 mb-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Space name</label>
           <input type="text" value={name} onChange={e => setName(e.target.value)}
@@ -85,7 +85,7 @@ export default function SpaceSettings() {
         {/* Success is shown via toast */}
       </form>
 
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-red-200 dark:border-red-800 p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-red-200 dark:border-red-800 p-4 sm:p-6">
         <h3 className="text-lg font-semibold text-red-700 dark:text-red-400 mb-2">Danger Zone</h3>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Deleting a space will permanently remove all its pages and content.</p>
         <button onClick={() => { if (confirm(`Delete space "${space.name}"? This cannot be undone.`)) deleteMut.mutate() }}
