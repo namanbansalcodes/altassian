@@ -9,7 +9,7 @@ Altassian is an open-source Confluence alternative — a wiki platform for teams
 - **Backend:** Python 3.11, Django 5.2, Django REST Framework
 - **Auth:** JWT via djangorestframework-simplejwt
 - **Database:** SQLite (dev), PostgreSQL (prod/Docker)
-- **Frontend:** Vite + React (separate repo at `../altassian_frontend`)
+- **Frontend:** Vite + React (separate repo at `./frontend`)
 
 ## Features
 
@@ -80,7 +80,7 @@ The API is available at `http://localhost:8000/api/`.
 ### Prerequisites
 
 - Docker and Docker Compose
-- Frontend repo at `../altassian_frontend`
+- Frontend repo at `./frontend`
 
 ### Start
 

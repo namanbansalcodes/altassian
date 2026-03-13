@@ -37,7 +37,7 @@ services:
 
   frontend:
     build:
-      context: ../altassian_frontend
+      context: ./frontend
       dockerfile: Dockerfile
     expose:
       - "80"

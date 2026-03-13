@@ -376,7 +376,7 @@ Automated Playwright-based screenshot capture for the Altassian frontend.
 \`\`\`bash
 # 1. Start backend + frontend
 python manage.py runserver 0.0.0.0:8001   # backend
-cd ../altassian_frontend && pnpm dev       # frontend on :5173
+cd ./frontend && pnpm dev       # frontend on :5173
 
 # 2. Run screenshots
 pnpm snapshots   # or: npm run snapshots

@@ -20,3 +20,5 @@ node_modules/
 *.log
 *.pot
 *.mo
+/frontend/dist
+/frontend/node_modules
