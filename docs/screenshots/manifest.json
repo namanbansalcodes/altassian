@@ -1,0 +1,547 @@
+{
+  "generatedAt": "2026-03-13T04:52:31.233Z",
+  "routes": {
+    "/login": [
+      "desktop/login-light.png",
+      "desktop/login-dark.png",
+      "mobile/login-light.png",
+      "mobile/login-dark.png"
+    ],
+    "/register": [
+      "desktop/register-light.png",
+      "desktop/register-dark.png",
+      "mobile/register-light.png",
+      "mobile/register-dark.png"
+    ],
+    "/landing": [
+      "desktop/landing-light.png",
+      "desktop/landing-dark.png",
+      "mobile/landing-light.png",
+      "mobile/landing-dark.png"
+    ],
+    "/": [
+      "desktop/home-light.png",
+      "desktop/home-dark.png",
+      "mobile/home-light.png",
+      "mobile/home-dark.png"
+    ],
+    "/spaces": [
+      "desktop/spaces-light.png",
+      "desktop/spaces-dark.png",
+      "mobile/spaces-light.png",
+      "mobile/spaces-dark.png"
+    ],
+    "/spaces/create": [
+      "desktop/spaces-create-light.png",
+      "desktop/spaces-create-dark.png",
+      "mobile/spaces-create-light.png",
+      "mobile/spaces-create-dark.png"
+    ],
+    "/spaces/ENG": [
+      "desktop/spaces-ENG-light.png",
+      "desktop/spaces-ENG-dark.png",
+      "mobile/spaces-ENG-light.png",
+      "mobile/spaces-ENG-dark.png"
+    ],
+    "/spaces/ENG/pages/architecture-overview": [
+      "desktop/spaces-ENG-pages-architecture-overview-light.png",
+      "desktop/spaces-ENG-pages-architecture-overview-dark.png",
+      "mobile/spaces-ENG-pages-architecture-overview-light.png",
+      "mobile/spaces-ENG-pages-architecture-overview-dark.png"
+    ],
+    "/spaces/ENG/pages/architecture-overview/edit": [
+      "desktop/spaces-ENG-pages-architecture-overview-edit-light.png",
+      "desktop/spaces-ENG-pages-architecture-overview-edit-slash-menu-light.png",
+      "desktop/spaces-ENG-pages-architecture-overview-edit-dark.png",
+      "desktop/spaces-ENG-pages-architecture-overview-edit-slash-menu-dark.png",
+      "mobile/spaces-ENG-pages-architecture-overview-edit-light.png",
+      "mobile/spaces-ENG-pages-architecture-overview-edit-slash-menu-light.png",
+      "mobile/spaces-ENG-pages-architecture-overview-edit-dark.png",
+      "mobile/spaces-ENG-pages-architecture-overview-edit-slash-menu-dark.png"
+    ],
+    "/spaces/ENG/pages/new": [
+      "desktop/spaces-ENG-pages-new-light.png",
+      "desktop/spaces-ENG-pages-new-dark.png",
+      "mobile/spaces-ENG-pages-new-light.png",
+      "mobile/spaces-ENG-pages-new-dark.png"
+    ],
+    "/spaces/ENG/pages/architecture-overview/history": [
+      "desktop/spaces-ENG-pages-architecture-overview-history-light.png",
+      "desktop/spaces-ENG-pages-architecture-overview-history-dark.png",
+      "mobile/spaces-ENG-pages-architecture-overview-history-light.png",
+      "mobile/spaces-ENG-pages-architecture-overview-history-dark.png"
+    ],
+    "/search": [
+      "desktop/search-light.png",
+      "desktop/search-results-light.png",
+      "desktop/search-dark.png",
+      "desktop/search-results-dark.png",
+      "mobile/search-light.png",
+      "mobile/search-results-light.png",
+      "mobile/search-dark.png",
+      "mobile/search-results-dark.png"
+    ],
+    "/spaces/ENG/settings": [
+      "desktop/spaces-ENG-settings-light.png",
+      "desktop/spaces-ENG-settings-dark.png",
+      "mobile/spaces-ENG-settings-light.png",
+      "mobile/spaces-ENG-settings-dark.png"
+    ],
+    "/nonexistent-route-404": [
+      "desktop/nonexistent-route-404-light.png",
+      "desktop/nonexistent-route-404-dark.png",
+      "mobile/nonexistent-route-404-light.png",
+      "mobile/nonexistent-route-404-dark.png"
+    ]
+  },
+  "entries": [
+    {
+      "route": "/login",
+      "file": "desktop/login-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Login page"
+    },
+    {
+      "route": "/register",
+      "file": "desktop/register-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Registration page"
+    },
+    {
+      "route": "/landing",
+      "file": "desktop/landing-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Landing page"
+    },
+    {
+      "route": "/",
+      "file": "desktop/home-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Dashboard / Home"
+    },
+    {
+      "route": "/spaces",
+      "file": "desktop/spaces-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Spaces list"
+    },
+    {
+      "route": "/spaces/create",
+      "file": "desktop/spaces-create-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Create space form"
+    },
+    {
+      "route": "/spaces/ENG",
+      "file": "desktop/spaces-ENG-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Space view with page tree"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview",
+      "file": "desktop/spaces-ENG-pages-architecture-overview-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Page content view"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview/edit",
+      "file": "desktop/spaces-ENG-pages-architecture-overview-edit-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Rich-text editor with content"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview/edit",
+      "file": "desktop/spaces-ENG-pages-architecture-overview-edit-slash-menu-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Editor — slash command menu"
+    },
+    {
+      "route": "/spaces/ENG/pages/new",
+      "file": "desktop/spaces-ENG-pages-new-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Editor (empty new page)"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview/history",
+      "file": "desktop/spaces-ENG-pages-architecture-overview-history-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Page version history"
+    },
+    {
+      "route": "/search",
+      "file": "desktop/search-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Search page (empty)"
+    },
+    {
+      "route": "/search",
+      "file": "desktop/search-results-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Search with results"
+    },
+    {
+      "route": "/spaces/ENG/settings",
+      "file": "desktop/spaces-ENG-settings-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "Space settings"
+    },
+    {
+      "route": "/nonexistent-route-404",
+      "file": "desktop/nonexistent-route-404-light.png",
+      "viewport": "desktop",
+      "theme": "light",
+      "description": "404 not-found page"
+    },
+    {
+      "route": "/login",
+      "file": "desktop/login-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Login page"
+    },
+    {
+      "route": "/register",
+      "file": "desktop/register-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Registration page"
+    },
+    {
+      "route": "/landing",
+      "file": "desktop/landing-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Landing page"
+    },
+    {
+      "route": "/",
+      "file": "desktop/home-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Dashboard / Home"
+    },
+    {
+      "route": "/spaces",
+      "file": "desktop/spaces-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Spaces list"
+    },
+    {
+      "route": "/spaces/create",
+      "file": "desktop/spaces-create-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Create space form"
+    },
+    {
+      "route": "/spaces/ENG",
+      "file": "desktop/spaces-ENG-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Space view with page tree"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview",
+      "file": "desktop/spaces-ENG-pages-architecture-overview-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Page content view"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview/edit",
+      "file": "desktop/spaces-ENG-pages-architecture-overview-edit-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Rich-text editor with content"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview/edit",
+      "file": "desktop/spaces-ENG-pages-architecture-overview-edit-slash-menu-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Editor — slash command menu"
+    },
+    {
+      "route": "/spaces/ENG/pages/new",
+      "file": "desktop/spaces-ENG-pages-new-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Editor (empty new page)"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview/history",
+      "file": "desktop/spaces-ENG-pages-architecture-overview-history-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Page version history"
+    },
+    {
+      "route": "/search",
+      "file": "desktop/search-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Search page (empty)"
+    },
+    {
+      "route": "/search",
+      "file": "desktop/search-results-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Search with results"
+    },
+    {
+      "route": "/spaces/ENG/settings",
+      "file": "desktop/spaces-ENG-settings-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "Space settings"
+    },
+    {
+      "route": "/nonexistent-route-404",
+      "file": "desktop/nonexistent-route-404-dark.png",
+      "viewport": "desktop",
+      "theme": "dark",
+      "description": "404 not-found page"
+    },
+    {
+      "route": "/login",
+      "file": "mobile/login-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Login page"
+    },
+    {
+      "route": "/register",
+      "file": "mobile/register-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Registration page"
+    },
+    {
+      "route": "/landing",
+      "file": "mobile/landing-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Landing page"
+    },
+    {
+      "route": "/",
+      "file": "mobile/home-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Dashboard / Home"
+    },
+    {
+      "route": "/spaces",
+      "file": "mobile/spaces-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Spaces list"
+    },
+    {
+      "route": "/spaces/create",
+      "file": "mobile/spaces-create-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Create space form"
+    },
+    {
+      "route": "/spaces/ENG",
+      "file": "mobile/spaces-ENG-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Space view with page tree"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview",
+      "file": "mobile/spaces-ENG-pages-architecture-overview-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Page content view"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview/edit",
+      "file": "mobile/spaces-ENG-pages-architecture-overview-edit-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Rich-text editor with content"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview/edit",
+      "file": "mobile/spaces-ENG-pages-architecture-overview-edit-slash-menu-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Editor — slash command menu"
+    },
+    {
+      "route": "/spaces/ENG/pages/new",
+      "file": "mobile/spaces-ENG-pages-new-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Editor (empty new page)"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview/history",
+      "file": "mobile/spaces-ENG-pages-architecture-overview-history-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Page version history"
+    },
+    {
+      "route": "/search",
+      "file": "mobile/search-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Search page (empty)"
+    },
+    {
+      "route": "/search",
+      "file": "mobile/search-results-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Search with results"
+    },
+    {
+      "route": "/spaces/ENG/settings",
+      "file": "mobile/spaces-ENG-settings-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "Space settings"
+    },
+    {
+      "route": "/nonexistent-route-404",
+      "file": "mobile/nonexistent-route-404-light.png",
+      "viewport": "mobile",
+      "theme": "light",
+      "description": "404 not-found page"
+    },
+    {
+      "route": "/login",
+      "file": "mobile/login-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Login page"
+    },
+    {
+      "route": "/register",
+      "file": "mobile/register-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Registration page"
+    },
+    {
+      "route": "/landing",
+      "file": "mobile/landing-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Landing page"
+    },
+    {
+      "route": "/",
+      "file": "mobile/home-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Dashboard / Home"
+    },
+    {
+      "route": "/spaces",
+      "file": "mobile/spaces-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Spaces list"
+    },
+    {
+      "route": "/spaces/create",
+      "file": "mobile/spaces-create-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Create space form"
+    },
+    {
+      "route": "/spaces/ENG",
+      "file": "mobile/spaces-ENG-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Space view with page tree"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview",
+      "file": "mobile/spaces-ENG-pages-architecture-overview-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Page content view"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview/edit",
+      "file": "mobile/spaces-ENG-pages-architecture-overview-edit-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Rich-text editor with content"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview/edit",
+      "file": "mobile/spaces-ENG-pages-architecture-overview-edit-slash-menu-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Editor — slash command menu"
+    },
+    {
+      "route": "/spaces/ENG/pages/new",
+      "file": "mobile/spaces-ENG-pages-new-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Editor (empty new page)"
+    },
+    {
+      "route": "/spaces/ENG/pages/architecture-overview/history",
+      "file": "mobile/spaces-ENG-pages-architecture-overview-history-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Page version history"
+    },
+    {
+      "route": "/search",
+      "file": "mobile/search-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Search page (empty)"
+    },
+    {
+      "route": "/search",
+      "file": "mobile/search-results-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Search with results"
+    },
+    {
+      "route": "/spaces/ENG/settings",
+      "file": "mobile/spaces-ENG-settings-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "Space settings"
+    },
+    {
+      "route": "/nonexistent-route-404",
+      "file": "mobile/nonexistent-route-404-dark.png",
+      "viewport": "mobile",
+      "theme": "dark",
+      "description": "404 not-found page"
+    }
+  ]
+}
