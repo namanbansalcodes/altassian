@@ -1,13 +1,146 @@
 @import "tailwindcss";
 
+/* ─── Dark mode: class-based ──────────────────────────────── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Theme color tokens ─────────────────────────────────── */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
+  --color-background:       #ffffff;
+  --color-surface:          #f9fafb;
+  --color-surface-raised:   #ffffff;
+  --color-text-primary:     #111827;
+  --color-text-secondary:   #6b7280;
+  --color-border:           #e5e7eb;
+  --color-accent:           #2563eb;
+  --color-accent-hover:     #1d4ed8;
 }
 
-html.dark {
+:root.dark {
   color-scheme: dark;
+  --color-background:       #0a0a0a;
+  --color-surface:          #171717;
+  --color-surface-raised:   #262626;
+  --color-text-primary:     #f5f5f5;
+  --color-text-secondary:   #a3a3a3;
+  --color-border:           #404040;
+  --color-accent:           #3b82f6;
+  --color-accent-hover:     #60a5fa;
 }
 
 body {
   @apply bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100;
+}
+
+/* ─── Mobile-friendly defaults ──────────────────────────── */
+
+/* 16px base on mobile prevents iOS zoom on input focus */
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Prevent horizontal overflow at the page level */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Touch-friendly tap targets for coarse pointers (touch devices) */
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  a,
+  select,
+  input,
+  textarea {
+    min-height: 44px;
+  }
+}
+
+/* Momentum scrolling for overflow containers on iOS */
+.overflow-y-auto,
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Focus-visible ring for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--color-accent, #2563eb);
+  outline-offset: 2px;
+}
+
+/* Long words break on mobile */
+h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Code blocks: prevent overflow on mobile */
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* ─── Theme transition ────────────────────────────────────── */
+html:not(.no-transitions),
+html:not(.no-transitions) * {
+  transition-property: background-color, border-color, color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(.no-transitions),
+  html:not(.no-transitions) * {
+    transition-duration: 0ms !important;
+  }
+}
+
+/* ─── Responsive prose content ───────────────────────────── */
+.prose-responsive {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.prose-responsive img {
+  max-width: 100%;
+  height: auto;
+}
+
+.prose-responsive table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ─── Mobile drawer backdrop ─────────────────────────────── */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out;
+}
+
+.drawer-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 18rem;
+  max-width: 85vw;
+  z-index: 50;
+  transform: translateX(-100%);
+  transition: transform 200ms ease-out;
+}
+
+.drawer-panel.open {
+  transform: translateX(0);
 }

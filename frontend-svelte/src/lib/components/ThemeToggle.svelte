@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  let dark = false;
+  let dark = $state(false);
   onMount(() => {
     const saved = localStorage.getItem('theme');
     dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -13,6 +13,6 @@
   }
 </script>
 
-<button class="btn btn-ghost" aria-label="Toggle theme" on:click={toggle}>
+<button class="p-2 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors" aria-label="Toggle theme" onclick={toggle}>
   {#if dark}🌙{:else}☀️{/if}
 </button>
