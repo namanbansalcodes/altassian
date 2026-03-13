@@ -371,6 +371,19 @@ body {
   }
 }
 
+/* ─── Lazy rendering: skip off-screen content ──────────── */
+/* content-visibility: auto lets the browser skip layout/paint for
+   sections scrolled well below the fold on mobile. */
+section + section,
+footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
+}
+
+img {
+  content-visibility: auto;
+}
+
 /* ─── Print styles: hide navigation ────────────────────── */
 @media print {
   .mobile-bottom-nav,

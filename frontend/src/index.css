@@ -726,3 +726,26 @@ textarea {
     overflow-y: auto;
   }
 }
+
+/* ─── Lazy rendering: skip off-screen content ──────────────── */
+/* content-visibility: auto lets the browser skip layout/paint for
+   sections scrolled well below the fold, significantly reducing
+   initial render cost on mobile devices. */
+#features,
+section + section,
+footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
+}
+
+/* ─── Image performance defaults ───────────────────────────── */
+img {
+  content-visibility: auto;
+}
+
+/* ─── Reduce motion: disable non-essential animations ──────── */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer {
+    animation: none !important;
+  }
+}

@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import dynamic from "next/dynamic";
 import "./globals.css";
 import { ReactQueryProvider } from "@/lib/query";
-import { MobileNav } from "@/components/MobileNav";
+
+// Lazy-load MobileNav — it's a client component with event handlers and state;
+// deferring it reduces the initial JS bundle for the server-rendered shell.
+const MobileNav = dynamic(() => import("@/components/MobileNav").then(m => ({ default: m.MobileNav })), {
+  ssr: false,
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

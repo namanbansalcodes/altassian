@@ -58,7 +58,7 @@ export default function LandingPage() {
           <div className="relative overflow-hidden rounded-2xl isolate min-w-0 max-w-full">
             <div className="absolute -inset-6 bg-gradient-to-tr from-blue-200 to-purple-200 dark:from-blue-900/40 dark:to-purple-900/30 blur-3xl rounded-3xl -z-10"/>
             <div className="relative rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-xl bg-white/70 dark:bg-gray-950/60">
-              <img src="/hero.png" alt="Altassian preview" className="w-full h-auto max-w-full" loading="lazy" />
+              <img src="/hero.png" alt="Altassian preview" className="w-full h-auto max-w-full" loading="lazy" decoding="async" />
             </div>
           </div>
         </section>

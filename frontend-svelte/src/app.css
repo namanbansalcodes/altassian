@@ -437,6 +437,17 @@ html:not(.no-transitions) * {
   }
 }
 
+/* ─── Lazy rendering: skip off-screen content ──────────── */
+section + section,
+footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
+}
+
+img {
+  content-visibility: auto;
+}
+
 /* ─── Print styles: hide navigation ────────────────────── */
 @media print {
   .mobile-bottom-nav,
