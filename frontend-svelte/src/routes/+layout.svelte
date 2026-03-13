@@ -30,7 +30,7 @@
     <!-- Mobile hamburger (< lg) -->
     <button
       on:click={openDrawer}
-      class="lg:hidden p-2 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 active:bg-neutral-200 dark:active:bg-neutral-700"
+      class="lg:hidden p-2.5 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 active:bg-neutral-200 dark:active:bg-neutral-700 min-h-[44px] min-w-[44px] flex items-center justify-center"
       aria-label="Open navigation menu"
     >
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,15 +42,15 @@
 
     <!-- Desktop nav links (md+) -->
     <nav class="hidden md:flex items-center gap-1 ml-4">
-      <a href="/" class="px-3 py-1.5 text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md">Home</a>
-      <a href="/spaces" class="px-3 py-1.5 text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md">Spaces</a>
+      <a href="/" class="px-3 py-2 text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md">Home</a>
+      <a href="/spaces" class="px-3 py-2 text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md">Spaces</a>
     </nav>
 
     <div class="flex-1"></div>
 
     <nav class="flex items-center gap-2">
-      <a class="hidden sm:inline-flex px-3 py-1.5 text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md" href="/login">Login</a>
-      <a class="hidden sm:inline-flex px-3 py-1.5 text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md" href="/register">Register</a>
+      <a class="hidden sm:inline-flex px-3 py-2 text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md" href="/login">Login</a>
+      <a class="hidden sm:inline-flex px-3 py-2 text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md" href="/register">Register</a>
       <ThemeToggle />
     </nav>
   </header>
@@ -68,7 +68,7 @@
       <span class="text-lg font-bold text-blue-600 dark:text-blue-400">Altassian</span>
       <button
         on:click={closeDrawer}
-        class="p-2 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 active:bg-neutral-200 dark:active:bg-neutral-700"
+        class="p-2.5 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 active:bg-neutral-200 dark:active:bg-neutral-700 min-h-[44px] min-w-[44px] flex items-center justify-center"
         aria-label="Close navigation menu"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,15 +77,15 @@
       </button>
     </div>
     <nav class="flex flex-col px-3 py-3 gap-1">
-      <a href="/" on:click={closeDrawer} class="px-3 py-2.5 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md">Home</a>
-      <a href="/spaces" on:click={closeDrawer} class="px-3 py-2.5 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md">Spaces</a>
-      <a href="/login" on:click={closeDrawer} class="px-3 py-2.5 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md">Login</a>
-      <a href="/register" on:click={closeDrawer} class="px-3 py-2.5 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md">Register</a>
+      <a href="/" on:click={closeDrawer} class="px-3 py-3 text-base text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md">Home</a>
+      <a href="/spaces" on:click={closeDrawer} class="px-3 py-3 text-base text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md">Spaces</a>
+      <a href="/login" on:click={closeDrawer} class="px-3 py-3 text-base text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md">Login</a>
+      <a href="/register" on:click={closeDrawer} class="px-3 py-3 text-base text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md">Register</a>
     </nav>
   </div>
 
   <!-- Main content -->
-  <main class="flex-1 p-3 sm:p-4 md:p-6 pb-20 md:pb-6">
+  <main class="flex-1 p-3 sm:p-4 md:p-6 pb-16 md:pb-6">
     <slot />
   </main>
 

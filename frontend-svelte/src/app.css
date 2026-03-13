@@ -311,3 +311,18 @@ html:not(.no-transitions) * {
   user-select: none;
   touch-action: pan-y;
 }
+
+/* ─── Landscape: reduce main content bottom padding ──── */
+@media (max-width: 767px) and (orientation: landscape) {
+  main {
+    padding-bottom: 2.5rem;
+  }
+}
+
+/* ─── Reduced motion: disable animations ─────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .drawer-backdrop,
+  .drawer-panel {
+    transition-duration: 0ms !important;
+  }
+}

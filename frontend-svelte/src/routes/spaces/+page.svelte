@@ -20,7 +20,7 @@
     <div class="grid gap-2 sm:gap-3">
       {#each $spacesQuery.data as s}
         <button
-          class="w-full text-left px-4 py-3 rounded-lg border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors active:bg-neutral-100 dark:active:bg-neutral-700"
+          class="w-full text-left px-4 py-3.5 rounded-lg border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors active:bg-neutral-100 dark:active:bg-neutral-700 min-h-[44px]"
           on:click={() => goto(`/spaces/${s.key}`)}
         >
           <span class="font-medium text-blue-600 dark:text-blue-400">{s.name}</span>

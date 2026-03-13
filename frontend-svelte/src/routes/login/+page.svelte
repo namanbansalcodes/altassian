@@ -18,20 +18,20 @@
   <h1 class="text-xl sm:text-2xl font-semibold mb-4">Login</h1>
   <form on:submit|preventDefault={() => mutation.mutate()} class="space-y-3">
     <input
-      class="w-full border border-neutral-300 dark:border-neutral-600 rounded px-3 py-3 bg-transparent text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+      class="w-full border border-neutral-300 dark:border-neutral-600 rounded px-3 py-3 bg-transparent text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none min-h-[44px]"
       placeholder="Username"
       autocomplete="username"
       bind:value={username}
     />
     <input
-      class="w-full border border-neutral-300 dark:border-neutral-600 rounded px-3 py-3 bg-transparent text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+      class="w-full border border-neutral-300 dark:border-neutral-600 rounded px-3 py-3 bg-transparent text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none min-h-[44px]"
       placeholder="Password"
       type="password"
       autocomplete="current-password"
       bind:value={password}
     />
     <button
-      class="w-full px-4 py-3 rounded bg-blue-600 text-white font-medium disabled:opacity-60 hover:bg-blue-700 active:bg-blue-800 transition-colors"
+      class="w-full px-4 py-3 rounded bg-blue-600 text-white font-medium disabled:opacity-60 hover:bg-blue-700 active:bg-blue-800 transition-colors min-h-[44px]"
       disabled={mutation.isPending}
     >
       Login
