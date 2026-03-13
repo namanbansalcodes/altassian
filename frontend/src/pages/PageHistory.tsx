@@ -45,7 +45,7 @@ export default function PageHistory() {
               {mobileListExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </span>
           </button>
-          <div className={`divide-y divide-gray-100 dark:divide-gray-800 max-h-[30vh] sm:max-h-[40vh] md:max-h-[600px] overflow-y-auto overscroll-y-contain ${mobileListExpanded ? '' : 'hidden md:block'}`}>
+          <div className={`divide-y divide-gray-100 dark:divide-gray-800 version-list-mobile md:max-h-[600px] md:overflow-y-auto md:overscroll-y-contain ${mobileListExpanded ? '' : 'hidden md:block'}`}>
             {versions?.map(v => (
               <button
                 key={v.id}

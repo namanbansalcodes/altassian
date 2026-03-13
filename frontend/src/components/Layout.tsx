@@ -61,7 +61,7 @@ export default function Layout() {
       </a>
 
       {/* Top navbar */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-4 shrink-0 z-20" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-4 shrink-0 z-20 safe-area-top">
         {/* Mobile hamburger (< lg) */}
         <button
           onClick={() => setMobileDrawerOpen(true)}
@@ -213,7 +213,7 @@ export default function Layout() {
       </div>
 
       {/* Mobile bottom navigation bar (< md) — compact in landscape via CSS */}
-      <nav className="mobile-bottom-nav md:hidden fixed bottom-0 inset-x-0 z-30 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }} aria-label="Mobile navigation">
+      <nav className="mobile-bottom-nav md:hidden fixed bottom-0 inset-x-0 z-30 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 safe-area-bottom" aria-label="Mobile navigation">
         <div className="flex items-center justify-around h-14">
           <Link to="/" className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs ${isHome ? 'text-blue-600 dark:text-blue-400 nav-active font-medium' : 'text-gray-500 dark:text-gray-400'}`}>
             <Home size={20} />

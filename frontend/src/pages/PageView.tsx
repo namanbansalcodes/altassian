@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Edit, Clock, Trash2, Paperclip, MessageSquare, Upload, ChevronRight, FileText, Link2 } from 'lucide-react'
@@ -76,7 +76,7 @@ export default function PageView() {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mb-4 overflow-x-auto scrollbar-thin whitespace-nowrap pb-1">
+      <nav className="breadcrumb-scroll flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mb-4 pb-1">
         <Link to={`/spaces/${spaceKey}`} className="hover:text-blue-600 dark:hover:text-blue-400 shrink-0">{page.space_detail?.name || spaceKey}</Link>
         {page.parent_detail && (
           <>

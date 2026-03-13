@@ -95,16 +95,17 @@ export default function Dashboard() {
         </div>
 
         {/* Sidebar: Spaces */}
-        <div>
+        <div className="space-y-6">
           {/* Favorite spaces */}
-          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2"><Star size={18} /> Favorite Spaces</h2>
             </div>
-            <div className="divide-y divide-gray-100 dark:divide-gray-800">
+            {/* Horizontal scroll on mobile, vertical list on desktop */}
+            <div className="mobile-card-scroll md:!block divide-y-0 md:divide-y divide-gray-100 dark:divide-gray-800 p-3 md:p-0">
               {favoriteSpaces?.map(space => (
                 <Link key={space.id} to={`/spaces/${space.key}`}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800">
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg md:rounded-none border border-gray-200 dark:border-gray-700 md:border-0">
                   <div className="w-8 h-8 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center text-sm font-bold shrink-0">
                     {space.key[0]}
                   </div>

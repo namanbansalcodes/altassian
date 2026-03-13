@@ -116,13 +116,13 @@ export default function PageEditor() {
     <div className="max-w-4xl mx-auto">
       <div className="editor-actions-sticky flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2 bg-gray-50 dark:bg-gray-950">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">{isEditing ? 'Edit Page' : 'New Page'}</h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
           <button onClick={() => navigate(-1)}
-            className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-800">
+            className="flex-1 sm:flex-initial px-3 sm:px-4 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-800 text-center">
             Cancel
           </button>
           <button onClick={() => saveMut.mutate()} disabled={!title.trim() || saveMut.isPending}
-            className="flex items-center gap-1.5 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
             <Save size={14} /> {saveMut.isPending ? 'Saving...' : 'Save'}
           </button>
         </div>

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { FileText, Plus, Settings } from 'lucide-react'
 import * as api from '../api'
 import { SpaceViewSkeleton } from '../components/Skeleton'
+import ResponsiveTable from '../components/ResponsiveTable'
 
 export default function SpaceView() {
   const { spaceKey } = useParams<{ spaceKey: string }>()
@@ -48,25 +49,27 @@ export default function SpaceView() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Pages</h2>
+      <ResponsiveTable label="Pages list" bg="card">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Pages</h2>
+          </div>
+          <div className="divide-y divide-gray-100 dark:divide-gray-800">
+            {rootPages.map(page => (
+              <PageRow key={page.id} page={page} spaceKey={spaceKey!} depth={0} />
+            ))}
+            {rootPages.length === 0 && (
+              <div className="p-8 text-center text-gray-400 dark:text-gray-500">
+                <FileText size={32} className="mx-auto mb-2 opacity-50" />
+                <p>No pages yet</p>
+                <Link to={`/spaces/${spaceKey}/pages/new`} className="text-blue-600 dark:text-blue-400 text-sm hover:underline mt-1 inline-block">
+                  Create your first page
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="divide-y divide-gray-100 dark:divide-gray-800">
-          {rootPages.map(page => (
-            <PageRow key={page.id} page={page} spaceKey={spaceKey!} depth={0} />
-          ))}
-          {rootPages.length === 0 && (
-            <div className="p-8 text-center text-gray-400 dark:text-gray-500">
-              <FileText size={32} className="mx-auto mb-2 opacity-50" />
-              <p>No pages yet</p>
-              <Link to={`/spaces/${spaceKey}/pages/new`} className="text-blue-600 dark:text-blue-400 text-sm hover:underline mt-1 inline-block">
-                Create your first page
-              </Link>
-            </div>
-          )}
-        </div>
-      </div>
+      </ResponsiveTable>
     </div>
   )
 }

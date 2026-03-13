@@ -601,3 +601,75 @@ textarea {
     opacity: 0.5;
   }
 }
+
+/* ─── Mobile: form action buttons stack full-width ─────────── */
+@media (max-width: 639px) {
+  .form-actions-responsive {
+    flex-direction: column;
+  }
+  .form-actions-responsive > button,
+  .form-actions-responsive > a {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ─── Breadcrumb scroll container with gradient fades ──────── */
+.breadcrumb-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;       /* Firefox */
+  white-space: nowrap;
+  position: relative;
+  mask-image: linear-gradient(to right, transparent 0, black 0.5rem, black calc(100% - 1.5rem), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 0.5rem, black calc(100% - 1.5rem), transparent 100%);
+}
+.breadcrumb-scroll::-webkit-scrollbar {
+  display: none;               /* Chrome / Safari */
+}
+/* Disable mask when content fits (no scroll needed) */
+.breadcrumb-scroll:not([data-scrollable]) {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+/* ─── Safe-area insets via CSS (replaces inline styles) ────── */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ─── Mobile: horizontal card scroller ─────────────────────── */
+@media (max-width: 767px) {
+  .mobile-card-scroll {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    gap: 0.75rem;
+    padding-bottom: 0.25rem;
+  }
+  .mobile-card-scroll > * {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 75vw;
+    max-width: 280px;
+  }
+  .mobile-card-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .mobile-card-scroll {
+    scrollbar-width: none;
+  }
+}
+
+/* ─── Mobile: version list height for PageHistory ──────────── */
+@media (max-width: 767px) {
+  .version-list-mobile {
+    max-height: 35vh;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+}
