@@ -47,7 +47,7 @@ export default function SearchPage() {
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-800 overflow-hidden">
           {results.map(result => (
             <Link key={result.id} to={`/spaces/${result.space?.key}/pages/${result.slug}`}
-              className="flex items-start gap-3 px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800">
+              className="flex items-start gap-3 px-4 sm:px-5 py-3 sm:py-4 hover:bg-gray-50 dark:hover:bg-gray-800">
               <FileText size={18} className="text-blue-500 shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0">
                 <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">{result.title}</h3>

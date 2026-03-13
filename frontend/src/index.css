@@ -375,3 +375,44 @@ h1, h2, h3, h4, h5, h6 {
   overflow-wrap: break-word;
   word-break: break-word;
 }
+
+/* ─── Skip-to-content link (accessibility) ──────────────── */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.skip-to-content:focus {
+  position: fixed;
+  top: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1.5rem;
+  background: var(--color-accent, #2563eb);
+  color: #fff;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ─── Mobile: prevent text selection on interactive drag areas ── */
+[draggable="true"] {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+/* ─── Mobile: smooth horizontal scroll containers ──────── */
+@media (max-width: 767px) {
+  .overflow-x-auto {
+    scroll-snap-type: x proximity;
+  }
+}
