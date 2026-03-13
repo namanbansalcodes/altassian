@@ -14,13 +14,13 @@ export default function MarkdownEditor({ value = "", onChange }: Props) {
     <div className="border rounded-md">
       <div className="flex gap-2 border-b px-2 sm:px-3 py-1.5 sm:py-2 text-sm">
         <button
-          className={`px-3 py-1.5 rounded min-h-[36px] ${tab === "edit" ? "bg-gray-200" : ""}`}
+          className={`px-3 py-1.5 rounded min-h-[44px] sm:min-h-[36px] ${tab === "edit" ? "bg-gray-200" : ""}`}
           onClick={() => setTab("edit")}
         >
           Edit
         </button>
         <button
-          className={`px-3 py-1.5 rounded min-h-[36px] ${tab === "preview" ? "bg-gray-200" : ""}`}
+          className={`px-3 py-1.5 rounded min-h-[44px] sm:min-h-[36px] ${tab === "preview" ? "bg-gray-200" : ""}`}
           onClick={() => setTab("preview")}
         >
           Preview
@@ -34,7 +34,7 @@ export default function MarkdownEditor({ value = "", onChange }: Props) {
           placeholder="Write markdown..."
         />
       ) : (
-        <div className="prose max-w-none p-3 overflow-x-auto">
+        <div className="prose max-w-none p-3 overflow-x-auto break-words">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>
         </div>
       )}

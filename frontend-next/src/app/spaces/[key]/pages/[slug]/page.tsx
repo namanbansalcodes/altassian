@@ -20,13 +20,13 @@ export default function PageDetail() {
   if (error || !data) return <main className="p-4 sm:p-6">Not found</main>;
 
   return (
-    <main className="p-4 sm:p-6 space-y-4">
-      <h1 className="text-xl sm:text-2xl font-semibold">{data.title}</h1>
-      <div className="prose max-w-none overflow-x-auto">
+    <main className="p-4 sm:p-6 max-w-4xl mx-auto space-y-4">
+      <h1 className="text-xl sm:text-2xl font-semibold break-words">{data.title}</h1>
+      <article className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 p-4 sm:p-6 md:p-8 prose max-w-none overflow-x-auto break-words">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
           {data.body_markdown || ""}
         </ReactMarkdown>
-      </div>
+      </article>
     </main>
   );
 }
