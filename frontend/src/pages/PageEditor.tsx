@@ -46,7 +46,7 @@ export default function PageEditor() {
     content: '',
     editorProps: {
       attributes: {
-        class: 'prose prose-blue dark:prose-invert max-w-none min-h-[300px] sm:min-h-[400px] outline-none p-4 sm:p-6 prose-responsive',
+        class: 'prose prose-blue dark:prose-invert max-w-none min-h-[200px] sm:min-h-[300px] md:min-h-[400px] outline-none p-4 sm:p-6 prose-responsive',
       },
     },
   })

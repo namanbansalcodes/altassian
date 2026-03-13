@@ -13,6 +13,6 @@
   }
 </script>
 
-<button class="p-2 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors" aria-label="Toggle theme" onclick={toggle}>
+<button class="p-2.5 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors" aria-label="Toggle theme" onclick={toggle}>
   {#if dark}🌙{:else}☀️{/if}
 </button>

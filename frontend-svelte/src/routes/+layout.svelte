@@ -26,11 +26,11 @@
 
 <QueryClientProvider client={queryClient}>
   <!-- Top navbar -->
-  <header class="sticky top-0 z-20 bg-white dark:bg-neutral-900 border-b border-neutral-300 dark:border-neutral-700 h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-4 shrink-0">
+  <header class="sticky top-0 z-20 bg-white dark:bg-neutral-900 border-b border-neutral-300 dark:border-neutral-700 h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-4 shrink-0" style="padding-top: env(safe-area-inset-top)">
     <!-- Mobile hamburger (< lg) -->
     <button
       on:click={openDrawer}
-      class="lg:hidden p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+      class="lg:hidden p-2 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 active:bg-neutral-200 dark:active:bg-neutral-700"
       aria-label="Open navigation menu"
     >
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +68,7 @@
       <span class="text-lg font-bold text-blue-600 dark:text-blue-400">Altassian</span>
       <button
         on:click={closeDrawer}
-        class="p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+        class="p-2 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 active:bg-neutral-200 dark:active:bg-neutral-700"
         aria-label="Close navigation menu"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
