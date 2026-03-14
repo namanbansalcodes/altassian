@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'analytics',
     'audit',
     'notifications',
+    'drf_spectacular',
     'rest_framework_simplejwt.token_blacklist',
 ]
 
@@ -136,6 +137,16 @@ REST_FRAMEWORK = {
         'user': os.getenv('THROTTLE_USER', '1000/hour'),
         'login': os.getenv('THROTTLE_LOGIN', '10/minute'),
     },
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Altassian API',
+    'DESCRIPTION': 'Confluence-clone backend API — wiki spaces, pages, comments, attachments, search, analytics, and audit.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': r'/api/',
 }
 
 # Disable throttling in tests so repeated login calls don't get rate-limited
