@@ -42,6 +42,36 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=False)
+
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'email', 'bio', 'avatar']
+
+    def validate_email(self, value: str) -> str:
+        user = self.context['request'].user
+        normalized = value.lower()
+        if CustomUser.objects.filter(email__iexact=normalized).exclude(pk=user.pk).exists():
+            raise serializers.ValidationError('A user with this email already exists.')
+        return normalized
+
+    def validate_first_name(self, value: str) -> str:
+        if value and len(value) > 150:
+            raise serializers.ValidationError('First name must be 150 characters or fewer.')
+        return value
+
+    def validate_last_name(self, value: str) -> str:
+        if value and len(value) > 150:
+            raise serializers.ValidationError('Last name must be 150 characters or fewer.')
+        return value
+
+    def validate_bio(self, value: str) -> str:
+        if value and len(value) > 2000:
+            raise serializers.ValidationError('Bio must be 2000 characters or fewer.')
+        return value
+
+
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True, validators=[validate_password])

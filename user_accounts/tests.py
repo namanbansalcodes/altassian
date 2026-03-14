@@ -265,6 +265,173 @@ class ChangePasswordTests(TestCase):
         self.assertIn(r.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
 
 
+class ProfileUpdateTests(TestCase):
+    """Tests for profile CRUD via /api/users/me/."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='profileuser', password='Password123!',
+            email='profile@example.com', first_name='Original',
+            last_name='Name', bio='Old bio', role='editor',
+        )
+        login = self.client.post('/api/auth/login/', {'username': 'profileuser', 'password': 'Password123!'})
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+
+    def test_get_own_profile(self):
+        r = self.client.get('/api/users/me/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertEqual(r.data['username'], 'profileuser')
+        self.assertEqual(r.data['bio'], 'Old bio')
+
+    def test_patch_profile(self):
+        r = self.client.patch('/api/users/me/', {
+            'first_name': 'Updated',
+            'bio': 'New bio',
+        })
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertEqual(r.data['first_name'], 'Updated')
+        self.assertEqual(r.data['bio'], 'New bio')
+        # Unchanged fields remain
+        self.assertEqual(r.data['last_name'], 'Name')
+        self.assertEqual(r.data['email'], 'profile@example.com')
+
+    def test_put_profile(self):
+        r = self.client.put('/api/users/me/', {
+            'first_name': 'Put',
+            'last_name': 'User',
+            'email': 'put@example.com',
+            'bio': 'Put bio',
+        })
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertEqual(r.data['first_name'], 'Put')
+        self.assertEqual(r.data['email'], 'put@example.com')
+
+    def test_patch_email_unique_validation(self):
+        CustomUser.objects.create_user(
+            username='other', password='Password123!', email='taken@example.com',
+        )
+        r = self.client.patch('/api/users/me/', {'email': 'taken@example.com'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('email', str(r.data))
+
+    def test_patch_email_case_insensitive_unique(self):
+        CustomUser.objects.create_user(
+            username='other', password='Password123!', email='taken@example.com',
+        )
+        r = self.client.patch('/api/users/me/', {'email': 'TAKEN@example.com'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_patch_own_email_allowed(self):
+        """User can re-submit their own email without conflict."""
+        r = self.client.patch('/api/users/me/', {'email': 'profile@example.com'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+
+    def test_patch_email_normalized(self):
+        r = self.client.patch('/api/users/me/', {'email': 'Mixed@Example.COM'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertEqual(r.data['email'], 'mixed@example.com')
+
+    def test_patch_bio_too_long(self):
+        r = self.client.patch('/api/users/me/', {'bio': 'x' * 2001})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('bio', str(r.data))
+
+    def test_patch_bio_at_limit(self):
+        r = self.client.patch('/api/users/me/', {'bio': 'x' * 2000})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+
+    def test_patch_username_not_editable(self):
+        """Username should not change via profile update (not in serializer fields)."""
+        r = self.client.patch('/api/users/me/', {'username': 'hacked'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertEqual(r.data['username'], 'profileuser')
+
+    def test_patch_role_not_editable(self):
+        """Role should not change via profile update (not in serializer fields)."""
+        r = self.client.patch('/api/users/me/', {'role': 'admin'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertEqual(r.data['role'], 'editor')
+
+    def test_profile_update_requires_auth(self):
+        self.client.credentials()
+        r = self.client.patch('/api/users/me/', {'first_name': 'Nope'})
+        self.assertIn(r.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+
+    def test_profile_persisted_in_db(self):
+        self.client.patch('/api/users/me/', {'first_name': 'Saved', 'bio': 'Persisted'})
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, 'Saved')
+        self.assertEqual(self.user.bio, 'Persisted')
+
+
+class AccountDeactivateTests(TestCase):
+    """Tests for account deactivation via DELETE /api/users/me/."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='deluser', password='Password123!', email='del@example.com',
+        )
+        login = self.client.post('/api/auth/login/', {'username': 'deluser', 'password': 'Password123!'})
+        self.access_token = login.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")
+
+    def test_delete_deactivates_account(self):
+        r = self.client.delete('/api/users/me/')
+        self.assertEqual(r.status_code, status.HTTP_204_NO_CONTENT)
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.is_active)
+
+    def test_deactivated_user_cannot_login(self):
+        self.client.delete('/api/users/me/')
+        self.client.credentials()
+        r = self.client.post('/api/auth/login/', {'username': 'deluser', 'password': 'Password123!'})
+        self.assertEqual(r.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_delete_requires_auth(self):
+        self.client.credentials()
+        r = self.client.delete('/api/users/me/')
+        self.assertIn(r.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+
+    def test_user_record_still_exists(self):
+        """Deactivation is soft-delete, user record remains."""
+        self.client.delete('/api/users/me/')
+        self.assertTrue(CustomUser.objects.filter(username='deluser').exists())
+
+
+class UserDetailPermissionTests(TestCase):
+    """Tests that users cannot modify other users' profiles."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user1 = CustomUser.objects.create_user(
+            username='user1', password='Password123!', email='u1@example.com',
+        )
+        self.user2 = CustomUser.objects.create_user(
+            username='user2', password='Password123!', email='u2@example.com',
+        )
+        login = self.client.post('/api/auth/login/', {'username': 'user1', 'password': 'Password123!'})
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+
+    def test_can_read_other_user(self):
+        r = self.client.get(f'/api/users/{self.user2.pk}/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+
+    def test_cannot_patch_other_user(self):
+        r = self.client.patch(f'/api/users/{self.user2.pk}/', {'first_name': 'Hacked'})
+        self.assertEqual(r.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_cannot_delete_other_user(self):
+        r = self.client.delete(f'/api/users/{self.user2.pk}/')
+        self.assertEqual(r.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_can_update_own_detail(self):
+        r = self.client.patch(f'/api/users/{self.user1.pk}/', {'first_name': 'Mine'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertEqual(r.data['first_name'], 'Mine')
+
+
 class AuthPerformanceTests(TestCase):
     """Tests that validate auth endpoint response time optimizations."""
 

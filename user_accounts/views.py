@@ -6,7 +6,13 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import CustomUser
-from .serializers import ChangePasswordSerializer, CustomUserSerializer, RegisterSerializer
+from .permissions import IsOwnerOrReadOnly
+from .serializers import (
+    ChangePasswordSerializer,
+    CustomUserSerializer,
+    ProfileUpdateSerializer,
+    RegisterSerializer,
+)
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
@@ -15,15 +21,35 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         'avatar', 'bio', 'role', 'date_joined',
     )
     serializer_class = CustomUserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     search_fields = ['username', 'email', 'first_name', 'last_name']
     ordering_fields = ['username', 'date_joined']
     ordering = ['username']
+    http_method_names = ['get', 'post', 'patch', 'put', 'delete', 'head', 'options']
 
-    @action(detail=False, methods=['get'], url_path='me', permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['get', 'patch', 'put', 'delete'], url_path='me', permission_classes=[IsAuthenticated])
     def me(self, request: Request) -> Response:
-        serializer = self.get_serializer(request.user)
-        return Response(serializer.data)
+        user = request.user
+
+        if request.method == 'GET':
+            serializer = CustomUserSerializer(user)
+            return Response(serializer.data)
+
+        if request.method in ('PATCH', 'PUT'):
+            partial = request.method == 'PATCH'
+            serializer = ProfileUpdateSerializer(
+                user, data=request.data, partial=partial, context={'request': request},
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(CustomUserSerializer(user).data)
+
+        if request.method == 'DELETE':
+            user.is_active = False
+            user.save(update_fields=['is_active'])
+            return Response({'detail': 'Account deactivated successfully.'}, status=status.HTTP_204_NO_CONTENT)
+
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @action(detail=False, methods=['post'], url_path='register', permission_classes=[AllowAny])
     def register(self, request: Request) -> Response:
