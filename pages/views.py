@@ -1,11 +1,12 @@
 from django.db.models import Q
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from spaces.models import Space
+from user_accounts.permissions import IsContentOwnerOrAdmin, IsEditorOrAboveOrReadOnly
 from .models import Page, PageVersion, Comment, Attachment
 from .serializers import (
     PageSerializer, PageVersionSerializer, CommentSerializer,
@@ -16,7 +17,7 @@ from .serializers import (
 class PageViewSet(viewsets.ModelViewSet):
     queryset = Page.objects.select_related('space', 'created_by', 'updated_by').all()
     serializer_class = PageSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated, IsEditorOrAboveOrReadOnly, IsContentOwnerOrAdmin]
     filterset_fields = ['space', 'parent', 'is_draft', 'created_by']
     search_fields = ['title', 'body_markdown']
     ordering_fields = ['title', 'position', 'created_at', 'updated_at']
@@ -81,7 +82,7 @@ class PageViewSet(viewsets.ModelViewSet):
 class PageVersionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PageVersion.objects.select_related('page', 'edited_by').all()
     serializer_class = PageVersionSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     filterset_fields = ['page']
     ordering_fields = ['version_number', 'created_at']
     ordering = ['-version_number']
@@ -90,7 +91,7 @@ class PageVersionViewSet(viewsets.ReadOnlyModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.select_related('page', 'author').all()
     serializer_class = CommentSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated, IsContentOwnerOrAdmin]
     filterset_fields = ['page', 'author']
     ordering_fields = ['created_at']
     ordering = ['-created_at']
@@ -99,7 +100,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 class AttachmentViewSet(viewsets.ModelViewSet):
     queryset = Attachment.objects.select_related('page', 'uploaded_by').all()
     serializer_class = AttachmentSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated, IsContentOwnerOrAdmin]
     filterset_fields = ['page']
     ordering_fields = ['created_at']
     ordering = ['-created_at']

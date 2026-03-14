@@ -12,7 +12,7 @@ from .models import Page, PageVersion, Comment, Attachment
 class PagesApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = CustomUser.objects.create_user(username='alice', password='Password123!', email='a@example.com')
+        self.user = CustomUser.objects.create_user(username='alice', password='Password123!', email='a@example.com', role='editor')
         # JWT login
         resp = self.client.post('/api/auth/login/', {'username': 'alice', 'password': 'Password123!'}, format='json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)

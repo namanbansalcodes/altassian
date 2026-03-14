@@ -9,7 +9,7 @@ from .models import Space
 class SpacesApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = CustomUser.objects.create_user(username='bob', password='Password123!', email='b@example.com')
+        self.user = CustomUser.objects.create_user(username='bob', password='Password123!', email='b@example.com', role='editor')
         resp = self.client.post('/api/auth/login/', {'username': 'bob', 'password': 'Password123!'}, format='json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {resp.data['access']}")

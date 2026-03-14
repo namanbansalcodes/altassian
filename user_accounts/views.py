@@ -6,8 +6,9 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import CustomUser
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsAdmin, IsOwnerOrReadOnly
 from .serializers import (
+    AdminUserUpdateSerializer,
     ChangePasswordSerializer,
     CustomUserSerializer,
     ProfileUpdateSerializer,
@@ -70,3 +71,26 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         request.user.set_password(serializer.validated_data['new_password'])
         request.user.save(update_fields=['password'])
         return Response({'detail': 'Password updated successfully.'}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['patch'], url_path='role', permission_classes=[IsAdmin])
+    def update_role(self, request: Request, pk: str = None) -> Response:
+        """Admin-only endpoint to change a user's role."""
+        user = self.get_object()
+        serializer = AdminUserUpdateSerializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(CustomUserSerializer(user).data)
+
+    @action(detail=True, methods=['patch'], url_path='activate', permission_classes=[IsAdmin])
+    def activate(self, request: Request, pk: str = None) -> Response:
+        """Admin-only endpoint to activate/deactivate a user account."""
+        user = self.get_object()
+        if 'is_active' not in request.data:
+            return Response({'detail': 'is_active field is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        is_active = request.data.get('is_active')
+        if isinstance(is_active, str):
+            user.is_active = is_active.lower() in ('true', '1')
+        else:
+            user.is_active = bool(is_active)
+        user.save(update_fields=['is_active'])
+        return Response(CustomUserSerializer(user).data)

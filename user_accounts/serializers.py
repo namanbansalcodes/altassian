@@ -72,6 +72,18 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         return value
 
 
+class AdminUserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['role']
+
+    def validate_role(self, value: str) -> str:
+        valid_roles = [choice[0] for choice in CustomUser._meta.get_field('role').choices]
+        if value not in valid_roles:
+            raise serializers.ValidationError(f'Invalid role. Must be one of: {", ".join(valid_roles)}')
+        return value
+
+
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True, validators=[validate_password])

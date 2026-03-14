@@ -2,7 +2,7 @@ from typing import Any
 
 from django.db.models import Q, QuerySet
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -28,7 +28,7 @@ class UnifiedSearchView(APIView):
         page       – pagination page number (default 1)
         page_size  – results per type per page (default 20, max 100)
     """
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request: Request) -> Response:
         q = request.query_params.get('q', '').strip()
