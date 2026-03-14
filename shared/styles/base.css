@@ -1,0 +1,369 @@
+/**
+ * Shared base styles for all Altassian frontends (React, Next.js, Svelte).
+ *
+ * These styles are framework-agnostic and provide consistent behavior
+ * across all frontend implementations. Each frontend imports this file
+ * alongside its own framework-specific styles.
+ *
+ * Sections:
+ *   1. Global element defaults
+ *   2. Utility classes
+ *   3. Component classes (card, nav-link, icon-button, etc.)
+ *   4. Touch / coarse-pointer queries
+ *   5. Mobile breakpoint queries
+ *   6. Landscape queries
+ *   7. PWA / print / reduced-motion
+ */
+
+/* ═══════════════════════════════════════════════════════════════
+   1. Global element defaults
+   ═══════════════════════════════════════════════════════════════ */
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  scroll-padding-top: 4rem;
+}
+
+html, body {
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+button,
+[role="button"],
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent, #2563eb);
+  outline-offset: 2px;
+}
+
+[draggable="true"] {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+[role="dialog"] {
+  overscroll-behavior: contain;
+}
+
+.overflow-y-auto,
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+img {
+  content-visibility: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   2. Utility classes
+   ═══════════════════════════════════════════════════════════════ */
+
+.min-h-dvh {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.min-w-0 {
+  overflow-wrap: break-word;
+}
+
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   3. Component classes
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Reusable card surface — replaces repeated Tailwind class strings */
+.card-surface {
+  background-color: white;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+
+:where(.dark) .card-surface {
+  background-color: #111827;
+  border-color: #374151;
+}
+
+/* Reusable divider list — replaces repeated divide-y patterns */
+.divider-list {
+  border-top: 0;
+}
+
+.divider-list > * + * {
+  border-top: 1px solid #f3f4f6;
+}
+
+:where(.dark) .divider-list > * + * {
+  border-top-color: #1f2937;
+}
+
+/* Thin scrollbar — using CSS variables */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-scrollbar, #d1d5db) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar, #d1d5db);
+  border-radius: 2px;
+}
+
+/* Mobile bottom nav active indicator */
+.mobile-bottom-nav .nav-active {
+  position: relative;
+}
+
+.mobile-bottom-nav .nav-active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2rem;
+  height: 2px;
+  background: var(--color-accent, #2563eb);
+  border-radius: 0 0 2px 2px;
+}
+
+/* Breadcrumb scroll with gradient fades */
+.breadcrumb-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  white-space: nowrap;
+  position: relative;
+  mask-image: linear-gradient(to right, transparent 0, black min(0.75rem, 3%), black calc(100% - min(2rem, 8%)), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black min(0.75rem, 3%), black calc(100% - min(2rem, 8%)), transparent 100%);
+}
+.breadcrumb-scroll::-webkit-scrollbar {
+  display: none;
+}
+.breadcrumb-scroll:not([data-scrollable]) {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+/* Responsive prose content */
+.prose-responsive {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.prose-responsive img {
+  max-width: 100%;
+  height: auto;
+}
+
+.prose-responsive a,
+.prose-responsive code {
+  word-break: break-all;
+}
+
+.prose-responsive iframe,
+.prose-responsive video,
+.prose-responsive embed,
+.prose-responsive object {
+  max-width: 100%;
+  height: auto;
+}
+
+.prose-responsive figure {
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Lazy rendering for off-screen content */
+section + section,
+footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   4. Touch / coarse-pointer queries
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  a,
+  select,
+  input,
+  textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  [data-compact-touch] {
+    min-height: unset;
+    min-width: unset;
+  }
+
+  .attachment-row {
+    min-height: 44px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .drag-handle-touch {
+    opacity: 0.5;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   5. Mobile breakpoint (max-width: 767px)
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .overflow-x-auto {
+    scroll-snap-type: x proximity;
+  }
+
+  .mobile-bottom-nav {
+    transition: transform 150ms ease-out;
+  }
+
+  .prose-responsive pre {
+    max-width: calc(100vw - 2rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+  }
+
+  table td,
+  table th {
+    word-break: break-word;
+  }
+
+  .mobile-card-scroll {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    gap: 0.75rem;
+    padding-bottom: 0.25rem;
+    scrollbar-width: none;
+  }
+  .mobile-card-scroll > * {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 75vw;
+    max-width: 280px;
+  }
+  .mobile-card-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .version-list-mobile {
+    max-height: 35vh;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   6. Small mobile (max-width: 639px)
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 639px) {
+  .editor-actions-sticky {
+    position: sticky;
+    bottom: 3.75rem;
+    z-index: 10;
+    background: inherit;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-top: 1px solid var(--color-border, #e5e7eb);
+  }
+
+  .form-mobile-spaced > div {
+    margin-bottom: 1rem;
+  }
+
+  .form-actions-responsive {
+    flex-direction: column;
+  }
+  .form-actions-responsive > button,
+  .form-actions-responsive > a {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   7. Landscape / PWA / Print / Reduced motion
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 767px) and (orientation: landscape) {
+  .mobile-bottom-nav {
+    height: 2.5rem;
+  }
+  .mobile-bottom-nav .nav-label {
+    display: none;
+  }
+}
+
+@media (display-mode: standalone) {
+  .mobile-bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media print {
+  .mobile-bottom-nav,
+  nav[aria-label="Mobile navigation"],
+  header,
+  aside,
+  .editor-actions-sticky {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  body {
+    padding: 0 !important;
+  }
+}

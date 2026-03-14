@@ -9,8 +9,8 @@ interface ResponsiveTableProps {
 }
 
 const gradientColors = {
-  card: "from-white dark:from-zinc-900",
-  surface: "from-zinc-50 dark:from-zinc-950",
+  card: "from-white dark:from-neutral-900",
+  surface: "from-neutral-50 dark:from-neutral-950",
 };
 
 export default function ResponsiveTable({
@@ -67,7 +67,6 @@ export default function ResponsiveTable({
         ref={scrollRef}
         tabIndex={0}
         className="overflow-x-auto -mx-4 sm:-mx-6 md:mx-0 scrollbar-thin"
-        style={{ WebkitOverflowScrolling: "touch" }}
         aria-label={scrollHint}
       >
         <div className="inline-block min-w-full px-4 sm:px-6 md:px-0 align-middle">

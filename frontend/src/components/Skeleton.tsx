@@ -9,6 +9,14 @@
  *                  <SettingsSkeleton />, <AppChromeSkeleton />
  */
 
+// ── Reusable class constants ────────────────────────────────
+const CARD = 'card-surface'
+const CARD_P = 'card-surface p-4 sm:p-6'
+const CARD_OVERFLOW = 'card-surface overflow-hidden'
+const DIVIDER = 'divider-list'
+const SECTION_HEADER = 'p-4 border-b border-gray-200 dark:border-gray-700'
+const SECTION_HEADER_BG = 'p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'
+
 // ── Size presets ────────────────────────────────────────────
 
 type SkeletonSize = 'sm' | 'md' | 'lg'
@@ -110,7 +118,7 @@ export function SkeletonToolbar() {
 /** Space card skeleton (for SpaceList grid) */
 export function SkeletonCard() {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
+    <div className={`${CARD} p-5`}>
       <div className="flex items-start gap-4">
         <Skeleton width={48} height={48} rounded="rounded-lg" className="shrink-0" />
         <div className="flex-1 space-y-2.5">
@@ -207,18 +215,18 @@ export function PageViewSkeleton() {
         </div>
       </div>
       {/* Content block */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 md:p-8 mb-8 space-y-4">
+      <div className={`${CARD} p-4 sm:p-6 md:p-8 mb-8 space-y-4`}>
         <SkeletonTitle width="80%" size="md" />
         <SkeletonText lines={4} />
         <SkeletonLine width="45%" />
         <SkeletonText lines={3} />
       </div>
       {/* Attachments */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 mb-8">
+      <div className={`${CARD_P} mb-8`}>
         <SkeletonLine width={120} size="lg" />
       </div>
       {/* Comments */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 space-y-4">
+      <div className={`${CARD_P} space-y-4`}>
         <SkeletonLine width={110} size="lg" />
         <SkeletonListItem />
         <SkeletonListItem />
@@ -237,9 +245,9 @@ export function EditorSkeleton() {
           <Skeleton width={70} height={36} rounded="rounded-lg" />
         </div>
       </div>
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className={CARD_OVERFLOW}>
         {/* Title area — matches PageEditor responsive padding */}
-        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700">
+        <div className={`px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700`}>
           <SkeletonTitle width="40%" size="lg" />
         </div>
         {/* Toolbar */}
@@ -263,11 +271,11 @@ export function DashboardSkeleton() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <div className="md:col-span-2 lg:col-span-2 space-y-6">
           {/* Recent pages */}
-          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className={CARD_OVERFLOW}>
+            <div className={SECTION_HEADER}>
               <SkeletonLine width={130} size="lg" />
             </div>
-            <div className="divide-y divide-gray-100 dark:divide-gray-800">
+            <div className={DIVIDER}>
               {[1, 2, 3, 4].map(i => (
                 <div key={i} className="flex items-center gap-3 px-4 py-3">
                   <SkeletonIcon size="sm" />
@@ -280,11 +288,11 @@ export function DashboardSkeleton() {
             </div>
           </div>
           {/* Activity */}
-          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className={CARD_OVERFLOW}>
+            <div className={SECTION_HEADER}>
               <SkeletonLine width={140} size="lg" />
             </div>
-            <div className="divide-y divide-gray-100 dark:divide-gray-800">
+            <div className={DIVIDER}>
               {[1, 2, 3].map(i => <SkeletonListItem key={i} />)}
             </div>
           </div>
@@ -292,11 +300,11 @@ export function DashboardSkeleton() {
         {/* Sidebar cards */}
         <div className="space-y-6">
           {[1, 2].map(n => (
-            <div key={n} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <div key={n} className={CARD_OVERFLOW}>
+              <div className={SECTION_HEADER}>
                 <SkeletonLine width={120} size="lg" />
               </div>
-              <div className="divide-y divide-gray-100 dark:divide-gray-800">
+              <div className={DIVIDER}>
                 {[1, 2].map(i => (
                   <div key={i} className="flex items-center gap-3 px-4 py-3">
                     <Skeleton width={32} height={32} rounded="rounded" className="shrink-0" />
@@ -346,11 +354,11 @@ export function SpaceViewSkeleton() {
           <Skeleton width={36} height={32} rounded="rounded-lg" />
         </div>
       </div>
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+      <div className={CARD_OVERFLOW}>
+        <div className={SECTION_HEADER_BG}>
           <SkeletonLine width={50} />
         </div>
-        <div className="divide-y divide-gray-100 dark:divide-gray-800">
+        <div className={DIVIDER}>
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="flex items-center gap-3 px-4 py-3">
               <SkeletonIcon size="sm" />
@@ -374,11 +382,11 @@ export function HistorySkeleton() {
         <SkeletonTitle width={140} size="md" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-        <div className="md:col-span-1 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <div className={`md:col-span-1 ${CARD_OVERFLOW}`}>
+          <div className={SECTION_HEADER_BG}>
             <SkeletonLine width={60} />
           </div>
-          <div className="divide-y divide-gray-100 dark:divide-gray-800">
+          <div className={DIVIDER}>
             {[1, 2, 3].map(i => (
               <div key={i} className="p-3 space-y-2">
                 <div className="flex items-center gap-2">
@@ -390,8 +398,8 @@ export function HistorySkeleton() {
             ))}
           </div>
         </div>
-        <div className="md:col-span-2 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <div className={`md:col-span-2 ${CARD_OVERFLOW}`}>
+          <div className={SECTION_HEADER_BG}>
             <SkeletonLine width={160} />
           </div>
           <div className="p-4 sm:p-6 space-y-3">
@@ -405,7 +413,7 @@ export function HistorySkeleton() {
 
 export function SearchResultsSkeleton() {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-800 overflow-hidden" role="status" aria-label="Loading search results">
+    <div className={`${CARD_OVERFLOW} ${DIVIDER}`} role="status" aria-label="Loading search results">
       {[1, 2, 3].map(i => (
         <div key={i} className="flex items-start gap-3 px-4 sm:px-5 py-3 sm:py-4">
           <SkeletonIcon size="md" />
@@ -427,7 +435,7 @@ export function SettingsSkeleton() {
         <SkeletonIcon size="md" />
         <SkeletonTitle width={140} size="md" />
       </div>
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 space-y-5">
+      <div className={`${CARD_P} space-y-5`}>
         {[1, 2, 3].map(i => (
           <div key={i} className="space-y-1.5">
             <SkeletonLine width={90} size="sm" />

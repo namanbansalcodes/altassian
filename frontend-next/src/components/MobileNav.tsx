@@ -26,11 +26,10 @@ export function MobileNav() {
   return (
     <>
       {/* Top header bar */}
-      <header className="sticky top-0 z-20 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-4 shrink-0 safe-area-top">
-        {/* Hamburger button (mobile) */}
+      <header className="sticky top-0 z-20 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700 h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-4 shrink-0 safe-area-top">
         <button
           onClick={() => setDrawerOpen(true)}
-          className="lg:hidden p-2.5 rounded-lg text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800 active:bg-zinc-200 dark:active:bg-zinc-700 min-h-[44px] min-w-[44px] flex items-center justify-center"
+          className="lg:hidden icon-button"
           aria-label="Open navigation menu"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -44,15 +43,15 @@ export function MobileNav() {
 
         {/* Desktop nav links */}
         <nav className="hidden md:flex items-center gap-1 ml-4" aria-label="Main navigation">
-          <Link href="/" className="px-3 py-2 text-sm text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md">Home</Link>
-          <Link href="/spaces" className="px-3 py-2 text-sm text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md">Spaces</Link>
+          <Link href="/" className="nav-link">Home</Link>
+          <Link href="/spaces" className="nav-link">Spaces</Link>
         </nav>
 
         <div className="flex-1" />
 
         <nav className="flex items-center gap-2" aria-label="Account navigation">
-          <Link className="hidden sm:inline-flex px-3 py-2 text-sm text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md" href="/login">Login</Link>
-          <Link className="hidden sm:inline-flex px-3 py-2 text-sm text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md" href="/register">Register</Link>
+          <Link className="hidden sm:inline-flex nav-link" href="/login">Login</Link>
+          <Link className="hidden sm:inline-flex nav-link" href="/register">Register</Link>
         </nav>
       </header>
 
@@ -67,15 +66,15 @@ export function MobileNav() {
 
       {/* Mobile drawer panel */}
       <div
-        className={`fixed inset-y-0 left-0 z-40 w-72 max-w-[85vw] bg-white dark:bg-zinc-900 shadow-xl flex flex-col overflow-y-auto overscroll-y-contain transition-transform duration-300 lg:hidden ${drawerOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed inset-y-0 left-0 z-40 w-72 max-w-[85vw] bg-white dark:bg-neutral-900 shadow-xl flex flex-col overflow-y-auto overscroll-y-contain transition-transform duration-300 lg:hidden ${drawerOpen ? "translate-x-0" : "-translate-x-full"}`}
         role="dialog"
         aria-label="Navigation drawer"
       >
-        <div className="flex items-center justify-between h-14 px-4 border-b border-zinc-200 dark:border-zinc-700 shrink-0">
+        <div className="flex items-center justify-between h-14 px-4 border-b border-neutral-200 dark:border-neutral-700 shrink-0">
           <span className="text-lg font-bold text-blue-600 dark:text-blue-400">Altassian</span>
           <button
             onClick={() => setDrawerOpen(false)}
-            className="p-2.5 rounded-lg text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="icon-button"
             aria-label="Close navigation menu"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -84,29 +83,29 @@ export function MobileNav() {
           </button>
         </div>
         <nav className="flex flex-col px-3 py-3 gap-1" aria-label="Drawer navigation">
-          <Link href="/" onClick={() => setDrawerOpen(false)} className="px-3 py-3 text-base text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md">Home</Link>
-          <Link href="/spaces" onClick={() => setDrawerOpen(false)} className="px-3 py-3 text-base text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md">Spaces</Link>
-          <Link href="/login" onClick={() => setDrawerOpen(false)} className="px-3 py-3 text-base text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md">Login</Link>
-          <Link href="/register" onClick={() => setDrawerOpen(false)} className="px-3 py-3 text-base text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md">Register</Link>
+          <Link href="/" onClick={() => setDrawerOpen(false)} className="nav-link-drawer">Home</Link>
+          <Link href="/spaces" onClick={() => setDrawerOpen(false)} className="nav-link-drawer">Spaces</Link>
+          <Link href="/login" onClick={() => setDrawerOpen(false)} className="nav-link-drawer">Login</Link>
+          <Link href="/register" onClick={() => setDrawerOpen(false)} className="nav-link-drawer">Register</Link>
         </nav>
       </div>
 
       {/* Mobile bottom navigation bar */}
-      <nav className="mobile-bottom-nav md:hidden fixed bottom-0 inset-x-0 z-30 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-700 safe-area-bottom" aria-label="Mobile navigation">
+      <nav className="mobile-bottom-nav md:hidden fixed bottom-0 inset-x-0 z-30 bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-700 safe-area-bottom" aria-label="Mobile navigation">
         <div className="flex items-center justify-around h-14">
-          <Link href="/" className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full min-h-[48px] min-w-[48px] text-xs text-zinc-500 dark:text-zinc-400" aria-label="Home">
+          <Link href="/" className="bottom-nav-item" aria-label="Home">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z" /></svg>
             <span className="nav-label">Home</span>
           </Link>
-          <Link href="/spaces" className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full min-h-[48px] min-w-[48px] text-xs text-zinc-500 dark:text-zinc-400" aria-label="Spaces">
+          <Link href="/spaces" className="bottom-nav-item" aria-label="Spaces">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
             <span className="nav-label">Spaces</span>
           </Link>
-          <Link href="/login" className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full min-h-[48px] min-w-[48px] text-xs text-zinc-500 dark:text-zinc-400" aria-label="Login">
+          <Link href="/login" className="bottom-nav-item" aria-label="Login">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
             <span className="nav-label">Login</span>
           </Link>
-          <Link href="/register" className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full min-h-[48px] min-w-[48px] text-xs text-zinc-500 dark:text-zinc-400" aria-label="Register">
+          <Link href="/register" className="bottom-nav-item" aria-label="Register">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
             <span className="nav-label">Register</span>
           </Link>
