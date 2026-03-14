@@ -43,6 +43,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'audit.middleware.RequestLoggingMiddleware',
+    'integrations.middleware.SecurityHeadersMiddleware',
 ]
 
 ROOT_URLCONF = 'altassian_core.urls'
@@ -123,6 +124,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny' if os.getenv('DEMO_OPEN') == '1' else 'rest_framework.permissions.IsAuthenticated',
+        'integrations.permissions.APIKeyScopePermission',
     ],
     'DEFAULT_PAGINATION_CLASS': 'altassian_core.pagination.StandardPagination',
     'PAGE_SIZE': 20,
@@ -141,6 +143,9 @@ REST_FRAMEWORK = {
         'login': os.getenv('THROTTLE_LOGIN', '10/minute'),
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.AcceptHeaderVersioning',
+    'DEFAULT_VERSION': '1.0',
+    'ALLOWED_VERSIONS': ['1.0'],
 }
 
 SPECTACULAR_SETTINGS = {
@@ -164,7 +169,17 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS: allow all in dev, restrict in production via CORS_ALLOWED_ORIGINS env var
+_cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', '')
+if _cors_origins:
+    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_origins.split(',') if o.strip()]
+else:
+    CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_HEADERS = [
+    'accept', 'authorization', 'content-type', 'origin',
+    'x-api-key', 'x-requested-with',
+]
 
 # ── Email ────────────────────────────────────────────────────────────
 # Console backend for dev; override with SMTP env vars in production.
