@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'audit',
     'notifications',
     'projects',
+    'integrations',
     'drf_spectacular',
     'rest_framework_simplejwt.token_blacklist',
 ]
@@ -118,6 +119,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'integrations.authentication.APIKeyAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny' if os.getenv('DEMO_OPEN') == '1' else 'rest_framework.permissions.IsAuthenticated',
