@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/', include('user_accounts.urls')),
+    path('api/search/', include('search.urls')),
 ]
 
 if settings.DEBUG:

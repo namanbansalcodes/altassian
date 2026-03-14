@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'user_accounts',
     'spaces',
     'pages',
+    'search',
 ]
 
 MIDDLEWARE = [
