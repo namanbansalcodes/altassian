@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'analytics',
     'audit',
     'notifications',
+    'projects',
     'drf_spectacular',
     'rest_framework_simplejwt.token_blacklist',
 ]
@@ -121,7 +122,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny' if os.getenv('DEMO_OPEN') == '1' else 'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'altassian_core.pagination.StandardPagination',
     'PAGE_SIZE': 20,
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
