@@ -6,7 +6,13 @@ class CustomUser(AbstractUser):
     user_permissions = models.ManyToManyField('auth.Permission', related_name='custom_user_permissions_set')
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
-    role = models.CharField(max_length=50, choices=[('admin', 'Admin'), ('editor', 'Editor'), ('viewer', 'Viewer')], default='viewer')
+    role = models.CharField(max_length=50, choices=[('admin', 'Admin'), ('editor', 'Editor'), ('viewer', 'Viewer')], default='viewer', db_index=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['email'], name='idx_user_email'),
+            models.Index(fields=['date_joined'], name='idx_user_date_joined'),
+        ]
 
     def __str__(self):
         return self.username

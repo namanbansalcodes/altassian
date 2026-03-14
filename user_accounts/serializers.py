@@ -2,25 +2,8 @@ from typing import Any, Dict
 
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import CustomUser
-
-
-class OptimizedTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """Adds user profile to login response, eliminating a follow-up /me call."""
-
-    def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
-        data = super().validate(attrs)
-        data['user'] = {
-            'id': self.user.pk,
-            'username': self.user.username,
-            'email': self.user.email,
-            'first_name': self.user.first_name,
-            'last_name': self.user.last_name,
-            'role': self.user.role,
-        }
-        return data
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
