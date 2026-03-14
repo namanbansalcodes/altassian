@@ -1,15 +1,39 @@
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 
+const schemaMarkup = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Altassian',
+  description: 'A Git-powered workspace for docs, decisions, and discovery. Blazing-fast search, version history, and a modern editor.',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  featureList: [
+    'Git-powered version control',
+    'Lightning-fast search',
+    'Modern rich text editor',
+    'Team collaboration',
+  ],
+}
+
 export default function LandingPage() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   return (
     <div className="min-h-dvh bg-gradient-to-b from-white to-gray-100 dark:from-gray-950 dark:to-gray-900 text-gray-900 dark:text-gray-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+      />
       <header className="sticky top-0 backdrop-blur bg-white/70 dark:bg-gray-950/60 border-b border-gray-100 dark:border-gray-800 z-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <div className="font-semibold text-xl tracking-tight">Altassian</div>
-          <nav className="hidden md:flex items-center gap-8 text-sm">
+          <nav className="hidden md:flex items-center gap-8 text-sm" aria-label="Landing page navigation">
             <a href="#features" className="hover:opacity-80">Features</a>
             <a href="#pricing" className="hover:opacity-80">Pricing</a>
             <a href="#security" className="hover:opacity-80">Security</a>
@@ -58,7 +82,7 @@ export default function LandingPage() {
           <div className="relative overflow-hidden rounded-2xl isolate min-w-0 max-w-full">
             <div className="absolute -inset-6 bg-gradient-to-tr from-blue-200 to-purple-200 dark:from-blue-900/40 dark:to-purple-900/30 blur-3xl rounded-3xl -z-10"/>
             <div className="relative rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-xl bg-white/70 dark:bg-gray-950/60">
-              <img src="/hero.png" alt="Altassian preview" className="w-full h-auto max-w-full" loading="lazy" decoding="async" />
+              <img src="/hero.png" alt="Screenshot of the Altassian workspace showing the page editor, sidebar navigation, and search interface" className="w-full h-auto max-w-full" loading="lazy" decoding="async" />
             </div>
           </div>
         </section>
@@ -77,12 +101,12 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-12 text-sm text-gray-500 dark:text-gray-400 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-12 text-sm text-gray-500 dark:text-gray-400 flex flex-col sm:flex-row items-center justify-between gap-4" role="contentinfo">
         <div>© {new Date().getFullYear()} Altassian</div>
-        <div className="flex items-center gap-6">
+        <nav className="flex items-center gap-6" aria-label="Footer links">
           <a href="#" className="py-2 hover:text-gray-700 dark:hover:text-gray-300">Terms</a>
           <a href="#" className="py-2 hover:text-gray-700 dark:hover:text-gray-300">Privacy</a>
-        </div>
+        </nav>
       </footer>
     </div>
   )

@@ -51,10 +51,10 @@ export default function ResponsiveTable({ children, className = '', label = 'Scr
   return (
     <div className={`relative ${className}`} role="region" aria-label={label}>
       {canScrollLeft && (
-        <div className={`absolute left-0 top-0 bottom-0 w-4 sm:w-6 bg-gradient-to-r ${from} to-transparent z-10 pointer-events-none`} />
+        <div className={`absolute left-0 top-0 bottom-0 w-4 sm:w-6 bg-gradient-to-r ${from} to-transparent z-10 pointer-events-none`} aria-hidden="true" />
       )}
       {canScrollRight && (
-        <div className={`absolute right-0 top-0 bottom-0 w-4 sm:w-6 bg-gradient-to-l ${from} to-transparent z-10 pointer-events-none`} />
+        <div className={`absolute right-0 top-0 bottom-0 w-4 sm:w-6 bg-gradient-to-l ${from} to-transparent z-10 pointer-events-none`} aria-hidden="true" />
       )}
       <div
         ref={scrollRef}

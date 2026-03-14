@@ -82,24 +82,25 @@ export default function Layout() {
 
         <Link to="/" className="text-xl font-bold text-blue-700 dark:text-blue-400 mr-2 sm:mr-4 shrink-0">Altassian</Link>
 
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
           <Link to="/" className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md flex items-center gap-1.5">
-            <Home size={16} /> Home
+            <Home size={16} aria-hidden="true" /> Home
           </Link>
           <Link to="/spaces" className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md flex items-center gap-1.5">
-            <BookOpen size={16} /> Spaces
+            <BookOpen size={16} aria-hidden="true" /> Spaces
           </Link>
           <Link to="/spaces/create" className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md flex items-center gap-1.5">
-            <Plus size={16} /> Create
+            <Plus size={16} aria-hidden="true" /> Create
           </Link>
         </nav>
 
-        <form onSubmit={handleSearch} className="flex-1 min-w-0 max-w-xl mx-2 sm:mx-4">
+        <form onSubmit={handleSearch} role="search" aria-label="Site search" className="flex-1 min-w-0 max-w-xl mx-2 sm:mx-4">
           <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" aria-hidden="true" />
             <input
-              type="text"
+              type="search"
               placeholder="Search..."
+              aria-label="Search pages and spaces"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-3 py-1.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-base sm:text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-gray-700 outline-none"
@@ -177,15 +178,15 @@ export default function Layout() {
                 </div>
 
                 {/* Mobile nav links */}
-                <nav className="flex flex-col px-3 py-2 border-b border-gray-200 dark:border-gray-700 gap-0.5 lg:hidden">
+                <nav className="flex flex-col px-3 py-2 border-b border-gray-200 dark:border-gray-700 gap-0.5 lg:hidden" aria-label="Drawer navigation">
                   <Link to="/" onClick={closeMobileDrawer} className="px-3 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 rounded-md flex items-center gap-2">
-                    <Home size={16} /> Home
+                    <Home size={16} aria-hidden="true" /> Home
                   </Link>
                   <Link to="/spaces" onClick={closeMobileDrawer} className="px-3 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 rounded-md flex items-center gap-2">
-                    <BookOpen size={16} /> Spaces
+                    <BookOpen size={16} aria-hidden="true" /> Spaces
                   </Link>
                   <Link to="/spaces/create" onClick={closeMobileDrawer} className="px-3 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 rounded-md flex items-center gap-2">
-                    <Plus size={16} /> Create
+                    <Plus size={16} aria-hidden="true" /> Create
                   </Link>
                 </nav>
 

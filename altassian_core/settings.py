@@ -65,6 +65,8 @@ if os.getenv('DATABASE_HOST'):
             'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'altassian'),
             'HOST': os.getenv('DATABASE_HOST', 'db'),
             'PORT': int(os.getenv('DATABASE_PORT', '5432')),
+            # Keep DB connections open for reuse to reduce auth query latency
+            'CONN_MAX_AGE': int(os.getenv('DB_CONN_MAX_AGE', '60')),
         }
     }
 else:
@@ -72,6 +74,8 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
+            # Persistent connections help even with sqlite (no-op if unsupported)
+            'CONN_MAX_AGE': int(os.getenv('DB_CONN_MAX_AGE', '60')),
         }
     }
 

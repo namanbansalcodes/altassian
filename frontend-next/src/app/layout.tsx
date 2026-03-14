@@ -21,8 +21,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Altassian",
-  description: "Altassian frontend",
+  title: "Altassian — Git-Powered Team Knowledge Base",
+  description: "Altassian is a Git-powered workspace for docs, decisions, and discovery. Blazing-fast search, version history, and a modern editor — without the bloat.",
+  openGraph: {
+    title: "Altassian — Your team's knowledge, beautifully organized",
+    description: "Git-powered workspace for docs, decisions, and discovery. Blazing-fast search, version history, and a modern editor.",
+    type: "website",
+    siteName: "Altassian",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Altassian — Your team's knowledge, beautifully organized",
+    description: "Git-powered workspace for docs, decisions, and discovery.",
+  },
 };
 
 export default function RootLayout({

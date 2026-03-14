@@ -1,6 +1,7 @@
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework import status
+import time
 
 from .models import CustomUser
 
@@ -15,13 +16,22 @@ class AuthTests(TestCase):
             'first_name': 'Charlie', 'last_name': 'Day'
         })
         self.assertEqual(r.status_code, status.HTTP_201_CREATED)
+        t0 = time.monotonic()
         t = self.client.post('/api/auth/login/', {'username': 'charlie', 'password': 'Password123!'})
+        t1 = time.monotonic()
         self.assertEqual(t.status_code, status.HTTP_200_OK)
+        # Login should be reasonably fast under typical dev envs
+        self.assertLess(t1 - t0, 1.5, f"login too slow: {(t1 - t0)*1000:.1f}ms")
+        # Response should include the user payload to avoid immediate /me call
+        self.assertIn('user', t.data)
         access = t.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access}')
+        m0 = time.monotonic()
         me = self.client.get('/api/users/me/')
+        m1 = time.monotonic()
         self.assertEqual(me.status_code, status.HTTP_200_OK)
         self.assertEqual(me.data['username'], 'charlie')
+        self.assertLess(m1 - m0, 1.0, f"/users/me too slow: {(m1 - m0)*1000:.1f}ms")
 
     def test_jwt_token_refresh(self):
         CustomUser.objects.create_user(username='dave', password='Password123!', email='d@example.com')
@@ -30,9 +40,12 @@ class AuthTests(TestCase):
         self.assertIn('access', login.data)
         self.assertIn('refresh', login.data)
         # Refresh the token
+        t0 = time.monotonic()
         refresh = self.client.post('/api/auth/token/refresh/', {'refresh': login.data['refresh']})
+        t1 = time.monotonic()
         self.assertEqual(refresh.status_code, status.HTTP_200_OK)
         self.assertIn('access', refresh.data)
+        self.assertLess(t1 - t0, 1.0, f"token refresh too slow: {(t1 - t0)*1000:.1f}ms")
 
     def test_login_invalid_credentials(self):
         CustomUser.objects.create_user(username='eve', password='Password123!', email='e@example.com')

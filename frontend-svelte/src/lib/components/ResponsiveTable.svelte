@@ -49,10 +49,10 @@
 
 <div class="relative {className}" role="region" aria-label={label}>
   {#if canScrollLeft}
-    <div class="absolute left-0 top-0 bottom-0 w-4 sm:w-6 bg-gradient-to-r {from} to-transparent z-10 pointer-events-none" />
+    <div class="absolute left-0 top-0 bottom-0 w-4 sm:w-6 bg-gradient-to-r {from} to-transparent z-10 pointer-events-none" aria-hidden="true" />
   {/if}
   {#if canScrollRight}
-    <div class="absolute right-0 top-0 bottom-0 w-4 sm:w-6 bg-gradient-to-l {from} to-transparent z-10 pointer-events-none" />
+    <div class="absolute right-0 top-0 bottom-0 w-4 sm:w-6 bg-gradient-to-l {from} to-transparent z-10 pointer-events-none" aria-hidden="true" />
   {/if}
   <div
     bind:this={scrollEl}
