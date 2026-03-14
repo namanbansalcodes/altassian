@@ -169,8 +169,7 @@ function SpaceItem({ spaceKey, spaceName, isExpanded, onToggle }: SpaceItemProps
     >
       {/* Space header row */}
       <div
-        data-compact-touch
-        className={`flex items-center gap-1 px-2 py-1.5 rounded-md cursor-pointer text-sm
+        className={`flex items-center gap-1 px-2 py-2.5 rounded-md cursor-pointer text-sm
           hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors
           ${isActiveSpace ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'}
           ${focusIdx === -1 ? 'ring-1 ring-blue-400/50' : ''}`}
@@ -222,7 +221,8 @@ function SpaceItem({ spaceKey, spaceName, isExpanded, onToggle }: SpaceItemProps
                   ))}
                   <Link
                     to={`/spaces/${spaceKey}/pages/new`}
-                    className="flex items-center gap-1.5 px-2 py-1 text-xs text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mt-1"
+                    data-compact-touch
+                    className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mt-1"
                   >
                     <Plus size={12} /> Add page
                   </Link>
@@ -314,8 +314,7 @@ function PageTreeRow({ node, isFocused, onToggle, onFocus }: PageTreeRowProps) {
       aria-expanded={node.hasChildren ? node.isExpanded : undefined}
       aria-level={node.depth + 2}
       aria-selected={isActive}
-      data-compact-touch
-      className={`group flex items-center gap-1 px-2 py-1 rounded text-sm transition-colors
+      className={`group flex items-center gap-1 px-2 py-2 rounded text-sm transition-colors
         hover:bg-gray-100 dark:hover:bg-gray-800
         ${isActive ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-semibold' : 'text-gray-600 dark:text-gray-400'}
         ${isFocused ? 'ring-1 ring-blue-400/50' : ''}

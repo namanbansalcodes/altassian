@@ -375,8 +375,8 @@ html:not(.no-transitions) * {
   scrollbar-width: none;
   white-space: nowrap;
   position: relative;
-  mask-image: linear-gradient(to right, transparent 0, black 0.5rem, black calc(100% - 1.5rem), transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0, black 0.5rem, black calc(100% - 1.5rem), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black min(0.75rem, 3%), black calc(100% - min(2rem, 8%)), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black min(0.75rem, 3%), black calc(100% - min(2rem, 8%)), transparent 100%);
 }
 .breadcrumb-scroll::-webkit-scrollbar {
   display: none;

@@ -5,6 +5,7 @@ import { Edit, Clock, Trash2, Paperclip, MessageSquare, Upload, ChevronRight, Fi
 import * as api from '../api'
 import { toast, getErrorMessage } from '../lib/toast'
 import { useAuth } from '../hooks/useAuth'
+import { useScrollHint } from '../hooks/useScrollHint'
 import { PageViewSkeleton } from '../components/Skeleton'
 
 export default function PageView() {
@@ -12,6 +13,7 @@ export default function PageView() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { user } = useAuth()
+  const breadcrumbRef = useScrollHint<HTMLElement>()
 
   const { data: page, isLoading } = useQuery({
     queryKey: ['page', spaceKey, pageSlug],
@@ -76,7 +78,7 @@ export default function PageView() {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Breadcrumbs */}
-      <nav className="breadcrumb-scroll flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mb-4 pb-1">
+      <nav ref={breadcrumbRef} className="breadcrumb-scroll flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mb-4 pb-1">
         <Link to={`/spaces/${spaceKey}`} className="hover:text-blue-600 dark:hover:text-blue-400 shrink-0">{page.space_detail?.name || spaceKey}</Link>
         {page.parent_detail && (
           <>
