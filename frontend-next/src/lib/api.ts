@@ -16,3 +16,14 @@ export const api = kyBase.create({
     }],
   },
 });
+
+/** Shape returned by Django REST Framework's StandardPagination. */
+export interface PaginatedResponse<T> {
+  count: number;
+  total_pages: number;
+  current_page: number;
+  page_size: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
