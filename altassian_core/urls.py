@@ -23,6 +23,7 @@ urlpatterns = [
     path('api/', include('user_accounts.urls')),
     path('api/search/', include('search.urls')),
     path('api/analytics/', include('analytics.urls')),
+    path('api/audit/', include('audit.urls')),
 ]
 
 if settings.DEBUG:
