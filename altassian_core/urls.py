@@ -5,6 +5,7 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
+from altassian_core.views import HealthCheckView
 from spaces.views import SpaceViewSet
 from pages.views import PageViewSet, PageVersionViewSet, CommentViewSet, AttachmentViewSet
 from user_accounts.views import CustomUserViewSet
@@ -19,6 +20,7 @@ router.register(r'users', CustomUserViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/health/', HealthCheckView.as_view(), name='health_check'),
     path('api/', include(router.urls)),
     path('api/', include('user_accounts.urls')),
     path('api/search/', include('search.urls')),

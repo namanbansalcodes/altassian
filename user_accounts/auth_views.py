@@ -12,6 +12,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from altassian_core.throttles import LoginRateThrottle
 from .auth_serializers import FastTokenObtainPairSerializer
 from .models import CustomUser
 from .serializers import PasswordResetConfirmSerializer, PasswordResetRequestSerializer
@@ -19,6 +20,7 @@ from .serializers import PasswordResetConfirmSerializer, PasswordResetRequestSer
 
 class FastTokenObtainPairView(TokenObtainPairView):
     serializer_class = FastTokenObtainPairSerializer
+    throttle_classes = [LoginRateThrottle]
 
 
 class LogoutView(APIView):
