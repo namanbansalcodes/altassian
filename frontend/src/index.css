@@ -23,6 +23,12 @@
   --color-code-text:        #e11d48;
   --color-editor-bg:        #ffffff;
   --color-editor-toolbar:   #f9fafb;
+  --color-scrollbar:        #d1d5db;
+  --color-scrollbar-dark:   #4b5563;
+  --color-table-border:     #d1d5db;
+  --color-table-header-bg:  #f9fafb;
+  --color-code-block-bg:    #1e293b;
+  --color-code-block-text:  #e2e8f0;
 }
 
 :root.dark {
@@ -44,12 +50,23 @@
   --color-code-text:        #fb7185;
   --color-editor-bg:        #111827;
   --color-editor-toolbar:   #1f2937;
+  --color-scrollbar:        #4b5563;
+  --color-scrollbar-dark:   #4b5563;
+  --color-table-border:     #4b5563;
+  --color-table-header-bg:  #1f2937;
+  --color-code-block-bg:    #1e293b;
+  --color-code-block-text:  #e2e8f0;
 }
 
 /* ─── Theme transition ────────────────────────────────────── */
 html {
   color-scheme: light;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 4rem;
+  -webkit-tap-highlight-color: transparent;
 }
+
 html.dark {
   color-scheme: dark;
 }
@@ -61,15 +78,19 @@ html:not(.no-transitions) *:not(img):not(svg):not(canvas):not(video) {
   transition-timing-function: ease-in-out;
 }
 
-/* Disable theme transitions during page load for performance */
 html.no-transitions * {
   transition: none !important;
 }
 
+/* ─── Reduced motion (single consolidated block) ──────────── */
 @media (prefers-reduced-motion: reduce) {
   html:not(.no-transitions),
   html:not(.no-transitions) * {
     transition-duration: 0ms !important;
+  }
+
+  .skeleton-shimmer {
+    animation: none !important;
   }
 }
 
@@ -88,19 +109,13 @@ html.no-transitions * {
   );
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.8s ease-in-out infinite;
-  --skeleton-base: #e5e7eb;
-  --skeleton-shine: #f3f4f6;
+  --skeleton-base: var(--color-border, #e5e7eb);
+  --skeleton-shine: var(--color-border-subtle, #f3f4f6);
 }
 
 :where(.dark) .skeleton-shimmer {
-  --skeleton-base: #374151;
-  --skeleton-shine: #4b5563;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .skeleton-shimmer {
-    animation: none;
-  }
+  --skeleton-base: var(--color-border, #374151);
+  --skeleton-shine: var(--color-scrollbar-dark, #4b5563);
 }
 
 /* ─── TipTap editor styles ───────────────────────────────── */
@@ -111,7 +126,7 @@ html.no-transitions * {
 .tiptap p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
-  color: var(--tw-prose-placeholder, #9ca3af);
+  color: var(--color-text-muted, #9ca3af);
   pointer-events: none;
   height: 0;
 }
@@ -136,7 +151,7 @@ html.no-transitions * {
 .tiptap ul[data-type="taskList"] li label input[type="checkbox"] {
   width: 1rem;
   height: 1rem;
-  accent-color: #2563eb;
+  accent-color: var(--color-accent, #2563eb);
   cursor: pointer;
 }
 
@@ -145,13 +160,13 @@ html.no-transitions * {
   opacity: 0.6;
 }
 
-/* Responsive table wrapper — tables scroll horizontally on small screens */
+/* Responsive table wrapper */
 .tiptap-table-wrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Table styles */
+/* Table styles — using CSS variables for theme-aware colors */
 .tiptap table {
   border-collapse: collapse;
   width: 100%;
@@ -161,30 +176,21 @@ html.no-transitions * {
 
 .tiptap table td,
 .tiptap table th {
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-table-border);
   padding: 0.5rem 0.75rem;
   min-width: 80px;
   vertical-align: top;
 }
 
 .tiptap table th {
-  background-color: #f9fafb;
+  background-color: var(--color-table-header-bg);
   font-weight: 600;
 }
 
-:where(.dark) .tiptap table td,
-:where(.dark) .tiptap table th {
-  border-color: #4b5563;
-}
-
-:where(.dark) .tiptap table th {
-  background-color: #1f2937;
-}
-
-/* Code block */
+/* Code block — using CSS variables */
 .tiptap pre {
-  background-color: #1e293b;
-  color: #e2e8f0;
+  background-color: var(--color-code-block-bg);
+  color: var(--color-code-block-text);
   border-radius: 0.5rem;
   padding: 1rem;
   overflow-x: auto;
@@ -198,64 +204,51 @@ html.no-transitions * {
   padding: 0;
 }
 
-/* Inline code */
+/* Inline code — using CSS variables */
 .tiptap :not(pre) > code {
-  background-color: #f1f5f9;
-  color: #e11d48;
+  background-color: var(--color-code-bg);
+  color: var(--color-code-text);
   padding: 0.15rem 0.4rem;
   border-radius: 0.25rem;
   font-size: 0.875em;
 }
 
-:where(.dark) .tiptap :not(pre) > code {
-  background-color: #334155;
-  color: #fb7185;
-}
-
 /* Blockquote */
 .tiptap blockquote {
-  border-left: 3px solid #3b82f6;
+  border-left: 3px solid var(--color-accent, #3b82f6);
   padding-left: 1rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   font-style: italic;
 }
 
 :where(.dark) .tiptap blockquote {
-  color: #9ca3af;
-  border-left-color: #60a5fa;
+  color: var(--color-text-secondary);
+  border-left-color: var(--color-accent-hover, #60a5fa);
 }
 
 /* Horizontal rule */
 .tiptap hr {
   border: none;
-  border-top: 2px solid #e5e7eb;
+  border-top: 2px solid var(--color-border);
   margin: 1.5rem 0;
-}
-
-:where(.dark) .tiptap hr {
-  border-top-color: #4b5563;
 }
 
 /* Link */
 .tiptap a {
-  color: #2563eb;
+  color: var(--color-accent);
   text-decoration: underline;
   cursor: pointer;
 }
 
-:where(.dark) .tiptap a {
-  color: #60a5fa;
-}
-
 /* Dark mode: editor text colors */
 :where(.dark) .tiptap {
-  color: #e5e7eb;
+  color: var(--color-text-primary, #e5e7eb);
 }
 
 :where(.dark) .tiptap h1,
 :where(.dark) .tiptap h2,
 :where(.dark) .tiptap h3 {
-  color: #f3f4f6;
+  color: var(--color-text-primary, #f3f4f6);
 }
 
 /* Selection highlight in dark mode */
@@ -265,7 +258,7 @@ html.no-transitions * {
 
 /* Placeholder color in dark mode */
 :where(.dark) .tiptap p.is-editor-empty:first-child::before {
-  color: #6b7280;
+  color: var(--color-text-muted);
 }
 
 /* Responsive images in editor */
@@ -274,7 +267,7 @@ html.no-transitions * {
   height: auto;
 }
 
-/* Responsive prose content — prevent overflow */
+/* ─── Responsive prose content ────────────────────────────── */
 .prose-responsive {
   overflow-wrap: break-word;
   word-break: break-word;
@@ -288,107 +281,57 @@ html.no-transitions * {
 .prose-responsive table {
   width: 100%;
   max-width: 100%;
+  table-layout: auto;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
-/* Wrap prose tables in a scrollable container to prevent layout breakage */
 .prose-responsive .table-scroll-wrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   margin: 1rem 0;
 }
 
-/* Standalone tables in prose get auto-scroll via wrapper — match any nesting depth */
-@media (max-width: 767px) {
-  .prose-responsive > table,
-  .prose-responsive table,
-  .prose-responsive .tiptap-table-wrap {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    max-width: calc(100vw - 2rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
-  }
+.prose-responsive a,
+.prose-responsive code {
+  word-break: break-all;
 }
 
-/* Prevent tables from inflating their parent container */
-.prose-responsive table {
-  table-layout: auto;
-  overflow-wrap: normal;
-  word-break: normal;
+.prose-responsive iframe,
+.prose-responsive video,
+.prose-responsive embed,
+.prose-responsive object {
+  max-width: 100%;
+  height: auto;
 }
 
-/* ─── Mobile-friendly defaults ──────────────────────────── */
-
-/* Ensure 16px base on mobile to prevent iOS zoom on input focus */
-html {
-  font-size: 16px;
-  -webkit-text-size-adjust: 100%;
-  scroll-padding-top: 4rem;
-  -webkit-tap-highlight-color: transparent;
+.prose-responsive figure {
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
 
-/* Touch-friendly tap targets for coarse pointers (touch devices) */
-@media (pointer: coarse) {
-  button,
-  [role="button"],
-  a,
-  select,
-  input,
-  textarea {
-    min-height: 44px;
-    min-width: 44px;
-  }
-
-  [data-compact-touch] {
-    min-height: unset;
-    min-width: unset;
-  }
-}
-
-/* Momentum scrolling for overflow containers on iOS */
-.overflow-y-auto,
-.overflow-x-auto {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Thin scrollbar for horizontal scroll containers */
-.scrollbar-thin {
-  scrollbar-width: thin;
-  scrollbar-color: #d1d5db transparent;
-}
-:where(.dark) .scrollbar-thin {
-  scrollbar-color: #4b5563 transparent;
-}
-.scrollbar-thin::-webkit-scrollbar {
-  height: 4px;
-}
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 2px;
-}
-:where(.dark) .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #4b5563;
-}
-
-/* Prevent horizontal overflow at the page level */
+/* ─── Global element defaults ─────────────────────────────── */
 html, body {
   overflow-x: hidden;
   overscroll-behavior-x: none;
 }
 
-/* Safe-area insets for notched / rounded-corner devices */
 body {
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
 }
 
-/* Bottom-nav clearance: ensure scrollable content isn't hidden behind fixed bottom nav on mobile */
-@media (max-width: 767px) {
-  body {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+/* Code blocks: prevent overflow */
+.tiptap pre,
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* Focus-visible ring for keyboard navigation */
@@ -397,17 +340,65 @@ body {
   outline-offset: 2px;
 }
 
-/* Code blocks: prevent overflow on mobile */
-.tiptap pre,
-pre {
-  max-width: 100%;
-  overflow-x: auto;
+/* Remove 300ms tap delay on interactive elements */
+button,
+[role="button"],
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
 }
 
-/* Long words in headings break on mobile */
-h1, h2, h3, h4, h5, h6 {
+/* Momentum scrolling for overflow containers on iOS */
+.overflow-y-auto,
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Overscroll containment for drawers / modals */
+[role="dialog"] {
+  overscroll-behavior: contain;
+}
+
+/* Prevent text selection on draggable elements */
+[draggable="true"] {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+/* ─── Thin scrollbar — using CSS variables ────────────────── */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-scrollbar) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar);
+  border-radius: 2px;
+}
+
+/* ─── Utility classes ─────────────────────────────────────── */
+.min-h-dvh {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.min-w-0 {
   overflow-wrap: break-word;
-  word-break: break-word;
+}
+
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* ─── Skip-to-content link (accessibility) ──────────────── */
@@ -437,42 +428,7 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* ─── Mobile: prevent text selection on interactive drag areas ── */
-[draggable="true"] {
-  -webkit-user-select: none;
-  user-select: none;
-  touch-action: pan-y;
-}
-
-/* ─── Mobile: smooth horizontal scroll containers ──────── */
-@media (max-width: 767px) {
-  .overflow-x-auto {
-    scroll-snap-type: x proximity;
-  }
-}
-
-/* ─── Overscroll containment for drawers / modals ──────── */
-[role="dialog"] {
-  overscroll-behavior: contain;
-}
-
-/* ─── Touch-action: remove 300ms tap delay on interactive elements ── */
-button,
-[role="button"],
-a,
-input,
-select,
-textarea {
-  touch-action: manipulation;
-}
-
-/* ─── Dynamic viewport height (accounts for mobile browser chrome) ── */
-.min-h-dvh {
-  min-height: 100vh;
-  min-height: 100dvh;
-}
-
-/* ─── Mobile bottom nav: active state highlight ─────────── */
+/* ─── Mobile bottom nav ───────────────────────────────────── */
 .mobile-bottom-nav .nav-active {
   position: relative;
 }
@@ -489,49 +445,12 @@ textarea {
   border-radius: 0 0 2px 2px;
 }
 
-/* ─── Landscape: compact bottom nav ──────────────────────── */
-@media (max-width: 767px) and (orientation: landscape) {
-  .mobile-bottom-nav {
-    height: 2.5rem;
-  }
-  .mobile-bottom-nav .nav-label {
-    display: none;
-  }
-}
-
-/* ─── Long URLs / unbreakable strings in prose content ─── */
-.prose-responsive a,
-.prose-responsive code {
-  word-break: break-all;
-}
-
-/* ─── Sticky mobile save bar for editor ──────────────────── */
-@media (max-width: 639px) {
-  .editor-actions-sticky {
-    position: sticky;
-    bottom: 3.75rem;
-    z-index: 10;
-    background: inherit;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    border-top: 1px solid var(--color-border, #e5e7eb);
-  }
-}
-
+/* ─── Editor sticky save bar ──────────────────────────────── */
 :where(.dark) .editor-actions-sticky {
   border-top-color: var(--color-border, #374151);
 }
 
-/* ─── Mobile: attachment list touch targets ──────────────── */
-@media (pointer: coarse) {
-  .attachment-row {
-    min-height: 44px;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-  }
-}
-
-/* ─── Mobile: toolbar scroll fade (visible when toolbar overflows) ── */
+/* ─── Toolbar scroll fade ─────────────────────────────────── */
 .toolbar-scroll-fade {
   position: absolute;
   right: 0;
@@ -542,109 +461,96 @@ textarea {
   z-index: 1;
 }
 
-/* ─── Mobile: prevent content jump when virtual keyboard opens ── */
-@media (max-width: 767px) {
-  .mobile-bottom-nav {
-    transition: transform 150ms ease-out;
-  }
-}
-
-/* ─── Mobile: improve form field spacing for thumb reach ── */
-@media (max-width: 639px) {
-  .form-field-mobile {
-    margin-bottom: 1rem;
-  }
-
-  /* Auto-apply mobile field spacing inside tagged form containers */
-  .form-mobile-spaced > div {
-    margin-bottom: 1rem;
-  }
-}
-
-/* ─── Mobile: ensure iframes / embeds don't overflow ──────── */
-.prose-responsive iframe,
-.prose-responsive video,
-.prose-responsive embed,
-.prose-responsive object {
-  max-width: 100%;
-  height: auto;
-}
-
-/* ─── Mobile: image captions and figures ──────────────────── */
-.prose-responsive figure {
-  max-width: 100%;
-  margin-left: 0;
-  margin-right: 0;
-}
-
-/* ─── Mobile: prevent fixed / absolute positioned elements from causing overflow ── */
-@media (max-width: 767px) {
-  .prose-responsive pre {
-    max-width: calc(100vw - 2rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
-  }
-}
-
-/* ─── Mobile: constrain table cell content ────────────────── */
-@media (max-width: 767px) {
-  .tiptap table td,
-  .tiptap table th {
-    word-break: break-word;
-  }
-}
-
-/* ─── Prevent flex children from overflowing parent ──────── */
-.min-w-0 {
-  overflow-wrap: break-word;
-}
-
-/* ─── Touch devices: always show drag handles (no hover) ── */
-@media (pointer: coarse) {
-  .drag-handle-touch {
-    opacity: 0.5;
-  }
-}
-
-/* ─── Mobile: form action buttons stack full-width ─────────── */
-@media (max-width: 639px) {
-  .form-actions-responsive {
-    flex-direction: column;
-  }
-  .form-actions-responsive > button,
-  .form-actions-responsive > a {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
 /* ─── Breadcrumb scroll container with gradient fades ──────── */
 .breadcrumb-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;       /* Firefox */
+  scrollbar-width: none;
   white-space: nowrap;
   position: relative;
   mask-image: linear-gradient(to right, transparent 0, black min(0.75rem, 3%), black calc(100% - min(2rem, 8%)), transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0, black min(0.75rem, 3%), black calc(100% - min(2rem, 8%)), transparent 100%);
 }
 .breadcrumb-scroll::-webkit-scrollbar {
-  display: none;               /* Chrome / Safari */
+  display: none;
 }
-/* Disable mask when content fits (no scroll needed) */
 .breadcrumb-scroll:not([data-scrollable]) {
   mask-image: none;
   -webkit-mask-image: none;
 }
 
-/* ─── Safe-area insets via CSS (replaces inline styles) ────── */
-.safe-area-top {
-  padding-top: env(safe-area-inset-top);
-}
-.safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
+/* ─── Lazy rendering: skip off-screen content ──────────────── */
+#features,
+section + section,
+footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
 }
 
-/* ─── Mobile: horizontal card scroller ─────────────────────── */
+img {
+  content-visibility: auto;
+}
+
+/* ═══ Consolidated touch/coarse pointer queries ═══════════════ */
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  a,
+  select,
+  input,
+  textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  [data-compact-touch] {
+    min-height: unset;
+    min-width: unset;
+  }
+
+  .attachment-row {
+    min-height: 44px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .drag-handle-touch {
+    opacity: 0.5;
+  }
+}
+
+/* ═══ Consolidated mobile (max-width: 767px) queries ═════════ */
 @media (max-width: 767px) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .overflow-x-auto {
+    scroll-snap-type: x proximity;
+  }
+
+  .mobile-bottom-nav {
+    transition: transform 150ms ease-out;
+  }
+
+  .prose-responsive > table,
+  .prose-responsive table,
+  .prose-responsive .tiptap-table-wrap {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: calc(100vw - 2rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+  }
+
+  .prose-responsive pre {
+    max-width: calc(100vw - 2rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+  }
+
+  .tiptap table td,
+  .tiptap table th {
+    word-break: break-word;
+  }
+
   .mobile-card-scroll {
     display: flex;
     overflow-x: auto;
@@ -652,6 +558,7 @@ textarea {
     scroll-snap-type: x mandatory;
     gap: 0.75rem;
     padding-bottom: 0.25rem;
+    scrollbar-width: none;
   }
   .mobile-card-scroll > * {
     scroll-snap-align: start;
@@ -662,35 +569,71 @@ textarea {
   .mobile-card-scroll::-webkit-scrollbar {
     display: none;
   }
-  .mobile-card-scroll {
-    scrollbar-width: none;
-  }
-}
 
-/* ─── Mobile: version list height for PageHistory ──────────── */
-@media (max-width: 767px) {
   .version-list-mobile {
     max-height: 35vh;
     overflow-y: auto;
     overscroll-behavior-y: contain;
   }
+
+  [role="dialog"] .dialog-content,
+  [role="dialog"] [data-dialog-content] {
+    max-height: calc(100dvh - 4rem);
+    overflow-y: auto;
+  }
 }
 
-/* ─── Landscape: reduce bottom padding for main content ────── */
+/* ═══ Consolidated mobile landscape queries ══════════════════ */
 @media (max-width: 767px) and (orientation: landscape) {
+  .mobile-bottom-nav {
+    height: 2.5rem;
+  }
+  .mobile-bottom-nav .nav-label {
+    display: none;
+  }
   #main-content {
     padding-bottom: 2.5rem;
   }
 }
 
-/* ─── PWA standalone mode: safe-area padding for bottom nav ── */
+/* ═══ Consolidated small mobile (max-width: 639px) queries ═══ */
+@media (max-width: 639px) {
+  .editor-actions-sticky {
+    position: sticky;
+    bottom: 3.75rem;
+    z-index: 10;
+    background: inherit;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-top: 1px solid var(--color-border, #e5e7eb);
+  }
+
+  .form-field-mobile {
+    margin-bottom: 1rem;
+  }
+
+  .form-mobile-spaced > div {
+    margin-bottom: 1rem;
+  }
+
+  .form-actions-responsive {
+    flex-direction: column;
+  }
+  .form-actions-responsive > button,
+  .form-actions-responsive > a {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ═══ PWA standalone mode ════════════════════════════════════ */
 @media (display-mode: standalone) {
   .mobile-bottom-nav {
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
-/* ─── Print styles: hide navigation, full-width content ────── */
+/* ═══ Print styles ═══════════════════════════════════════════ */
 @media print {
   .mobile-bottom-nav,
   nav[aria-label="Mobile navigation"],
@@ -715,37 +658,5 @@ textarea {
   .prose-responsive,
   article {
     max-width: 100% !important;
-  }
-}
-
-/* ─── Mobile: constrain dialog/modal height ────────────────── */
-@media (max-width: 767px) {
-  [role="dialog"] .dialog-content,
-  [role="dialog"] [data-dialog-content] {
-    max-height: calc(100dvh - 4rem);
-    overflow-y: auto;
-  }
-}
-
-/* ─── Lazy rendering: skip off-screen content ──────────────── */
-/* content-visibility: auto lets the browser skip layout/paint for
-   sections scrolled well below the fold, significantly reducing
-   initial render cost on mobile devices. */
-#features,
-section + section,
-footer {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 300px;
-}
-
-/* ─── Image performance defaults ───────────────────────────── */
-img {
-  content-visibility: auto;
-}
-
-/* ─── Reduce motion: disable non-essential animations ──────── */
-@media (prefers-reduced-motion: reduce) {
-  .skeleton-shimmer {
-    animation: none !important;
   }
 }
