@@ -214,6 +214,15 @@ ACCOUNT_LOCKOUT_WINDOW_MINUTES = int(os.getenv('ACCOUNT_LOCKOUT_WINDOW_MINUTES',
 # Email verification token expiry (hours)
 EMAIL_VERIFICATION_EXPIRY_HOURS = int(os.getenv('EMAIL_VERIFICATION_EXPIRY_HOURS', '24'))
 
+# ── Phone / SMS verification ─────────────────────────────────────
+PHONE_VERIFICATION_EXPIRY_MINUTES = int(os.getenv('PHONE_VERIFICATION_EXPIRY_MINUTES', '10'))
+PHONE_VERIFICATION_MAX_ATTEMPTS = int(os.getenv('PHONE_VERIFICATION_MAX_ATTEMPTS', '5'))
+SMS_BACKEND = os.getenv('SMS_BACKEND', 'console')  # 'console' for dev, 'twilio' for prod
+SMS_PROVIDER = os.getenv('SMS_PROVIDER', '')
+TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID', '')
+TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN', '')
+TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER', '')
+
 # ── Logging ─────────────────────────────────────────────────────────
 LOGGING = {
     'version': 1,

@@ -5,7 +5,7 @@ from django.utils import timezone
 from rest_framework.test import APIClient
 from rest_framework import status
 
-from .models import CustomUser, EmailVerificationToken, LoginAttempt
+from .models import CustomUser, EmailVerificationToken, LoginAttempt, PhoneVerificationToken
 
 
 class RegisterTests(TestCase):
@@ -1523,3 +1523,346 @@ class NewEndpointSmokeTests(TestCase):
     def test_activity_summary_reachable(self):
         r = self.client.get('/api/users/me/activity/')
         self.assertEqual(r.status_code, status.HTTP_200_OK)
+
+    def test_phone_verify_endpoint_reachable(self):
+        self.user.phone_number = '+14155552671'
+        self.user.save(update_fields=['phone_number'])
+        r = self.client.post('/api/auth/phone-verify/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+
+    def test_phone_verify_confirm_reachable(self):
+        r = self.client.post('/api/auth/phone-verify/confirm/', {'code': '000000'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+# ── Phone verification tests ─────────────────────────────────────────
+
+class PhoneVerificationSendTests(TestCase):
+    """Tests for the phone verification send endpoint."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='phoneuser', password='Password123!', email='phone@example.com',
+            phone_number='+14155552671',
+        )
+        login = self.client.post('/api/auth/login/', {'username': 'phoneuser', 'password': 'Password123!'})
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+
+    def test_send_code(self):
+        r = self.client.post('/api/auth/phone-verify/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertIn('Verification code sent', r.data['detail'])
+        self.assertTrue(PhoneVerificationToken.objects.filter(user=self.user).exists())
+
+    def test_send_code_with_new_phone(self):
+        r = self.client.post('/api/auth/phone-verify/', {'phone_number': '+14155559999'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.phone_number, '+14155559999')
+        self.assertFalse(self.user.phone_verified)
+
+    def test_send_code_no_phone_on_file(self):
+        self.user.phone_number = ''
+        self.user.save(update_fields=['phone_number'])
+        r = self.client.post('/api/auth/phone-verify/')
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('No phone number', r.data['detail'])
+
+    def test_already_verified(self):
+        self.user.phone_verified = True
+        self.user.save(update_fields=['phone_verified'])
+        r = self.client.post('/api/auth/phone-verify/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertIn('already verified', r.data['detail'].lower())
+
+    def test_resend_replaces_code(self):
+        self.client.post('/api/auth/phone-verify/')
+        code1 = PhoneVerificationToken.objects.get(user=self.user).code
+        self.client.post('/api/auth/phone-verify/')
+        code2 = PhoneVerificationToken.objects.get(user=self.user).code
+        # Codes are random, so they should differ (extremely unlikely to be equal)
+        self.assertEqual(PhoneVerificationToken.objects.filter(user=self.user).count(), 1)
+
+    def test_requires_auth(self):
+        self.client.credentials()
+        r = self.client.post('/api/auth/phone-verify/')
+        self.assertIn(r.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+
+    def test_invalid_phone_rejected(self):
+        r = self.client.post('/api/auth/phone-verify/', {'phone_number': 'not-a-phone'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class PhoneVerificationConfirmTests(TestCase):
+    """Tests for the phone verification confirm endpoint."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='pconfirm', password='Password123!', email='pconfirm@example.com',
+            phone_number='+14155552671',
+        )
+        login = self.client.post('/api/auth/login/', {'username': 'pconfirm', 'password': 'Password123!'})
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+        self.token = PhoneVerificationToken.objects.create(
+            user=self.user, code='123456',
+        )
+
+    def test_confirm_success(self):
+        r = self.client.post('/api/auth/phone-verify/confirm/', {'code': '123456'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.phone_verified)
+        self.assertFalse(PhoneVerificationToken.objects.filter(user=self.user).exists())
+
+    def test_confirm_wrong_code(self):
+        r = self.client.post('/api/auth/phone-verify/confirm/', {'code': '999999'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Invalid code', r.data['detail'])
+        self.token.refresh_from_db()
+        self.assertEqual(self.token.attempts, 1)
+
+    def test_confirm_missing_code(self):
+        r = self.client.post('/api/auth/phone-verify/confirm/', {})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_confirm_no_pending_token(self):
+        self.token.delete()
+        r = self.client.post('/api/auth/phone-verify/confirm/', {'code': '123456'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('No pending verification', r.data['detail'])
+
+    def test_confirm_expired_code(self):
+        cutoff = timezone.now() - timezone.timedelta(minutes=15)
+        PhoneVerificationToken.objects.filter(pk=self.token.pk).update(created_at=cutoff)
+        r = self.client.post('/api/auth/phone-verify/confirm/', {'code': '123456'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('expired', r.data['detail'].lower())
+
+    @override_settings(PHONE_VERIFICATION_MAX_ATTEMPTS=2)
+    def test_confirm_max_attempts_exceeded(self):
+        self.token.attempts = 2
+        self.token.save(update_fields=['attempts'])
+        r = self.client.post('/api/auth/phone-verify/confirm/', {'code': '123456'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Too many', r.data['detail'])
+
+    def test_confirm_non_digit_code_rejected(self):
+        r = self.client.post('/api/auth/phone-verify/confirm/', {'code': 'abcdef'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_code_deleted_after_success(self):
+        self.client.post('/api/auth/phone-verify/confirm/', {'code': '123456'})
+        r = self.client.post('/api/auth/phone-verify/confirm/', {'code': '123456'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+# ── User status tests ────────────────────────────────────────────────
+
+class UserStatusTests(TestCase):
+    """Tests for user status field and admin status update endpoint."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.admin = CustomUser.objects.create_user(
+            username='statusadmin', password='Password123!', email='sadmin@example.com',
+            role='admin', status='active',
+        )
+        self.user = CustomUser.objects.create_user(
+            username='statususer', password='Password123!', email='suser@example.com',
+            status='pending',
+        )
+
+    def _auth_as(self, user):
+        login = self.client.post('/api/auth/login/', {'username': user.username, 'password': 'Password123!'})
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+
+    def test_new_user_starts_pending(self):
+        self.assertEqual(self.user.status, 'pending')
+
+    def test_status_in_profile(self):
+        self._auth_as(self.user)
+        r = self.client.get('/api/users/me/')
+        self.assertEqual(r.data['status'], 'pending')
+
+    def test_status_in_login_response(self):
+        r = self.client.post('/api/auth/login/', {'username': 'statususer', 'password': 'Password123!'})
+        self.assertEqual(r.data['user']['status'], 'pending')
+
+    def test_admin_can_update_status(self):
+        self._auth_as(self.admin)
+        r = self.client.patch(f'/api/users/{self.user.pk}/status/', {'status': 'active'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.status, 'active')
+
+    def test_admin_can_suspend_user(self):
+        self._auth_as(self.admin)
+        r = self.client.patch(f'/api/users/{self.user.pk}/status/', {'status': 'suspended'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.status, 'suspended')
+        self.assertFalse(self.user.is_active)
+
+    def test_admin_invalid_status_rejected(self):
+        self._auth_as(self.admin)
+        r = self.client.patch(f'/api/users/{self.user.pk}/status/', {'status': 'invalid'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_non_admin_cannot_update_status(self):
+        self._auth_as(self.user)
+        r = self.client.patch(f'/api/users/{self.user.pk}/status/', {'status': 'active'})
+        self.assertEqual(r.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_status_missing_field(self):
+        self._auth_as(self.admin)
+        r = self.client.patch(f'/api/users/{self.user.pk}/status/', {})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+# ── Auto-activation on verification tests ─────────────────────────────
+
+class AutoActivationTests(TestCase):
+    """Tests that user status auto-activates when both verifications pass."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='autoact', password='Password123!', email='autoact@example.com',
+            phone_number='+14155552671', status='pending',
+        )
+
+    def test_email_verify_activates_if_no_phone(self):
+        """User with no phone number gets activated on email verification."""
+        self.user.phone_number = ''
+        self.user.save(update_fields=['phone_number'])
+        token = EmailVerificationToken.objects.create(user=self.user, token='act-token-1')
+        r = self.client.post('/api/auth/email-verify/confirm/', {'token': 'act-token-1'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.status, 'active')
+
+    def test_email_verify_stays_pending_if_phone_not_verified(self):
+        """User with phone stays pending until phone is also verified."""
+        token = EmailVerificationToken.objects.create(user=self.user, token='act-token-2')
+        r = self.client.post('/api/auth/email-verify/confirm/', {'token': 'act-token-2'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.status, 'pending')
+
+    def test_phone_verify_activates_if_email_verified(self):
+        """Phone verification activates user if email already verified."""
+        self.user.email_verified = True
+        self.user.save(update_fields=['email_verified'])
+        PhoneVerificationToken.objects.create(user=self.user, code='111111')
+        login = self.client.post('/api/auth/login/', {'username': 'autoact', 'password': 'Password123!'})
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+        r = self.client.post('/api/auth/phone-verify/confirm/', {'code': '111111'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.status, 'active')
+
+
+# ── Phone number in profile tests ─────────────────────────────────────
+
+class PhoneProfileTests(TestCase):
+    """Tests that phone fields appear in profile and reset on change."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='ppuser', password='Password123!', email='ppuser@example.com',
+            phone_number='+14155552671', phone_verified=True,
+        )
+        login = self.client.post('/api/auth/login/', {'username': 'ppuser', 'password': 'Password123!'})
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+
+    def test_phone_in_profile(self):
+        r = self.client.get('/api/users/me/')
+        self.assertEqual(r.data['phone_number'], '+14155552671')
+        self.assertTrue(r.data['phone_verified'])
+
+    def test_phone_change_resets_verified(self):
+        r = self.client.patch('/api/users/me/', {'phone_number': '+14155559999'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.phone_verified)
+
+    def test_same_phone_keeps_verified(self):
+        r = self.client.patch('/api/users/me/', {'phone_number': '+14155552671'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.phone_verified)
+
+    def test_phone_verified_not_editable(self):
+        self.user.phone_verified = False
+        self.user.save(update_fields=['phone_verified'])
+        r = self.client.patch('/api/users/me/', {'phone_verified': True})
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.phone_verified)
+
+
+# ── Token security tests ─────────────────────────────────────────────
+
+class TokenSecurityTests(TestCase):
+    """Tests for enhanced JWT token claims."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='tokenuser', password='Password123!', email='token@example.com',
+            role='editor', phone_number='+14155552671',
+        )
+
+    def test_login_response_includes_phone_fields(self):
+        r = self.client.post('/api/auth/login/', {'username': 'tokenuser', 'password': 'Password123!'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertIn('phone_number', r.data['user'])
+        self.assertIn('phone_verified', r.data['user'])
+        self.assertIn('status', r.data['user'])
+
+    def test_login_returns_correct_status(self):
+        r = self.client.post('/api/auth/login/', {'username': 'tokenuser', 'password': 'Password123!'})
+        self.assertEqual(r.data['user']['status'], 'pending')
+
+
+# ── PhoneVerificationToken model tests ────────────────────────────────
+
+class PhoneVerificationTokenModelTests(TestCase):
+    """Unit tests for the PhoneVerificationToken model."""
+
+    def setUp(self):
+        self.user = CustomUser.objects.create_user(
+            username='pvtuser', password='Password123!', email='pvt@example.com',
+        )
+
+    def test_generate_code_returns_6_digits(self):
+        code = PhoneVerificationToken.generate_code()
+        self.assertEqual(len(code), 6)
+        self.assertTrue(code.isdigit())
+
+    def test_is_expired_false_when_fresh(self):
+        token = PhoneVerificationToken.objects.create(user=self.user, code='123456')
+        self.assertFalse(token.is_expired())
+
+    def test_is_expired_true_after_expiry(self):
+        token = PhoneVerificationToken.objects.create(user=self.user, code='123456')
+        cutoff = timezone.now() - timezone.timedelta(minutes=15)
+        PhoneVerificationToken.objects.filter(pk=token.pk).update(created_at=cutoff)
+        token.refresh_from_db()
+        self.assertTrue(token.is_expired())
+
+    @override_settings(PHONE_VERIFICATION_MAX_ATTEMPTS=3)
+    def test_max_attempts_exceeded(self):
+        token = PhoneVerificationToken.objects.create(user=self.user, code='123456', attempts=3)
+        self.assertTrue(token.max_attempts_exceeded())
+
+    @override_settings(PHONE_VERIFICATION_MAX_ATTEMPTS=3)
+    def test_max_attempts_not_exceeded(self):
+        token = PhoneVerificationToken.objects.create(user=self.user, code='123456', attempts=2)
+        self.assertFalse(token.max_attempts_exceeded())
+
+    def test_str_representation(self):
+        token = PhoneVerificationToken.objects.create(user=self.user, code='123456')
+        self.assertIn('pvtuser', str(token))

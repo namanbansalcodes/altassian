@@ -1,3 +1,4 @@
+import logging
 import secrets
 
 from django.conf import settings
@@ -15,9 +16,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from altassian_core.throttles import LoginRateThrottle
-from .auth_serializers import FastTokenObtainPairSerializer
-from .models import CustomUser, EmailVerificationToken, LoginAttempt
+from .auth_serializers import (
+    FastTokenObtainPairSerializer,
+    PhoneVerificationConfirmSerializer,
+    PhoneVerificationSendSerializer,
+)
+from .models import CustomUser, EmailVerificationToken, LoginAttempt, PhoneVerificationToken
 from .serializers import PasswordResetConfirmSerializer, PasswordResetRequestSerializer
+
+logger = logging.getLogger('altassian')
 
 
 class FastTokenObtainPairView(TokenObtainPairView):
@@ -229,7 +236,12 @@ class EmailVerificationConfirmView(APIView):
 
         user = verification.user
         user.email_verified = True
-        user.save(update_fields=['email_verified'])
+        # Auto-activate if both email and phone are verified (or no phone on file)
+        if user.status == 'pending' and (user.phone_verified or not user.phone_number):
+            user.status = 'active'
+            user.save(update_fields=['email_verified', 'status'])
+        else:
+            user.save(update_fields=['email_verified'])
         verification.delete()
 
         return Response(
@@ -258,3 +270,134 @@ class LoginHistoryView(APIView):
             for a in attempts
         ]
         return Response({'results': data}, status=status.HTTP_200_OK)
+
+
+class PhoneVerificationSendView(APIView):
+    """Send a verification code to the user's phone number via SMS."""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: Request) -> Response:
+        user = request.user
+        serializer = PhoneVerificationSendSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Optionally update phone number from request
+        new_phone = serializer.validated_data.get('phone_number')
+        if new_phone:
+            if new_phone != user.phone_number:
+                user.phone_number = new_phone
+                user.phone_verified = False
+                user.save(update_fields=['phone_number', 'phone_verified'])
+
+        if not user.phone_number:
+            return Response(
+                {'detail': 'No phone number on file. Please add a phone number first.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if user.phone_verified:
+            return Response(
+                {'detail': 'Phone number is already verified.'},
+                status=status.HTTP_200_OK,
+            )
+
+        # Generate OTP code
+        code = PhoneVerificationToken.generate_code()
+
+        # Upsert verification token
+        PhoneVerificationToken.objects.update_or_create(
+            user=user,
+            defaults={'code': code, 'attempts': 0},
+        )
+
+        # Send SMS (pluggable backend — logs in dev, real SMS in prod)
+        sms_backend = getattr(settings, 'SMS_BACKEND', 'console')
+        if sms_backend == 'console':
+            logger.info(
+                'Phone verification code for %s (%s): %s',
+                user.username, user.phone_number, code,
+            )
+        else:
+            # Production: integrate with SMS provider (Twilio, etc.)
+            _send_sms(user.phone_number, code)
+
+        return Response(
+            {'detail': 'Verification code sent to your phone number.'},
+            status=status.HTTP_200_OK,
+        )
+
+
+class PhoneVerificationConfirmView(APIView):
+    """Confirm a phone verification code."""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: Request) -> Response:
+        serializer = PhoneVerificationConfirmSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = request.user
+        code = serializer.validated_data['code']
+
+        try:
+            token = PhoneVerificationToken.objects.get(user=user)
+        except PhoneVerificationToken.DoesNotExist:
+            return Response(
+                {'detail': 'No pending verification. Please request a new code.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if token.is_expired():
+            token.delete()
+            return Response(
+                {'detail': 'Verification code has expired. Please request a new one.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if token.max_attempts_exceeded():
+            token.delete()
+            return Response(
+                {'detail': 'Too many failed attempts. Please request a new code.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not secrets.compare_digest(token.code, code):
+            token.attempts += 1
+            token.save(update_fields=['attempts'])
+            remaining = getattr(settings, 'PHONE_VERIFICATION_MAX_ATTEMPTS', 5) - token.attempts
+            return Response(
+                {'detail': f'Invalid code. {max(remaining, 0)} attempts remaining.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Success — mark phone as verified
+        user.phone_verified = True
+        # If both email and phone are verified, activate the user
+        if user.email_verified and user.status == 'pending':
+            user.status = 'active'
+            user.save(update_fields=['phone_verified', 'status'])
+        else:
+            user.save(update_fields=['phone_verified'])
+        token.delete()
+
+        return Response(
+            {'detail': 'Phone number verified successfully.'},
+            status=status.HTTP_200_OK,
+        )
+
+
+def _send_sms(phone_number: str, code: str) -> None:
+    """Send an SMS with the verification code. Override for production SMS provider."""
+    sms_provider = getattr(settings, 'SMS_PROVIDER', None)
+    if sms_provider == 'twilio':
+        from twilio.rest import Client  # type: ignore[import-untyped]
+        client = Client(
+            settings.TWILIO_ACCOUNT_SID,
+            settings.TWILIO_AUTH_TOKEN,
+        )
+        client.messages.create(
+            body=f'Your Altassian verification code is: {code}',
+            from_=settings.TWILIO_PHONE_NUMBER,
+            to=phone_number,
+        )
+    else:
+        logger.warning('No SMS provider configured. Code for %s: %s', phone_number, code)

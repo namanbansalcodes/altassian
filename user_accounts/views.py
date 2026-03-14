@@ -18,10 +18,7 @@ from .serializers import (
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.only(
-        'id', 'username', 'email', 'first_name', 'last_name',
-        'avatar', 'bio', 'role', 'date_joined', 'email_verified',
-    )
+    queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     search_fields = ['username', 'email', 'first_name', 'last_name']
@@ -52,6 +49,13 @@ class CustomUserViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Account deactivated successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def get_queryset(self):
+        return CustomUser.objects.only(
+            'id', 'username', 'email', 'first_name', 'last_name',
+            'avatar', 'bio', 'role', 'status', 'date_joined',
+            'email_verified', 'phone_number', 'phone_verified',
+        )
 
     @action(detail=False, methods=['get'], url_path='me/activity', permission_classes=[IsAuthenticated])
     def activity_summary(self, request: Request) -> Response:
@@ -92,7 +96,9 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         return Response({
             'username': user.username,
             'role': user.role,
+            'status': user.status,
             'email_verified': user.email_verified,
+            'phone_verified': user.phone_verified,
             'pages_created': pages_created,
             'comments_made': comments_made,
             'spaces_owned': spaces_owned,
@@ -126,6 +132,28 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer = AdminUserUpdateSerializer(user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        return Response(CustomUserSerializer(user).data)
+
+    @action(detail=True, methods=['patch'], url_path='status', permission_classes=[IsAdmin])
+    def update_status(self, request: Request, pk: str = None) -> Response:
+        """Admin-only endpoint to change a user's status (active/suspended/pending)."""
+        user = self.get_object()
+        new_status = request.data.get('status')
+        if not new_status:
+            return Response(
+                {'detail': 'status field is required.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        valid_statuses = [c[0] for c in CustomUser.STATUS_CHOICES]
+        if new_status not in valid_statuses:
+            return Response(
+                {'detail': f'Invalid status. Must be one of: {", ".join(valid_statuses)}'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        user.status = new_status
+        # Sync is_active with status
+        user.is_active = new_status != 'suspended'
+        user.save(update_fields=['status', 'is_active'])
         return Response(CustomUserSerializer(user).data)
 
     @action(detail=True, methods=['patch'], url_path='activate', permission_classes=[IsAdmin])

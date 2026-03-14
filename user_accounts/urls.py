@@ -9,6 +9,8 @@ from .auth_views import (
     LogoutView,
     PasswordResetConfirmView,
     PasswordResetRequestView,
+    PhoneVerificationConfirmView,
+    PhoneVerificationSendView,
 )
 
 urlpatterns = [
@@ -19,5 +21,7 @@ urlpatterns = [
     path('auth/password-reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('auth/email-verify/', EmailVerificationSendView.as_view(), name='email_verify_send'),
     path('auth/email-verify/confirm/', EmailVerificationConfirmView.as_view(), name='email_verify_confirm'),
+    path('auth/phone-verify/', PhoneVerificationSendView.as_view(), name='phone_verify_send'),
+    path('auth/phone-verify/confirm/', PhoneVerificationConfirmView.as_view(), name='phone_verify_confirm'),
     path('auth/login-history/', LoginHistoryView.as_view(), name='login_history'),
 ]

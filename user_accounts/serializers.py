@@ -15,8 +15,12 @@ from .validators import (
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'avatar', 'bio', 'role', 'date_joined', 'email_verified']
-        read_only_fields = ['id', 'date_joined', 'email_verified']
+        fields = [
+            'id', 'username', 'email', 'first_name', 'last_name', 'avatar',
+            'bio', 'role', 'status', 'date_joined', 'email_verified',
+            'phone_number', 'phone_verified',
+        ]
+        read_only_fields = ['id', 'date_joined', 'email_verified', 'phone_verified', 'status']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -112,7 +116,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'bio', 'avatar']
+        fields = ['first_name', 'last_name', 'email', 'bio', 'avatar', 'phone_number']
 
     def validate_email(self, value: str) -> str:
         value = validate_email_format(value)
@@ -132,22 +136,40 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Bio must be 2000 characters or fewer.')
         return value
 
+    def validate_phone_number(self, value: str) -> str:
+        import re
+        value = value.strip()
+        if value and not re.match(r'^\+?1?\d{9,15}$', value):
+            raise serializers.ValidationError(
+                'Phone number must be 9-15 digits, optionally prefixed with +.'
+            )
+        return value
+
     def update(self, instance: CustomUser, validated_data: Dict[str, Any]) -> CustomUser:
         new_email = validated_data.get('email')
         if new_email and new_email.lower() != (instance.email or '').lower():
             instance.email_verified = False
+        new_phone = validated_data.get('phone_number')
+        if new_phone is not None and new_phone != (instance.phone_number or ''):
+            instance.phone_verified = False
         return super().update(instance, validated_data)
 
 
 class AdminUserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['role']
+        fields = ['role', 'status']
 
     def validate_role(self, value: str) -> str:
-        valid_roles = [choice[0] for choice in CustomUser._meta.get_field('role').choices]
+        valid_roles = [choice[0] for choice in CustomUser.ROLE_CHOICES]
         if value not in valid_roles:
             raise serializers.ValidationError(f'Invalid role. Must be one of: {", ".join(valid_roles)}')
+        return value
+
+    def validate_status(self, value: str) -> str:
+        valid_statuses = [choice[0] for choice in CustomUser.STATUS_CHOICES]
+        if value not in valid_statuses:
+            raise serializers.ValidationError(f'Invalid status. Must be one of: {", ".join(valid_statuses)}')
         return value
 
 
