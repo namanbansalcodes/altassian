@@ -847,3 +847,304 @@ class PermissionClassUnitTests(TestCase):
         """Verify role is embedded in JWT token."""
         r = self.client.post('/api/auth/login/', {'username': 'padmin', 'password': 'Password123!'})
         self.assertEqual(r.data['user']['role'], 'admin')
+
+
+# ── Registration validation tests ────────────────────────────────────
+
+class RegisterValidationTests(TestCase):
+    """Tests for enhanced registration input validation."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.valid_payload = {
+            'username': 'validuser',
+            'email': 'valid@example.com',
+            'password': 'Password123!',
+            'password_confirm': 'Password123!',
+            'first_name': 'Valid',
+            'last_name': 'User',
+        }
+
+    def test_username_too_short(self):
+        payload = {**self.valid_payload, 'username': 'ab'}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('username', r.data)
+
+    def test_username_too_long(self):
+        payload = {**self.valid_payload, 'username': 'a' * 31}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('username', r.data)
+
+    def test_username_starts_with_number(self):
+        payload = {**self.valid_payload, 'username': '1badname'}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('username', r.data)
+
+    def test_username_special_chars_rejected(self):
+        payload = {**self.valid_payload, 'username': 'bad user!'}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_username_valid_with_dots_hyphens_underscores(self):
+        payload = {**self.valid_payload, 'username': 'valid.user-name_1'}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_201_CREATED)
+
+    def test_username_whitespace_stripped(self):
+        payload = {**self.valid_payload, 'username': '  validuser  '}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(r.data['username'], 'validuser')
+
+    def test_email_no_domain_dot(self):
+        payload = {**self.valid_payload, 'email': 'user@localhost'}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('email', r.data)
+
+    def test_email_too_long(self):
+        payload = {**self.valid_payload, 'email': 'a' * 250 + '@example.com'}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_password_no_uppercase(self):
+        payload = {**self.valid_payload, 'password': 'password123!', 'password_confirm': 'password123!'}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('password', r.data)
+
+    def test_password_no_lowercase(self):
+        payload = {**self.valid_payload, 'password': 'PASSWORD123!', 'password_confirm': 'PASSWORD123!'}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_password_no_digit(self):
+        payload = {**self.valid_payload, 'password': 'PasswordABC!', 'password_confirm': 'PasswordABC!'}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_password_no_special_char(self):
+        payload = {**self.valid_payload, 'password': 'Password123', 'password_confirm': 'Password123'}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_password_too_long(self):
+        long_pw = 'Aa1!' + 'x' * 125
+        payload = {**self.valid_payload, 'password': long_pw, 'password_confirm': long_pw}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_blank_username_rejected(self):
+        payload = {**self.valid_payload, 'username': ''}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_blank_email_rejected(self):
+        payload = {**self.valid_payload, 'email': ''}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_blank_password_rejected(self):
+        payload = {**self.valid_payload, 'password': '', 'password_confirm': ''}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_case_insensitive_username_duplicate(self):
+        CustomUser.objects.create_user(username='TakenUser', password='Password123!', email='taken@example.com')
+        payload = {**self.valid_payload, 'username': 'takenuser', 'email': 'new@example.com'}
+        r = self.client.post('/api/users/register/', payload)
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('username', r.data)
+
+
+# ── Login validation tests ───────────────────────────────────────────
+
+class LoginValidationTests(TestCase):
+    """Tests for enhanced login input validation."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='loginval', password='Password123!', email='loginval@example.com',
+        )
+
+    def test_login_blank_username(self):
+        r = self.client.post('/api/auth/login/', {'username': '', 'password': 'Password123!'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_blank_password(self):
+        r = self.client.post('/api/auth/login/', {'username': 'loginval', 'password': ''})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_whitespace_username_stripped(self):
+        r = self.client.post('/api/auth/login/', {'username': '  loginval  ', 'password': 'Password123!'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+
+    def test_login_empty_body(self):
+        r = self.client.post('/api/auth/login/', {})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_wrong_credentials_message(self):
+        r = self.client.post('/api/auth/login/', {'username': 'loginval', 'password': 'WrongPass!'})
+        self.assertEqual(r.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn('detail', r.data)
+
+
+# ── Password reset tests ────────────────────────────────────────────
+
+class PasswordResetRequestTests(TestCase):
+    """Tests for the forgotten-password request endpoint."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='resetuser', password='Password123!', email='reset@example.com',
+        )
+
+    def test_request_with_valid_email(self):
+        r = self.client.post('/api/auth/password-reset/', {'email': 'reset@example.com'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertIn('detail', r.data)
+
+    def test_request_with_nonexistent_email_still_200(self):
+        """Must not reveal whether email exists (prevents enumeration)."""
+        r = self.client.post('/api/auth/password-reset/', {'email': 'nobody@example.com'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+
+    def test_request_with_invalid_email_format(self):
+        r = self.client.post('/api/auth/password-reset/', {'email': 'not-an-email'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('email', r.data)
+
+    def test_request_with_blank_email(self):
+        r = self.client.post('/api/auth/password-reset/', {'email': ''})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_request_with_missing_email(self):
+        r = self.client.post('/api/auth/password-reset/', {})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_request_with_no_domain_dot(self):
+        r = self.client.post('/api/auth/password-reset/', {'email': 'user@localhost'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_inactive_user_does_not_get_reset(self):
+        self.user.is_active = False
+        self.user.save(update_fields=['is_active'])
+        r = self.client.post('/api/auth/password-reset/', {'email': 'reset@example.com'})
+        # Still 200 to prevent enumeration, but no email sent
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+
+
+class PasswordResetConfirmTests(TestCase):
+    """Tests for the password-reset confirmation endpoint."""
+
+    def setUp(self):
+        from django.contrib.auth.tokens import default_token_generator
+        from django.utils.encoding import force_bytes
+        from django.utils.http import urlsafe_base64_encode
+
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='confirmuser', password='OldPassword123!', email='confirm@example.com',
+        )
+        self.uid = urlsafe_base64_encode(force_bytes(self.user.pk))
+        self.token = default_token_generator.make_token(self.user)
+
+    def test_reset_confirm_success(self):
+        r = self.client.post('/api/auth/password-reset/confirm/', {
+            'uid': self.uid,
+            'token': self.token,
+            'new_password': 'NewPassword456!',
+            'new_password_confirm': 'NewPassword456!',
+        })
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        # Verify new password works
+        login = self.client.post('/api/auth/login/', {
+            'username': 'confirmuser', 'password': 'NewPassword456!',
+        })
+        self.assertEqual(login.status_code, status.HTTP_200_OK)
+
+    def test_reset_confirm_invalid_token(self):
+        r = self.client.post('/api/auth/password-reset/confirm/', {
+            'uid': self.uid,
+            'token': 'invalid-token',
+            'new_password': 'NewPassword456!',
+            'new_password_confirm': 'NewPassword456!',
+        })
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_reset_confirm_invalid_uid(self):
+        r = self.client.post('/api/auth/password-reset/confirm/', {
+            'uid': 'invaliduid',
+            'token': self.token,
+            'new_password': 'NewPassword456!',
+            'new_password_confirm': 'NewPassword456!',
+        })
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_reset_confirm_missing_uid(self):
+        r = self.client.post('/api/auth/password-reset/confirm/', {
+            'token': self.token,
+            'new_password': 'NewPassword456!',
+            'new_password_confirm': 'NewPassword456!',
+        })
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_reset_confirm_password_mismatch(self):
+        r = self.client.post('/api/auth/password-reset/confirm/', {
+            'uid': self.uid,
+            'token': self.token,
+            'new_password': 'NewPassword456!',
+            'new_password_confirm': 'DifferentPass1!',
+        })
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('new_password_confirm', str(r.data))
+
+    def test_reset_confirm_weak_password(self):
+        r = self.client.post('/api/auth/password-reset/confirm/', {
+            'uid': self.uid,
+            'token': self.token,
+            'new_password': 'weak',
+            'new_password_confirm': 'weak',
+        })
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_reset_confirm_password_no_special_char(self):
+        r = self.client.post('/api/auth/password-reset/confirm/', {
+            'uid': self.uid,
+            'token': self.token,
+            'new_password': 'Password123',
+            'new_password_confirm': 'Password123',
+        })
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_token_invalidated_after_use(self):
+        """Token should not work twice (password change invalidates it)."""
+        self.client.post('/api/auth/password-reset/confirm/', {
+            'uid': self.uid,
+            'token': self.token,
+            'new_password': 'NewPassword456!',
+            'new_password_confirm': 'NewPassword456!',
+        })
+        r = self.client.post('/api/auth/password-reset/confirm/', {
+            'uid': self.uid,
+            'token': self.token,
+            'new_password': 'AnotherPass789!',
+            'new_password_confirm': 'AnotherPass789!',
+        })
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_inactive_user_cannot_reset(self):
+        self.user.is_active = False
+        self.user.save(update_fields=['is_active'])
+        r = self.client.post('/api/auth/password-reset/confirm/', {
+            'uid': self.uid,
+            'token': self.token,
+            'new_password': 'NewPassword456!',
+            'new_password_confirm': 'NewPassword456!',
+        })
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
