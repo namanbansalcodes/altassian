@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import CustomUser
-from .serializers import CustomUserSerializer, RegisterSerializer
+from .serializers import ChangePasswordSerializer, CustomUserSerializer, RegisterSerializer
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
@@ -15,7 +15,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         'avatar', 'bio', 'role', 'date_joined',
     )
     serializer_class = CustomUserSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     search_fields = ['username', 'email', 'first_name', 'last_name']
     ordering_fields = ['username', 'date_joined']
     ordering = ['username']
@@ -36,3 +36,11 @@ class CustomUserViewSet(viewsets.ModelViewSet):
             'access': str(refresh.access_token),
             'refresh': str(refresh),
         }, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['post'], url_path='change-password', permission_classes=[IsAuthenticated])
+    def change_password(self, request: Request) -> Response:
+        serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        request.user.set_password(serializer.validated_data['new_password'])
+        request.user.save(update_fields=['password'])
+        return Response({'detail': 'Password updated successfully.'}, status=status.HTTP_200_OK)
