@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'search',
     'analytics',
     'audit',
+    'notifications',
     'rest_framework_simplejwt.token_blacklist',
 ]
 
