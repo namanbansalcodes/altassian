@@ -1,6 +1,8 @@
+import secrets
+
+from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
-from django.conf import settings
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework import status
@@ -14,7 +16,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from altassian_core.throttles import LoginRateThrottle
 from .auth_serializers import FastTokenObtainPairSerializer
-from .models import CustomUser
+from .models import CustomUser, EmailVerificationToken, LoginAttempt
 from .serializers import PasswordResetConfirmSerializer, PasswordResetRequestSerializer
 
 
@@ -149,3 +151,110 @@ class PasswordResetConfirmView(APIView):
             {'detail': 'Password has been reset successfully. You can now log in with your new password.'},
             status=status.HTTP_200_OK,
         )
+
+
+class EmailVerificationSendView(APIView):
+    """Send (or re-send) an email verification link to the authenticated user."""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: Request) -> Response:
+        user = request.user
+        if user.email_verified:
+            return Response(
+                {'detail': 'Email is already verified.'},
+                status=status.HTTP_200_OK,
+            )
+
+        # Generate a secure token
+        token = secrets.token_urlsafe(48)
+
+        # Upsert verification token
+        EmailVerificationToken.objects.update_or_create(
+            user=user,
+            defaults={'token': token},
+        )
+
+        # Build verification URL
+        frontend_url = getattr(settings, 'FRONTEND_EMAIL_VERIFY_URL', '')
+        if frontend_url:
+            verify_link = f'{frontend_url}?token={token}'
+        else:
+            verify_link = f'token={token}'
+
+        send_mail(
+            subject='Altassian – Verify Your Email Address',
+            message=(
+                f'Hello {user.username},\n\n'
+                f'Please verify your email address by clicking the link below:\n\n'
+                f'{verify_link}\n\n'
+                f'If you did not create this account, you can safely ignore this email.'
+            ),
+            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@altassian.local'),
+            recipient_list=[user.email],
+            fail_silently=True,
+        )
+
+        return Response(
+            {'detail': 'Verification email sent.'},
+            status=status.HTTP_200_OK,
+        )
+
+
+class EmailVerificationConfirmView(APIView):
+    """Confirm an email verification token."""
+    permission_classes = [AllowAny]
+
+    def post(self, request: Request) -> Response:
+        token = request.data.get('token', '').strip()
+        if not token:
+            return Response(
+                {'detail': 'Verification token is required.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            verification = EmailVerificationToken.objects.select_related('user').get(token=token)
+        except EmailVerificationToken.DoesNotExist:
+            return Response(
+                {'detail': 'Invalid or expired verification token.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if verification.is_expired():
+            verification.delete()
+            return Response(
+                {'detail': 'Verification token has expired. Please request a new one.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = verification.user
+        user.email_verified = True
+        user.save(update_fields=['email_verified'])
+        verification.delete()
+
+        return Response(
+            {'detail': 'Email verified successfully.'},
+            status=status.HTTP_200_OK,
+        )
+
+
+class LoginHistoryView(APIView):
+    """Return recent login attempts for the authenticated user."""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request) -> Response:
+        attempts = LoginAttempt.objects.filter(
+            username__iexact=request.user.username,
+        ).order_by('-timestamp')[:20]
+
+        data = [
+            {
+                'ip_address': a.ip_address,
+                'user_agent': a.user_agent,
+                'success': a.success,
+                'locked_out': a.locked_out,
+                'timestamp': a.timestamp.isoformat(),
+            }
+            for a in attempts
+        ]
+        return Response({'results': data}, status=status.HTTP_200_OK)

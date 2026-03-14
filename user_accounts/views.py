@@ -1,3 +1,4 @@
+from django.db.models import Count, Q
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -5,7 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import CustomUser
+from .models import CustomUser, LoginAttempt
 from .permissions import IsAdmin, IsOwnerOrReadOnly
 from .serializers import (
     AdminUserUpdateSerializer,
@@ -19,7 +20,7 @@ from .serializers import (
 class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.only(
         'id', 'username', 'email', 'first_name', 'last_name',
-        'avatar', 'bio', 'role', 'date_joined',
+        'avatar', 'bio', 'role', 'date_joined', 'email_verified',
     )
     serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
@@ -51,6 +52,52 @@ class CustomUserViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Account deactivated successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @action(detail=False, methods=['get'], url_path='me/activity', permission_classes=[IsAuthenticated])
+    def activity_summary(self, request: Request) -> Response:
+        """Return an activity summary for the authenticated user."""
+        user = request.user
+
+        # Count pages created
+        pages_created = 0
+        comments_made = 0
+        spaces_owned = 0
+
+        try:
+            from pages.models import Page, Comment
+            pages_created = Page.objects.filter(created_by=user).count()
+            comments_made = Comment.objects.filter(author=user).count()
+        except Exception:
+            pass
+
+        try:
+            from spaces.models import Space
+            spaces_owned = Space.objects.filter(owner=user).count()
+        except Exception:
+            pass
+
+        # Recent login activity
+        recent_logins = LoginAttempt.objects.filter(
+            username__iexact=user.username, success=True,
+        ).order_by('-timestamp')[:5]
+
+        last_login_attempts = [
+            {
+                'ip_address': a.ip_address,
+                'timestamp': a.timestamp.isoformat(),
+            }
+            for a in recent_logins
+        ]
+
+        return Response({
+            'username': user.username,
+            'role': user.role,
+            'email_verified': user.email_verified,
+            'pages_created': pages_created,
+            'comments_made': comments_made,
+            'spaces_owned': spaces_owned,
+            'recent_logins': last_login_attempts,
+        })
 
     @action(detail=False, methods=['post'], url_path='register', permission_classes=[AllowAny])
     def register(self, request: Request) -> Response:

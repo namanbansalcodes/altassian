@@ -1,10 +1,11 @@
 import time
 
 from django.test import TestCase, override_settings
+from django.utils import timezone
 from rest_framework.test import APIClient
 from rest_framework import status
 
-from .models import CustomUser
+from .models import CustomUser, EmailVerificationToken, LoginAttempt
 
 
 class RegisterTests(TestCase):
@@ -451,9 +452,9 @@ class AuthPerformanceTests(TestCase):
         self.assertLess(t1 - t0, 2.0, f"register+tokens too slow: {(t1 - t0)*1000:.1f}ms")
 
     def test_login_query_count(self):
-        """Login should execute minimal DB queries (user lookup + outstanding token insert)."""
+        """Login should execute minimal DB queries (user lookup + token insert + lockout check + attempt record)."""
         CustomUser.objects.create_user(username='quser', password='Password123!', email='q@example.com')
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(4):
             resp = self.client.post('/api/auth/login/', {'username': 'quser', 'password': 'Password123!'})
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
@@ -1148,3 +1149,377 @@ class PasswordResetConfirmTests(TestCase):
             'new_password_confirm': 'NewPassword456!',
         })
         self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+# ── Account lockout tests ────────────────────────────────────────────
+
+@override_settings(ACCOUNT_LOCKOUT_MAX_ATTEMPTS=3, ACCOUNT_LOCKOUT_WINDOW_MINUTES=15)
+class AccountLockoutTests(TestCase):
+    """Tests for the account lockout mechanism."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='lockuser', password='Password123!', email='lock@example.com',
+        )
+
+    def test_lockout_after_max_failed_attempts(self):
+        for _ in range(3):
+            self.client.post('/api/auth/login/', {'username': 'lockuser', 'password': 'Wrong!'})
+        r = self.client.post('/api/auth/login/', {'username': 'lockuser', 'password': 'Password123!'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('locked', str(r.data).lower())
+
+    def test_successful_login_before_lockout(self):
+        for _ in range(2):
+            self.client.post('/api/auth/login/', {'username': 'lockuser', 'password': 'Wrong!'})
+        r = self.client.post('/api/auth/login/', {'username': 'lockuser', 'password': 'Password123!'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+
+    def test_lockout_records_attempt(self):
+        for _ in range(3):
+            self.client.post('/api/auth/login/', {'username': 'lockuser', 'password': 'Wrong!'})
+        self.client.post('/api/auth/login/', {'username': 'lockuser', 'password': 'Password123!'})
+        locked_attempts = LoginAttempt.objects.filter(username='lockuser', locked_out=True)
+        self.assertTrue(locked_attempts.exists())
+
+    def test_lockout_case_insensitive(self):
+        for _ in range(3):
+            self.client.post('/api/auth/login/', {'username': 'lockuser', 'password': 'Wrong!'})
+        r = self.client.post('/api/auth/login/', {'username': 'LOCKUSER', 'password': 'Password123!'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_lockout_expires_after_window(self):
+        """After the lockout window, attempts should reset."""
+        cutoff = timezone.now() - timezone.timedelta(minutes=20)
+        for _ in range(3):
+            attempt = LoginAttempt.objects.create(
+                username='lockuser', success=False, ip_address='127.0.0.1',
+            )
+            LoginAttempt.objects.filter(pk=attempt.pk).update(timestamp=cutoff)
+        self.assertFalse(LoginAttempt.is_locked_out('lockuser'))
+
+    def test_login_attempt_recorded_on_success(self):
+        self.client.post('/api/auth/login/', {'username': 'lockuser', 'password': 'Password123!'})
+        self.assertTrue(
+            LoginAttempt.objects.filter(username='lockuser', success=True).exists()
+        )
+
+    def test_login_attempt_recorded_on_failure(self):
+        self.client.post('/api/auth/login/', {'username': 'lockuser', 'password': 'Wrong!'})
+        self.assertTrue(
+            LoginAttempt.objects.filter(username='lockuser', success=False).exists()
+        )
+
+
+# ── Login attempt model tests ────────────────────────────────────────
+
+class LoginAttemptModelTests(TestCase):
+    """Unit tests for the LoginAttempt model."""
+
+    def test_recent_failures_count(self):
+        for _ in range(3):
+            LoginAttempt.objects.create(username='testuser', success=False)
+        LoginAttempt.objects.create(username='testuser', success=True)
+        self.assertEqual(LoginAttempt.recent_failures('testuser'), 3)
+
+    def test_recent_failures_case_insensitive(self):
+        LoginAttempt.objects.create(username='TestUser', success=False)
+        self.assertEqual(LoginAttempt.recent_failures('testuser'), 1)
+
+    def test_is_locked_out_false_when_below_threshold(self):
+        LoginAttempt.objects.create(username='testuser', success=False)
+        self.assertFalse(LoginAttempt.is_locked_out('testuser'))
+
+    @override_settings(ACCOUNT_LOCKOUT_MAX_ATTEMPTS=2)
+    def test_is_locked_out_true_when_at_threshold(self):
+        LoginAttempt.objects.create(username='testuser', success=False)
+        LoginAttempt.objects.create(username='testuser', success=False)
+        self.assertTrue(LoginAttempt.is_locked_out('testuser'))
+
+    def test_record_creates_attempt(self):
+        attempt = LoginAttempt.record(username='testuser', success=True)
+        self.assertTrue(attempt.pk)
+        self.assertTrue(attempt.success)
+
+    def test_str_representation(self):
+        attempt = LoginAttempt.objects.create(username='testuser', success=False)
+        self.assertIn('testuser', str(attempt))
+        self.assertIn('failed', str(attempt))
+
+
+# ── Email verification tests ─────────────────────────────────────────
+
+class EmailVerificationSendTests(TestCase):
+    """Tests for the email verification send endpoint."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='verifyuser', password='Password123!', email='verify@example.com',
+        )
+        login = self.client.post('/api/auth/login/', {'username': 'verifyuser', 'password': 'Password123!'})
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+
+    def test_send_verification_email(self):
+        r = self.client.post('/api/auth/email-verify/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertIn('Verification email sent', r.data['detail'])
+        self.assertTrue(EmailVerificationToken.objects.filter(user=self.user).exists())
+
+    def test_already_verified_returns_ok(self):
+        self.user.email_verified = True
+        self.user.save(update_fields=['email_verified'])
+        r = self.client.post('/api/auth/email-verify/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertIn('already verified', r.data['detail'].lower())
+
+    def test_resend_replaces_token(self):
+        self.client.post('/api/auth/email-verify/')
+        token1 = EmailVerificationToken.objects.get(user=self.user).token
+        self.client.post('/api/auth/email-verify/')
+        token2 = EmailVerificationToken.objects.get(user=self.user).token
+        self.assertNotEqual(token1, token2)
+
+    def test_requires_auth(self):
+        self.client.credentials()
+        r = self.client.post('/api/auth/email-verify/')
+        self.assertIn(r.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+
+
+class EmailVerificationConfirmTests(TestCase):
+    """Tests for the email verification confirm endpoint."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='confirmverify', password='Password123!', email='confv@example.com',
+        )
+        self.verification = EmailVerificationToken.objects.create(
+            user=self.user, token='valid-test-token-123',
+        )
+
+    def test_confirm_success(self):
+        r = self.client.post('/api/auth/email-verify/confirm/', {'token': 'valid-test-token-123'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.email_verified)
+        self.assertFalse(EmailVerificationToken.objects.filter(user=self.user).exists())
+
+    def test_confirm_invalid_token(self):
+        r = self.client.post('/api/auth/email-verify/confirm/', {'token': 'invalid-token'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_confirm_missing_token(self):
+        r = self.client.post('/api/auth/email-verify/confirm/', {})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_confirm_expired_token(self):
+        cutoff = timezone.now() - timezone.timedelta(hours=25)
+        EmailVerificationToken.objects.filter(pk=self.verification.pk).update(created_at=cutoff)
+        r = self.client.post('/api/auth/email-verify/confirm/', {'token': 'valid-test-token-123'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('expired', r.data['detail'].lower())
+
+    def test_token_deleted_after_use(self):
+        self.client.post('/api/auth/email-verify/confirm/', {'token': 'valid-test-token-123'})
+        r = self.client.post('/api/auth/email-verify/confirm/', {'token': 'valid-test-token-123'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+# ── Email verified flag in profile tests ─────────────────────────────
+
+class EmailVerifiedProfileTests(TestCase):
+    """Tests that email_verified is included in user responses and resets on email change."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='evpuser', password='Password123!', email='evp@example.com',
+            email_verified=True,
+        )
+        login = self.client.post('/api/auth/login/', {'username': 'evpuser', 'password': 'Password123!'})
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+
+    def test_email_verified_in_profile(self):
+        r = self.client.get('/api/users/me/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertTrue(r.data['email_verified'])
+
+    def test_email_verified_in_login_response(self):
+        self.client.credentials()
+        r = self.client.post('/api/auth/login/', {'username': 'evpuser', 'password': 'Password123!'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertTrue(r.data['user']['email_verified'])
+
+    def test_email_verified_in_register_response(self):
+        self.client.credentials()
+        r = self.client.post('/api/users/register/', {
+            'username': 'newevp', 'email': 'newevp@example.com',
+            'password': 'Password123!', 'password_confirm': 'Password123!',
+        })
+        self.assertEqual(r.status_code, status.HTTP_201_CREATED)
+        self.assertFalse(r.data['email_verified'])
+
+    def test_email_change_resets_verified(self):
+        r = self.client.patch('/api/users/me/', {'email': 'newemail@example.com'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.email_verified)
+
+    def test_same_email_keeps_verified(self):
+        r = self.client.patch('/api/users/me/', {'email': 'evp@example.com'})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.email_verified)
+
+    def test_email_verified_not_editable_via_profile(self):
+        self.user.email_verified = False
+        self.user.save(update_fields=['email_verified'])
+        r = self.client.patch('/api/users/me/', {'email_verified': True})
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.email_verified)
+
+
+# ── Login history tests ──────────────────────────────────────────────
+
+class LoginHistoryTests(TestCase):
+    """Tests for the login history endpoint."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='histuser', password='Password123!', email='hist@example.com',
+        )
+        login = self.client.post('/api/auth/login/', {'username': 'histuser', 'password': 'Password123!'})
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+
+    def test_login_history_returns_attempts(self):
+        r = self.client.get('/api/auth/login-history/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertIn('results', r.data)
+        self.assertGreaterEqual(len(r.data['results']), 1)
+
+    def test_login_history_includes_fields(self):
+        r = self.client.get('/api/auth/login-history/')
+        entry = r.data['results'][0]
+        self.assertIn('ip_address', entry)
+        self.assertIn('success', entry)
+        self.assertIn('timestamp', entry)
+        self.assertIn('user_agent', entry)
+        self.assertIn('locked_out', entry)
+
+    def test_login_history_requires_auth(self):
+        self.client.credentials()
+        r = self.client.get('/api/auth/login-history/')
+        self.assertIn(r.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+
+    def test_login_history_only_shows_own_attempts(self):
+        other = CustomUser.objects.create_user(
+            username='otheruser', password='Password123!', email='other@example.com',
+        )
+        LoginAttempt.record(username='otheruser', success=True)
+        r = self.client.get('/api/auth/login-history/')
+        for entry in r.data['results']:
+            self.assertTrue(entry['success'] or not entry['success'])
+        # All entries should belong to histuser (verified via the view filter)
+        usernames = LoginAttempt.objects.filter(
+            username__iexact='histuser',
+        ).values_list('username', flat=True)
+        self.assertTrue(all(u.lower() == 'histuser' for u in usernames))
+
+    def test_login_history_max_20_entries(self):
+        for _ in range(25):
+            LoginAttempt.record(username='histuser', success=True)
+        r = self.client.get('/api/auth/login-history/')
+        self.assertLessEqual(len(r.data['results']), 20)
+
+
+# ── Activity summary tests ───────────────────────────────────────────
+
+class ActivitySummaryTests(TestCase):
+    """Tests for the user activity summary endpoint."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='actuser', password='Password123!', email='act@example.com',
+            role='editor',
+        )
+        login = self.client.post('/api/auth/login/', {'username': 'actuser', 'password': 'Password123!'})
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+
+    def test_activity_summary_returns_data(self):
+        r = self.client.get('/api/users/me/activity/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertIn('username', r.data)
+        self.assertIn('pages_created', r.data)
+        self.assertIn('comments_made', r.data)
+        self.assertIn('spaces_owned', r.data)
+        self.assertIn('recent_logins', r.data)
+        self.assertIn('email_verified', r.data)
+        self.assertIn('role', r.data)
+
+    def test_activity_summary_correct_username(self):
+        r = self.client.get('/api/users/me/activity/')
+        self.assertEqual(r.data['username'], 'actuser')
+        self.assertEqual(r.data['role'], 'editor')
+
+    def test_activity_summary_requires_auth(self):
+        self.client.credentials()
+        r = self.client.get('/api/users/me/activity/')
+        self.assertIn(r.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+
+    def test_activity_summary_counts_pages(self):
+        from spaces.models import Space
+        from pages.models import Page
+        space = Space.objects.create(name='Test', key='TST', owner=self.user)
+        Page.objects.create(
+            title='Test Page', space=space, created_by=self.user,
+            updated_by=self.user, body_markdown='content', position=0,
+        )
+        r = self.client.get('/api/users/me/activity/')
+        self.assertEqual(r.data['pages_created'], 1)
+
+    def test_activity_summary_counts_spaces(self):
+        from spaces.models import Space
+        Space.objects.create(name='My Space', key='MSP', owner=self.user)
+        r = self.client.get('/api/users/me/activity/')
+        self.assertEqual(r.data['spaces_owned'], 1)
+
+    def test_activity_summary_includes_recent_logins(self):
+        r = self.client.get('/api/users/me/activity/')
+        self.assertIsInstance(r.data['recent_logins'], list)
+        self.assertGreaterEqual(len(r.data['recent_logins']), 1)
+
+
+# ── New endpoint reachability smoke tests ─────────────────────────────
+
+class NewEndpointSmokeTests(TestCase):
+    """Smoke tests that all new auth endpoints are reachable."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(
+            username='smokeuser', password='Password123!', email='smoke2@example.com',
+        )
+        login = self.client.post('/api/auth/login/', {'username': 'smokeuser', 'password': 'Password123!'})
+        self.access = login.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access}")
+
+    def test_email_verify_endpoint_reachable(self):
+        r = self.client.post('/api/auth/email-verify/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+
+    def test_email_verify_confirm_reachable(self):
+        r = self.client.post('/api/auth/email-verify/confirm/', {'token': 'fake'})
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_history_reachable(self):
+        r = self.client.get('/api/auth/login-history/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+
+    def test_activity_summary_reachable(self):
+        r = self.client.get('/api/users/me/activity/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)

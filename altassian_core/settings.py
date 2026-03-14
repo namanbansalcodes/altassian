@@ -183,6 +183,16 @@ PASSWORD_RESET_TIMEOUT = int(os.getenv('PASSWORD_RESET_TIMEOUT', '3600'))
 # Frontend URL the reset email links to (e.g. https://app.altassian.com/reset-password)
 FRONTEND_PASSWORD_RESET_URL = os.getenv('FRONTEND_PASSWORD_RESET_URL', '')
 
+# Frontend URL for email verification (e.g. https://app.altassian.com/verify-email)
+FRONTEND_EMAIL_VERIFY_URL = os.getenv('FRONTEND_EMAIL_VERIFY_URL', '')
+
+# ── Account lockout ────────────────────────────────────────────────
+ACCOUNT_LOCKOUT_MAX_ATTEMPTS = int(os.getenv('ACCOUNT_LOCKOUT_MAX_ATTEMPTS', '5'))
+ACCOUNT_LOCKOUT_WINDOW_MINUTES = int(os.getenv('ACCOUNT_LOCKOUT_WINDOW_MINUTES', '15'))
+
+# Email verification token expiry (hours)
+EMAIL_VERIFICATION_EXPIRY_HOURS = int(os.getenv('EMAIL_VERIFICATION_EXPIRY_HOURS', '24'))
+
 # ── Logging ─────────────────────────────────────────────────────────
 LOGGING = {
     'version': 1,

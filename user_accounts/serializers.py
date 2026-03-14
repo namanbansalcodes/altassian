@@ -15,8 +15,8 @@ from .validators import (
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'avatar', 'bio', 'role', 'date_joined']
-        read_only_fields = ['id', 'date_joined']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'avatar', 'bio', 'role', 'date_joined', 'email_verified']
+        read_only_fields = ['id', 'date_joined', 'email_verified']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -131,6 +131,12 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         if value and len(value) > 2000:
             raise serializers.ValidationError('Bio must be 2000 characters or fewer.')
         return value
+
+    def update(self, instance: CustomUser, validated_data: Dict[str, Any]) -> CustomUser:
+        new_email = validated_data.get('email')
+        if new_email and new_email.lower() != (instance.email or '').lower():
+            instance.email_verified = False
+        return super().update(instance, validated_data)
 
 
 class AdminUserUpdateSerializer(serializers.ModelSerializer):
