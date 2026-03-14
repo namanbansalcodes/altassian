@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
@@ -27,6 +27,15 @@ export default function SpaceDetailPage() {
     enabled: !!key,
     placeholderData: keepPreviousData,
   });
+
+  useEffect(() => {
+    if (space?.name) {
+      document.title = `${space.name} — Altassian`;
+    }
+    return () => {
+      document.title = "Altassian — Git-Powered Team Knowledge Base";
+    };
+  }, [space?.name]);
 
   if (!space) return <main className="p-4 sm:p-6">Loading...</main>;
 

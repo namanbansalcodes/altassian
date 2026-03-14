@@ -15,6 +15,15 @@
   }));
 </script>
 
+<svelte:head>
+  <title>Space: {key} — Altassian</title>
+  <meta name="description" content="Browse pages in the {key} workspace on Altassian — collaborative team knowledge base." />
+  <meta property="og:title" content="Space: {key}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Altassian" />
+  <link rel="canonical" href="/spaces/{key}" />
+</svelte:head>
+
 <div class="max-w-4xl mx-auto">
   <h1 class="text-xl sm:text-2xl font-semibold mb-4">Space: {key}</h1>
   {#if pagesQuery.isLoading}

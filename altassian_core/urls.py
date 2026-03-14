@@ -1,15 +1,36 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
+from django.http import HttpResponse
 from django.urls import path, include
+from django.views.decorators.cache import cache_page
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from rest_framework.routers import DefaultRouter
 
+from altassian_core.sitemaps import PageSitemap, SpaceSitemap, StaticSitemap
 from altassian_core.views import HealthCheckView
 from spaces.views import SpaceViewSet
 from pages.views import PageViewSet, PageVersionViewSet, CommentViewSet, AttachmentViewSet
 from user_accounts.views import CustomUserViewSet
+
+sitemaps = {
+    'pages': PageSitemap,
+    'spaces': SpaceSitemap,
+    'static': StaticSitemap,
+}
+
+
+def robots_txt(request):
+    lines = [
+        'User-agent: *',
+        'Allow: /',
+        'Disallow: /api/',
+        'Disallow: /admin/',
+        f'Sitemap: {request.scheme}://{request.get_host()}/sitemap.xml',
+    ]
+    return HttpResponse('\n'.join(lines), content_type='text/plain')
 
 router = DefaultRouter()
 router.register(r'spaces', SpaceViewSet)
@@ -20,6 +41,8 @@ router.register(r'attachments', AttachmentViewSet)
 router.register(r'users', CustomUserViewSet)
 
 urlpatterns = [
+    path('robots.txt', robots_txt, name='robots_txt'),
+    path('sitemap.xml', cache_page(3600)(sitemap), {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('admin/', admin.site.urls),
     path('api/health/', HealthCheckView.as_view(), name='health_check'),
     path('api/', include(router.urls)),

@@ -32,7 +32,11 @@ INSTALLED_APPS = [
     'integrations',
     'drf_spectacular',
     'rest_framework_simplejwt.token_blacklist',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

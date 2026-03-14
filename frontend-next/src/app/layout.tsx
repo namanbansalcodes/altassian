@@ -21,13 +21,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Altassian — Git-Powered Team Knowledge Base",
+  title: {
+    default: "Altassian — Git-Powered Team Knowledge Base",
+    template: "%s — Altassian",
+  },
   description: "Altassian is a Git-powered workspace for docs, decisions, and discovery. Blazing-fast search, version history, and a modern editor — without the bloat.",
+  keywords: ["knowledge base", "team wiki", "documentation platform", "Git-powered workspace", "version control docs", "collaborative editing", "Confluence alternative"],
+  authors: [{ name: "Altassian" }],
+  robots: { index: true, follow: true },
   openGraph: {
     title: "Altassian — Your team's knowledge, beautifully organized",
     description: "Git-powered workspace for docs, decisions, and discovery. Blazing-fast search, version history, and a modern editor.",
     type: "website",
     siteName: "Altassian",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",

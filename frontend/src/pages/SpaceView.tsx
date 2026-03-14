@@ -4,6 +4,7 @@ import { FileText, Plus, Settings } from 'lucide-react'
 import * as api from '../api'
 import { SpaceViewSkeleton } from '../components/Skeleton'
 import ResponsiveTable from '../components/ResponsiveTable'
+import SEOHead from '../components/SEOHead'
 
 export default function SpaceView() {
   const { spaceKey } = useParams<{ spaceKey: string }>()
@@ -27,9 +28,27 @@ export default function SpaceView() {
 
   return (
     <div className="max-w-4xl mx-auto">
+      <SEOHead
+        title={space.name}
+        description={space.meta_description || space.description || `${space.name} — collaborative workspace on Altassian`}
+        keywords={space.meta_keywords || `${space.name}, workspace, knowledge base, documentation`}
+        canonicalUrl={`${window.location.origin}/spaces/${spaceKey}`}
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: space.name,
+          description: space.description || `${space.name} workspace`,
+          url: `${window.location.origin}/spaces/${spaceKey}`,
+          isPartOf: {
+            '@type': 'WebSite',
+            name: 'Altassian',
+          },
+        }}
+      />
+
       <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-6 gap-3">
         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-          <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center text-lg sm:text-xl font-bold shrink-0">
+          <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center text-lg sm:text-xl font-bold shrink-0" role="img" aria-label={`${space.name} space icon`}>
             {space.key.slice(0, 2)}
           </div>
           <div className="min-w-0">

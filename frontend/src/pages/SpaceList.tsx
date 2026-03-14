@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { BookOpen, Plus, Users } from 'lucide-react'
 import * as api from '../api'
 import { SpaceListSkeleton } from '../components/Skeleton'
+import SEOHead from '../components/SEOHead'
 
 export default function SpaceList() {
   const { data: spaces, isLoading } = useQuery({
@@ -14,6 +15,13 @@ export default function SpaceList() {
 
   return (
     <div className="max-w-4xl mx-auto">
+      <SEOHead
+        title="Spaces"
+        description="Browse all workspaces on Altassian — your team's collaborative knowledge base for docs, decisions, and discovery."
+        keywords="workspaces, knowledge base, team collaboration, documentation, wiki spaces"
+        canonicalUrl={`${window.location.origin}/spaces`}
+      />
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Spaces</h1>
         <Link to="/spaces/create"
@@ -28,7 +36,7 @@ export default function SpaceList() {
             <Link key={space.id} to={`/spaces/${space.key}`}
               className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-5 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm transition-all">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center text-lg font-bold shrink-0">
+                <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center text-lg font-bold shrink-0" role="img" aria-label={`${space.name} space icon`}>
                   {space.key.slice(0, 2)}
                 </div>
                 <div className="flex-1 min-w-0">

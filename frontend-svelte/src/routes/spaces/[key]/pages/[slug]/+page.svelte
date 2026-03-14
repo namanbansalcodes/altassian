@@ -41,6 +41,23 @@
   }));
 </script>
 
+<svelte:head>
+  {#if pageQuery.data}
+    <title>{pageQuery.data.title} — Altassian</title>
+    <meta name="description" content="{pageQuery.data.title} — documentation page on Altassian workspace" />
+    <meta property="og:title" content={pageQuery.data.title} />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Altassian" />
+    <link rel="canonical" href="/spaces/{key}/pages/{slug}" />
+    {@html `<script type="application/ld+json">${JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: pageQuery.data.title,
+      publisher: { '@type': 'Organization', name: 'Altassian' },
+    })}</script>`}
+  {/if}
+</svelte:head>
+
 <div class="max-w-4xl mx-auto space-y-3">
   {#if pageQuery.isLoading}
     <div class="space-y-3 animate-pulse">

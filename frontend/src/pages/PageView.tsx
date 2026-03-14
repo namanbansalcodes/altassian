@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Edit, Clock, Trash2, Paperclip, MessageSquare, Upload, ChevronRight, FileText, Link2 } from 'lucide-react'
@@ -7,6 +7,7 @@ import { toast, getErrorMessage } from '../lib/toast'
 import { useAuth } from '../hooks/useAuth'
 import { useScrollHint } from '../hooks/useScrollHint'
 import { PageViewSkeleton } from '../components/Skeleton'
+import SEOHead from '../components/SEOHead'
 
 export default function PageView() {
   const { spaceKey, pageSlug } = useParams<{ spaceKey: string; pageSlug: string }>()
@@ -72,21 +73,78 @@ export default function PageView() {
     onError: (err) => toast.error(getErrorMessage(err)),
   })
 
+  const pageSchema = useMemo(() => {
+    if (!page) return undefined
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: page.title,
+      description: page.meta_description || page.title,
+      author: {
+        '@type': 'Person',
+        name: page.author?.first_name || page.author?.username || 'Unknown',
+      },
+      datePublished: page.created_at,
+      dateModified: page.updated_at,
+      publisher: {
+        '@type': 'Organization',
+        name: 'Altassian',
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `${window.location.origin}/spaces/${spaceKey}/pages/${pageSlug}`,
+      },
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: page.space_detail?.name || spaceKey,
+            item: `${window.location.origin}/spaces/${spaceKey}`,
+          },
+          ...(page.parent_detail ? [{
+            '@type': 'ListItem',
+            position: 2,
+            name: page.parent_detail.title,
+            item: `${window.location.origin}/spaces/${spaceKey}/pages/${page.parent_detail.slug}`,
+          }] : []),
+          {
+            '@type': 'ListItem',
+            position: page.parent_detail ? 3 : 2,
+            name: page.title,
+          },
+        ],
+      },
+    }
+  }, [page, spaceKey, pageSlug])
+
   if (isLoading) return <PageViewSkeleton />
   if (!page) return <div className="text-center py-12 text-gray-500 dark:text-gray-400">Page not found</div>
 
   return (
     <div className="max-w-4xl mx-auto">
+      <SEOHead
+        title={page.title}
+        description={page.meta_description || `${page.title} — ${page.space_detail?.name || spaceKey} workspace documentation on Altassian`}
+        keywords={page.meta_keywords || ''}
+        ogImage={page.og_image || ''}
+        ogType="article"
+        canonicalUrl={page.canonical_url || `${window.location.origin}/spaces/${spaceKey}/pages/${pageSlug}`}
+        noindex={page.noindex || page.is_draft}
+        schema={pageSchema}
+      />
+
       {/* Breadcrumbs */}
-      <nav ref={breadcrumbRef} className="breadcrumb-scroll flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mb-4 pb-1">
+      <nav ref={breadcrumbRef} className="breadcrumb-scroll flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mb-4 pb-1" aria-label="Breadcrumb">
         <Link to={`/spaces/${spaceKey}`} className="hover:text-blue-600 dark:hover:text-blue-400 shrink-0">{page.space_detail?.name || spaceKey}</Link>
         {page.parent_detail && (
           <>
-            <ChevronRight size={14} className="shrink-0" />
+            <ChevronRight size={14} className="shrink-0" aria-hidden="true" />
             <Link to={`/spaces/${spaceKey}/pages/${page.parent_detail.slug}`} className="hover:text-blue-600 dark:hover:text-blue-400 shrink-0">{page.parent_detail.title}</Link>
           </>
         )}
-        <ChevronRight size={14} className="shrink-0" />
+        <ChevronRight size={14} className="shrink-0" aria-hidden="true" />
         <span className="text-gray-800 dark:text-gray-200 truncate">{page.title}</span>
       </nav>
 

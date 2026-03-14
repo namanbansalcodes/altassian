@@ -15,6 +15,13 @@ class Page(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # SEO fields
+    meta_description = models.CharField(max_length=160, blank=True, default='')
+    meta_keywords = models.CharField(max_length=255, blank=True, default='')
+    og_image = models.URLField(max_length=500, blank=True, default='')
+    canonical_url = models.URLField(max_length=500, blank=True, default='')
+    noindex = models.BooleanField(default=False)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['space', 'slug'], name='unique_page_slug_per_space')

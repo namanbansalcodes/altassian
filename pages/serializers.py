@@ -57,6 +57,7 @@ class PageSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'space', 'space_name', 'parent', 'body_markdown', 'body_html',
             'created_by', 'created_by_username', 'updated_by', 'updated_by_username',
             'position', 'is_draft', 'created_at', 'updated_at',
+            'meta_description', 'meta_keywords', 'og_image', 'canonical_url', 'noindex',
         ]
         read_only_fields = ['id', 'slug', 'created_by', 'updated_by', 'created_at', 'updated_at']
 

@@ -11,7 +11,7 @@ class SpaceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Space
-        fields = ['id', 'name', 'key', 'description', 'owner', 'owner_username', 'page_count', 'created_at', 'is_archived']
+        fields = ['id', 'name', 'key', 'description', 'owner', 'owner_username', 'page_count', 'created_at', 'is_archived', 'meta_description', 'meta_keywords']
         read_only_fields = ['id', 'owner', 'created_at']
 
     def get_page_count(self, obj: Space) -> int:
