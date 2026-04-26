@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: altassian-backend
+Version: 0.1.0
+Summary: Altassian — markdown-first wiki backend
+Requires-Python: >=3.11
+License-File: LICENSE
+Requires-Dist: Django==5.2.*
+Requires-Dist: djangorestframework==3.15.*
+Requires-Dist: djangorestframework-simplejwt==5.3.*
+Requires-Dist: psycopg[binary]==3.2.*
+Requires-Dist: markdown-it-py==3.0.*
+Requires-Dist: mdit-py-plugins==0.4.*
+Requires-Dist: python-decouple==3.8
+Requires-Dist: Pillow==10.4.*
+Provides-Extra: dev
+Requires-Dist: pytest==8.3.*; extra == "dev"
+Requires-Dist: pytest-django==4.9.*; extra == "dev"
+Requires-Dist: factory_boy==3.3.*; extra == "dev"
+Requires-Dist: ruff==0.6.*; extra == "dev"
+Dynamic: license-file

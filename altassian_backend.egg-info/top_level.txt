@@ -1,0 +1,5 @@
+altassian_core
+pages
+search
+spaces
+user_accounts
