@@ -43,3 +43,17 @@ class SpaceFactory(factory.django.DjangoModelFactory):
 
     slug = factory.Sequence(lambda n: f"space-{n}")
     name = factory.Sequence(lambda n: f"Space {n}")
+
+
+from pages.models import Page
+
+
+class PageFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Page
+
+    space = factory.SubFactory(SpaceFactory)
+    title = factory.Sequence(lambda n: f"Page {n}")
+    body_md = "# default"
+    created_by = factory.SubFactory(UserFactory)
+    updated_by = factory.LazyAttribute(lambda o: o.created_by)

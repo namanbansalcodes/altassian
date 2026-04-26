@@ -1,4 +1,8 @@
-# Stub — pages endpoints added in Phase D.
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
-urlpatterns: list = []
+from .views import PageViewSet
+
+router = DefaultRouter(trailing_slash=True)
+router.register("pages", PageViewSet, basename="page")
+
+urlpatterns = router.urls

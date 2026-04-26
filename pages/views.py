@@ -1,106 +1,48 @@
-from django.db.models import Q
-from rest_framework import viewsets, status
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.request import Request
 from rest_framework.response import Response
 
-from spaces.models import Space
-from user_accounts.permissions import IsContentOwnerOrAdmin, IsEditorOrAboveOrReadOnly
-from .models import Page, PageVersion, Comment, Attachment
-from .serializers import (
-    PageSerializer, PageVersionSerializer, CommentSerializer,
-    AttachmentSerializer, PageTreeSerializer,
-)
+from .models import Page
+from .permissions import IsAuthorOrAdminOrReadOnly
+from .serializers import PageDetailSerializer, PageMoveSerializer
 
 
 class PageViewSet(viewsets.ModelViewSet):
-    queryset = Page.objects.select_related('space', 'created_by', 'updated_by').all()
-    serializer_class = PageSerializer
-    permission_classes = [IsAuthenticated, IsEditorOrAboveOrReadOnly, IsContentOwnerOrAdmin]
-    filterset_fields = ['space', 'parent', 'is_draft', 'created_by']
-    search_fields = ['title', 'body_markdown']
-    ordering_fields = ['title', 'position', 'created_at', 'updated_at']
-    ordering = ['-updated_at']
+    queryset = Page.objects.filter(deleted_at__isnull=True)
+    serializer_class = PageDetailSerializer
+    permission_classes = (IsAuthenticated, IsAuthorOrAdminOrReadOnly)
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        space_key = self.request.query_params.get('space_key')
-        if space_key:
-            return qs.filter(space__key=space_key)
-        return qs
+    def perform_create(self, serializer):
+        instance = serializer.save(created_by=self.request.user, updated_by=self.request.user)
+        instance.refresh_from_db()
+        serializer.instance = instance
 
-    @action(detail=False, methods=['get'], url_path='tree')
-    def tree(self, request: Request) -> Response:
-        space_key = request.query_params.get('space_key')
-        space_id = request.query_params.get('space')
-        if not (space_id or space_key):
-            return Response({'detail': 'space or space_key query param is required.'}, status=status.HTTP_400_BAD_REQUEST)
-        if space_key and not space_id:
-            try:
-                space_id = Space.objects.only('id').get(key=space_key).id
-            except Space.DoesNotExist:
-                return Response({'detail': 'Space not found.'}, status=status.HTTP_404_NOT_FOUND)
-        root_pages = Page.objects.filter(space_id=space_id, parent__isnull=True).order_by('position')
-        serializer = PageTreeSerializer(root_pages, many=True)
-        return Response(serializer.data)
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
 
-    @action(detail=False, methods=['get'], url_path='by-slug')
-    def by_slug(self, request: Request) -> Response:
-        space_key = request.query_params.get('space_key')
-        slug = request.query_params.get('slug')
-        if not space_key or not slug:
-            return Response({'detail': 'space_key and slug are required.'}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            space = Space.objects.get(key=space_key)
-            page = Page.objects.select_related('space', 'created_by', 'updated_by').get(space=space, slug=slug)
-        except (Space.DoesNotExist, Page.DoesNotExist):
-            return Response({'detail': 'Page not found.'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = PageSerializer(page, context={'request': request})
-        return Response(serializer.data)
+    def destroy(self, request, *args, **kwargs):
+        page = self.get_object()
+        page.deleted_at = timezone.now()
+        page.save(update_fields=["deleted_at"])
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, methods=['get'], url_path='search')
-    def full_text_search(self, request: Request) -> Response:
-        q = request.query_params.get('q', '').strip()
-        if not q:
-            return Response({'detail': 'q query param is required.'}, status=status.HTTP_400_BAD_REQUEST)
-        pages = Page.objects.filter(
-            Q(title__icontains=q) | Q(body_markdown__icontains=q)
-        ).select_related('space', 'created_by').order_by('-updated_at')
-        page = self.paginate_queryset(pages)
-        serializer = PageSerializer(page, many=True, context={'request': request})
-        return self.get_paginated_response(serializer.data)
-
-    @action(detail=False, methods=['get'], url_path='activity')
-    def activity(self, request: Request) -> Response:
-        recent = Page.objects.select_related('space', 'created_by', 'updated_by').order_by('-updated_at')
-        page = self.paginate_queryset(recent)
-        serializer = PageSerializer(page, many=True, context={'request': request})
-        return self.get_paginated_response(serializer.data)
-
-
-class PageVersionViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = PageVersion.objects.select_related('page', 'edited_by').all()
-    serializer_class = PageVersionSerializer
-    permission_classes = [IsAuthenticated]
-    filterset_fields = ['page']
-    ordering_fields = ['version_number', 'created_at']
-    ordering = ['-version_number']
-
-
-class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.select_related('page', 'author').all()
-    serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated, IsContentOwnerOrAdmin]
-    filterset_fields = ['page', 'author']
-    ordering_fields = ['created_at']
-    ordering = ['-created_at']
-
-
-class AttachmentViewSet(viewsets.ModelViewSet):
-    queryset = Attachment.objects.select_related('page', 'uploaded_by').all()
-    serializer_class = AttachmentSerializer
-    permission_classes = [IsAuthenticated, IsContentOwnerOrAdmin]
-    filterset_fields = ['page']
-    ordering_fields = ['created_at']
-    ordering = ['-created_at']
+    @action(detail=True, methods=["post"], url_path="move")
+    def move(self, request, pk=None):
+        page = self.get_object()
+        s = PageMoveSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        parent_id = s.validated_data.get("parent_id")
+        if parent_id is not None:
+            parent = get_object_or_404(Page, pk=parent_id, space=page.space, deleted_at__isnull=True)
+            if parent.pk == page.pk:
+                return Response({"detail": "A page cannot be its own parent."}, status=400)
+            page.parent = parent
+        else:
+            page.parent = None
+        page.position = s.validated_data["position"]
+        page.updated_by = request.user
+        page.save(update_fields=["parent", "position", "updated_by", "updated_at"])
+        return Response(PageDetailSerializer(page).data)
