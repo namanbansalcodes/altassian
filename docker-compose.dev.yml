@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: altassian
+      POSTGRES_USER: altassian
+      POSTGRES_PASSWORD: altassian
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - altassian_pgdata:/var/lib/postgresql/data
+volumes:
+  altassian_pgdata:
