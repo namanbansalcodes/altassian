@@ -17,8 +17,7 @@ export function LoginForm() {
     setBusy(true);
     try {
       await api.login(email, password);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      router.push("/home" as any);
+      router.push("/home");
       router.refresh();
     } catch (err) {
       if (err instanceof HTTPError) {
