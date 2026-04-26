@@ -13,3 +13,13 @@ class CustomUserAdmin(admin.ModelAdmin):
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ("name", "created_at")
+
+
+from .invite_models import Invite  # noqa: E402
+
+
+@admin.register(Invite)
+class InviteAdmin(admin.ModelAdmin):
+    list_display = ("email", "invited_by", "expires_at", "accepted_at", "created_at")
+    search_fields = ("email",)
+    readonly_fields = ("token", "created_at")
