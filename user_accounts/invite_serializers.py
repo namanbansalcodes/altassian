@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from .invite_models import Invite
@@ -8,6 +9,12 @@ class InviteCreateSerializer(serializers.ModelSerializer):
         model = Invite
         fields = ("id", "email", "expires_at", "accepted_at", "created_at")
         read_only_fields = ("id", "expires_at", "accepted_at", "created_at")
+
+    def validate_email(self, value: str) -> str:
+        User = get_user_model()
+        if User.objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return value
 
 
 class InvitePublicSerializer(serializers.ModelSerializer):

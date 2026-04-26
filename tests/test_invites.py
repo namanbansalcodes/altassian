@@ -91,3 +91,19 @@ def test_accept_invite_rejected_if_already_accepted(api_client, admin_user):
         format="json",
     )
     assert r.status_code == 410
+
+
+@pytest.mark.django_db
+def test_invite_existing_user_email_rejected(admin_client, member_user):
+    r = admin_client.post("/api/invites", {"email": member_user.email}, format="json")
+    assert r.status_code == 400
+    assert "already exists" in str(r.json())
+
+
+@pytest.mark.django_db
+def test_invite_existing_user_email_case_insensitive(admin_client):
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    User.objects.create_user(email="bob@example.com", password="x", display_name="Bob")
+    r = admin_client.post("/api/invites", {"email": "BOB@EXAMPLE.COM"}, format="json")
+    assert r.status_code == 400
