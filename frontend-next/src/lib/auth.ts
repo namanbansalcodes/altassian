@@ -9,7 +9,8 @@ export async function requireUser(): Promise<User> {
   try {
     return await ssrApi.me(cookieHeader);
   } catch {
-    redirect("/login");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    redirect("/login" as any);
   }
 }
 
