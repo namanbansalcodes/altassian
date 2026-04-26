@@ -56,3 +56,12 @@ def test_refresh_rotates_access_cookie(api_client, member_user):
     assert r.status_code == 200
     assert r.cookies[ACCESS_COOKIE].value
     assert r.cookies[ACCESS_COOKIE].value != old_access
+
+
+@pytest.mark.django_db
+def test_refresh_rejects_inactive_user(api_client, member_user):
+    api_client.post("/api/auth/login", {"email": member_user.email, "password": "testpass123"}, format="json")
+    member_user.is_active = False
+    member_user.save(update_fields=["is_active"])
+    r = api_client.post("/api/auth/refresh")
+    assert r.status_code == 401

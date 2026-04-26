@@ -86,7 +86,13 @@ class RefreshView(APIView):
         except TokenError:
             pass
 
-        user = get_user_model().objects.get(pk=user_id)
+        try:
+            user = get_user_model().objects.get(pk=user_id)
+        except get_user_model().DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        if not user.is_active:
+            return Response({"detail": "User is inactive."}, status=status.HTTP_401_UNAUTHORIZED)
         new_refresh = RefreshToken.for_user(user)
         resp = Response({"detail": "ok"})
         _set_cookie(resp, ACCESS_COOKIE, str(new_refresh.access_token), settings.JWT_ACCESS_LIFETIME)
