@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "altassian-backend"
+version = "0.1.0"
+description = "Altassian — markdown-first wiki backend"
+requires-python = ">=3.11"
+dependencies = [
+  "Django==5.2.*",
+  "djangorestframework==3.15.*",
+  "djangorestframework-simplejwt==5.3.*",
+  "psycopg[binary]==3.2.*",
+  "markdown-it-py==3.0.*",
+  "mdit-py-plugins==0.4.*",
+  "python-decouple==3.8",
+  "Pillow==10.4.*",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==8.3.*",
+  "pytest-django==4.9.*",
+  "factory_boy==3.3.*",
+  "ruff==0.6.*",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]
+
+[tool.setuptools]
+packages = ["altassian_core", "pages", "public_api", "search", "spaces", "user_accounts"]

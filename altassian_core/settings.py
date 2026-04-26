@@ -1,254 +1,127 @@
-import os
+"""Django settings for altassian_core."""
 from datetime import timedelta
 from pathlib import Path
-import sys
+
+from decouple import Csv, config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-altassian-dev-key-change-in-production')
-
-DEBUG = os.getenv('DJANGO_DEBUG', '1') in ('1', 'true', 'True')
-
-ALLOWED_HOSTS = ['*']
+SECRET_KEY = config("DJANGO_SECRET_KEY", default="dev-insecure-change-me")
+DEBUG = config("DJANGO_DEBUG", default=True, cast=bool)
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework',
-    'corsheaders',
-    'django_filters',
-    'user_accounts',
-    'spaces',
-    'pages',
-    'search',
-    'analytics',
-    'audit',
-    'notifications',
-    'projects',
-    'integrations',
-    'drf_spectacular',
-    'rest_framework_simplejwt.token_blacklist',
-    'django.contrib.sites',
-    'django.contrib.sitemaps',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.postgres",
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "user_accounts",
+    "spaces",
+    "pages",
+    "search",
+    "public_api",
 ]
-
-SITE_ID = 1
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'audit.middleware.RequestLoggingMiddleware',
-    'integrations.middleware.SecurityHeadersMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'altassian_core.urls'
+ROOT_URLCONF = "altassian_core.urls"
+WSGI_APPLICATION = "altassian_core.wsgi.application"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {"context_processors": [
+            "django.template.context_processors.request",
+            "django.contrib.auth.context_processors.auth",
+            "django.contrib.messages.context_processors.messages",
+        ]},
     },
 ]
 
-WSGI_APPLICATION = 'altassian_core.wsgi.application'
-
-if os.getenv('DATABASE_HOST'):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('POSTGRES_DB', 'altassian'),
-            'USER': os.getenv('POSTGRES_USER', 'altassian'),
-            'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'altassian'),
-            'HOST': os.getenv('DATABASE_HOST', 'db'),
-            'PORT': int(os.getenv('DATABASE_PORT', '5432')),
-            # Keep DB connections open for reuse to reduce auth query latency
-            'CONN_MAX_AGE': int(os.getenv('DB_CONN_MAX_AGE', '60')),
-        }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("POSTGRES_DB", default="altassian"),
+        "USER": config("POSTGRES_USER", default="altassian"),
+        "PASSWORD": config("POSTGRES_PASSWORD", default="altassian"),
+        "HOST": config("POSTGRES_HOST", default="127.0.0.1"),
+        "PORT": config("POSTGRES_PORT", default="5433"),
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-            # Persistent connections help even with sqlite (no-op if unsupported)
-            'CONN_MAX_AGE': int(os.getenv('DB_CONN_MAX_AGE', '60')),
-        }
-    }
+}
 
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
-]
-
-# Speed up auth-related tests considerably without affecting production security
-if 'test' in sys.argv or os.getenv('FAST_PASSWORD_HASHERS') == '1':
-    PASSWORD_HASHERS = [
-        'django.contrib.auth.hashers.MD5PasswordHasher',
-    ]
-
-AUTH_USER_MODEL = 'user_accounts.CustomUser'
-
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+AUTH_USER_MODEL = "user_accounts.CustomUser"
+LANGUAGE_CODE = "en-us"
+TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'integrations.authentication.APIKeyAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny' if os.getenv('DEMO_OPEN') == '1' else 'rest_framework.permissions.IsAuthenticated',
-        'integrations.permissions.APIKeyScopePermission',
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'altassian_core.pagination.StandardPagination',
-    'PAGE_SIZE': 20,
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend',
-        'rest_framework.filters.SearchFilter',
-        'rest_framework.filters.OrderingFilter',
-    ],
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle',
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': os.getenv('THROTTLE_ANON', '100/hour'),
-        'user': os.getenv('THROTTLE_USER', '1000/hour'),
-        'login': os.getenv('THROTTLE_LOGIN', '10/minute'),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "user_accounts.authentication.CookieJWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
+    "DEFAULT_RENDERER_CLASSES": (
+        "rest_framework.renderers.JSONRenderer",
+    ),
+    "DEFAULT_PARSER_CLASSES": (
+        "rest_framework.parsers.JSONParser",
+        "rest_framework.parsers.MultiPartParser",
+        "rest_framework.parsers.FormParser",
+    ),
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 50,
+    "DEFAULT_THROTTLE_RATES": {
+        "login": "10/min",
+        "anon": "60/min",
     },
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.AcceptHeaderVersioning',
-    'DEFAULT_VERSION': '1.0',
-    'ALLOWED_VERSIONS': ['1.0'],
 }
 
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'Altassian API',
-    'DESCRIPTION': 'Confluence-clone backend API — wiki spaces, pages, comments, attachments, search, analytics, and audit.',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-    'COMPONENT_SPLIT_REQUEST': True,
-    'SCHEMA_PATH_PREFIX': r'/api/',
-}
-
-# Disable throttling in tests so repeated login calls don't get rate-limited
-if 'test' in sys.argv:
-    REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'] = []
-    REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {}
+JWT_ACCESS_LIFETIME = config("JWT_ACCESS_LIFETIME", default=900, cast=int)
+JWT_REFRESH_LIFETIME = config("JWT_REFRESH_LIFETIME", default=1209600, cast=int)
+JWT_COOKIE_SECURE = config("JWT_COOKIE_SECURE", default=False, cast=bool)
+JWT_COOKIE_SAMESITE = config("JWT_COOKIE_SAMESITE", default="Lax")
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=JWT_ACCESS_LIFETIME),
+    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=JWT_REFRESH_LIFETIME),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# CORS: allow all in dev, restrict in production via CORS_ALLOWED_ORIGINS env var
-_cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', '')
-if _cors_origins:
-    CORS_ALLOW_ALL_ORIGINS = False
-    CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_origins.split(',') if o.strip()]
-else:
-    CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_HEADERS = [
-    'accept', 'authorization', 'content-type', 'origin',
-    'x-api-key', 'x-requested-with',
-]
+# Email — local memory backend in dev/test, real SMTP in prod.
+EMAIL_BACKEND = config("EMAIL_BACKEND", default="django.core.mail.backends.locmem.EmailBackend")
+EMAIL_HOST = config("EMAIL_HOST", default="")
+EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="hello@altassian.ai")
 
-# ── Email ────────────────────────────────────────────────────────────
-# Console backend for dev; override with SMTP env vars in production.
-EMAIL_BACKEND = os.getenv(
-    'EMAIL_BACKEND',
-    'django.core.mail.backends.console.EmailBackend',
-)
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'localhost')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', '1') in ('1', 'true', 'True')
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@altassian.local')
-
-# Password-reset token lifetime (seconds). Default: 1 hour.
-PASSWORD_RESET_TIMEOUT = int(os.getenv('PASSWORD_RESET_TIMEOUT', '3600'))
-
-# Frontend URL the reset email links to (e.g. https://app.altassian.com/reset-password)
-FRONTEND_PASSWORD_RESET_URL = os.getenv('FRONTEND_PASSWORD_RESET_URL', '')
-
-# Frontend URL for email verification (e.g. https://app.altassian.com/verify-email)
-FRONTEND_EMAIL_VERIFY_URL = os.getenv('FRONTEND_EMAIL_VERIFY_URL', '')
-
-# ── Account lockout ────────────────────────────────────────────────
-ACCOUNT_LOCKOUT_MAX_ATTEMPTS = int(os.getenv('ACCOUNT_LOCKOUT_MAX_ATTEMPTS', '5'))
-ACCOUNT_LOCKOUT_WINDOW_MINUTES = int(os.getenv('ACCOUNT_LOCKOUT_WINDOW_MINUTES', '15'))
-
-# Email verification token expiry (hours)
-EMAIL_VERIFICATION_EXPIRY_HOURS = int(os.getenv('EMAIL_VERIFICATION_EXPIRY_HOURS', '24'))
-
-# ── Phone / SMS verification ─────────────────────────────────────
-PHONE_VERIFICATION_EXPIRY_MINUTES = int(os.getenv('PHONE_VERIFICATION_EXPIRY_MINUTES', '10'))
-PHONE_VERIFICATION_MAX_ATTEMPTS = int(os.getenv('PHONE_VERIFICATION_MAX_ATTEMPTS', '5'))
-SMS_BACKEND = os.getenv('SMS_BACKEND', 'console')  # 'console' for dev, 'twilio' for prod
-SMS_PROVIDER = os.getenv('SMS_PROVIDER', '')
-TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID', '')
-TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN', '')
-TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER', '')
-
-# ── Logging ─────────────────────────────────────────────────────────
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '[{asctime}] {levelname} {name} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-    },
-    'loggers': {
-        'altassian': {
-            'handlers': ['console'],
-            'level': os.getenv('LOG_LEVEL', 'INFO'),
-            'propagate': False,
-        },
-        'django': {
-            'handlers': ['console'],
-            'level': 'WARNING',
-            'propagate': False,
-        },
-    },
-}
+PUBLIC_BASE_URL = config("PUBLIC_BASE_URL", default="http://localhost:3000")
+INVITE_TTL_DAYS = config("INVITE_TTL_DAYS", default=14, cast=int)

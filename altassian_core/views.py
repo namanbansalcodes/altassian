@@ -1,26 +1,19 @@
-import django
+"""Project-wide views — health check for GCP LB."""
 from django.db import connection
 from rest_framework.permissions import AllowAny
-from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 
 class HealthCheckView(APIView):
-    """Lightweight health probe for load balancers and uptime monitors."""
-    permission_classes = [AllowAny]
-    authentication_classes = []
-    throttle_classes = []
+    permission_classes = (AllowAny,)
+    authentication_classes: list = []
 
-    def get(self, request: Request) -> Response:
-        db_ok = True
+    def get(self, request):
         try:
-            connection.ensure_connection()
-        except Exception:
-            db_ok = False
-
-        return Response({
-            'status': 'healthy' if db_ok else 'degraded',
-            'version': django.get_version(),
-            'database': 'connected' if db_ok else 'unavailable',
-        })
+            with connection.cursor() as cur:
+                cur.execute("SELECT 1")
+                cur.fetchone()
+            return Response({"status": "ok"})
+        except Exception as exc:  # noqa: BLE001
+            return Response({"status": "degraded", "detail": str(exc)}, status=503)

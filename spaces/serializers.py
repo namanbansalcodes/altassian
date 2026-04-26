@@ -1,22 +1,30 @@
-from typing import Any, Dict
-
 from rest_framework import serializers
 
 from .models import Space
 
 
-class SpaceSerializer(serializers.ModelSerializer):
-    owner_username = serializers.ReadOnlyField(source='owner.username')
-    page_count = serializers.SerializerMethodField()
-
+class SpaceListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Space
-        fields = ['id', 'name', 'key', 'description', 'owner', 'owner_username', 'page_count', 'created_at', 'is_archived', 'meta_description', 'meta_keywords']
-        read_only_fields = ['id', 'owner', 'created_at']
+        fields = ("id", "slug", "name", "description", "icon", "position", "created_at", "updated_at")
+        read_only_fields = ("id", "created_at", "updated_at")
 
-    def get_page_count(self, obj: Space) -> int:
-        return obj.page_set.count()
 
-    def create(self, validated_data: Dict[str, Any]) -> Space:
-        validated_data['owner'] = self.context['request'].user
-        return super().create(validated_data)
+class SpaceDetailSerializer(SpaceListSerializer):
+    pages = serializers.SerializerMethodField()
+
+    class Meta(SpaceListSerializer.Meta):
+        fields = SpaceListSerializer.Meta.fields + ("pages",)
+
+    def get_pages(self, obj):
+        # Lazy import: pages.serializers.PageTreeNodeSerializer doesn't exist until G4.
+        try:
+            from pages.serializers import PageTreeNodeSerializer
+        except ImportError:
+            return []
+        try:
+            roots = obj.page_set.filter(parent__isnull=True, deleted_at__isnull=True).order_by("position", "id")
+            return PageTreeNodeSerializer(roots, many=True).data
+        except Exception:
+            # Legacy Page model may not have deleted_at — return empty until G2 lands.
+            return []

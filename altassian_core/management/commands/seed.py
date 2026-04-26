@@ -1,1 +1,0 @@
-from .seed_demo import Command  # reuse the same command implementation

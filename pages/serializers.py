@@ -1,95 +1,74 @@
-from typing import Any, Dict, List
-
 from rest_framework import serializers
 
-from .models import Page, PageVersion, Comment, Attachment
+from .models import Attachment, Comment, Page, PageVersion
 
 
-class PageVersionSerializer(serializers.ModelSerializer):
-    edited_by_username = serializers.ReadOnlyField(source='edited_by.username')
-
-    class Meta:
-        model = PageVersion
-        fields = ['id', 'page', 'version_number', 'body_markdown', 'edited_by', 'edited_by_username', 'created_at', 'change_summary']
-        read_only_fields = ['id', 'created_at']
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    author_username = serializers.ReadOnlyField(source='author.username')
-    replies = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Comment
-        fields = ['id', 'page', 'author', 'author_username', 'body', 'parent', 'replies', 'created_at']
-        read_only_fields = ['id', 'author', 'created_at']
-
-    def get_replies(self, obj: Comment) -> List[Dict[str, Any]]:
-        if obj.replies.exists():
-            return CommentSerializer(obj.replies.all(), many=True).data
-        return []
-
-    def create(self, validated_data: Dict[str, Any]) -> Comment:
-        validated_data['author'] = self.context['request'].user
-        return super().create(validated_data)
-
-
-class AttachmentSerializer(serializers.ModelSerializer):
-    uploaded_by_username = serializers.ReadOnlyField(source='uploaded_by.username')
-
-    class Meta:
-        model = Attachment
-        fields = ['id', 'page', 'file', 'uploaded_by', 'uploaded_by_username', 'created_at']
-        read_only_fields = ['id', 'uploaded_by', 'created_at']
-
-    def create(self, validated_data: Dict[str, Any]) -> Attachment:
-        validated_data['uploaded_by'] = self.context['request'].user
-        return super().create(validated_data)
-
-
-class PageSerializer(serializers.ModelSerializer):
-    created_by_username = serializers.ReadOnlyField(source='created_by.username')
-    updated_by_username = serializers.ReadOnlyField(source='updated_by.username')
-    space_name = serializers.ReadOnlyField(source='space.name')
-
-    class Meta:
-        model = Page
-        fields = [
-            'id', 'title', 'slug', 'space', 'space_name', 'parent', 'body_markdown', 'body_html',
-            'created_by', 'created_by_username', 'updated_by', 'updated_by_username',
-            'position', 'is_draft', 'created_at', 'updated_at',
-            'meta_description', 'meta_keywords', 'og_image', 'canonical_url', 'noindex',
-        ]
-        read_only_fields = ['id', 'slug', 'created_by', 'updated_by', 'created_at', 'updated_at']
-
-    def create(self, validated_data: Dict[str, Any]) -> Page:
-        user = self.context['request'].user
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
-        return super().create(validated_data)
-
-    def update(self, instance: Page, validated_data: Dict[str, Any]) -> Page:
-        user = self.context['request'].user
-        validated_data['updated_by'] = user
-        # Auto-create a PageVersion before updating
-        last_version = PageVersion.objects.filter(page=instance).order_by('-version_number').first()
-        next_version = (last_version.version_number + 1) if last_version else 1
-        PageVersion.objects.create(
-            page=instance,
-            version_number=next_version,
-            body_markdown=instance.body_markdown,
-            edited_by=user,
-            change_summary=self.context['request'].data.get('change_summary', ''),
-        )
-        return super().update(instance, validated_data)
-
-
-class PageTreeSerializer(serializers.ModelSerializer):
+class PageTreeNodeSerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()
 
     class Meta:
         model = Page
-        fields = ['id', 'title', 'slug', 'position', 'is_draft', 'children']
+        fields = ("id", "slug", "title", "is_draft", "is_public", "position", "children")
 
-    def get_children(self, obj: Page) -> List[Dict[str, Any]]:
-        children = Page.objects.filter(parent=obj).order_by('position')
-        return PageTreeSerializer(children, many=True).data
+    def get_children(self, obj):
+        kids = obj.children.filter(deleted_at__isnull=True).order_by("position", "id")
+        return PageTreeNodeSerializer(kids, many=True).data
+
+
+class PageDetailSerializer(serializers.ModelSerializer):
+    body_html = serializers.CharField(source="body_html_cache", read_only=True)
+
+    class Meta:
+        model = Page
+        fields = (
+            "id", "space", "parent", "slug", "title", "body_md", "body_html",
+            "position", "is_public", "is_draft",
+            "created_by", "updated_by", "created_at", "updated_at",
+        )
+        read_only_fields = (
+            "id", "slug", "body_html",
+            "created_by", "updated_by", "created_at", "updated_at",
+        )
+
+    def validate_is_public(self, value):
+        request = self.context.get("request")
+        instance = self.instance
+        # Only admins may flip is_public on or off.
+        was_public = bool(instance.is_public) if instance else False
+        if value != was_public and not (request and request.user.is_authenticated and request.user.is_admin):
+            raise serializers.ValidationError("Only admins can change page visibility.")
+        return value
+
+
+class PageMoveSerializer(serializers.Serializer):
+    parent_id = serializers.IntegerField(allow_null=True, required=False)
+    position = serializers.IntegerField(required=True)
+
+
+class PageVersionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PageVersion
+        fields = ("id", "version_n", "body_md", "edited_by", "change_summary", "created_at")
+        read_only_fields = fields
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ("id", "page", "author", "body_md", "parent", "created_at", "deleted_at")
+        read_only_fields = ("id", "author", "created_at", "deleted_at")
+
+
+class AttachmentSerializer(serializers.ModelSerializer):
+    file_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Attachment
+        fields = ("id", "page", "file_url", "original_filename", "mime_type", "size_bytes", "uploaded_by", "created_at")
+        read_only_fields = ("id", "page", "file_url", "uploaded_by", "created_at", "original_filename", "mime_type", "size_bytes")
+
+    def get_file_url(self, obj):
+        request = self.context.get("request")
+        if obj.file and request:
+            return request.build_absolute_uri(obj.file.url)
+        return obj.file.url if obj.file else ""

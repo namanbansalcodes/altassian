@@ -1,16 +1,20 @@
 from django.db import models
 
+
 class Space(models.Model):
-    name = models.CharField(max_length=100)
-    key = models.CharField(max_length=10, unique=True)
-    description = models.TextField(blank=True, null=True)
-    owner = models.ForeignKey('user_accounts.CustomUser', on_delete=models.CASCADE)
+    slug = models.SlugField(max_length=64, unique=True)
+    name = models.CharField(max_length=200)
+    description = models.TextField(blank=True, default="")
+    icon = models.CharField(max_length=64, blank=True, default="")  # emoji or short URL
+    position = models.IntegerField(default=0)
+    created_by = models.ForeignKey(
+        "user_accounts.CustomUser", on_delete=models.SET_NULL, null=True, related_name="spaces_created"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
-    is_archived = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    # SEO fields
-    meta_description = models.CharField(max_length=160, blank=True, default='')
-    meta_keywords = models.CharField(max_length=255, blank=True, default='')
+    class Meta:
+        ordering = ("position", "name")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
