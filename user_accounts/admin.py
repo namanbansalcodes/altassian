@@ -1,28 +1,15 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 
-from .models import CustomUser, EmailVerificationToken, LoginAttempt
+from .models import CustomUser, Organization
 
 
 @admin.register(CustomUser)
-class CustomUserAdmin(UserAdmin):
-    list_display = ['username', 'email', 'role', 'email_verified', 'is_staff', 'date_joined']
-    list_filter = ['role', 'is_staff', 'is_active', 'email_verified']
-    fieldsets = UserAdmin.fieldsets + (
-        ('Profile', {'fields': ('avatar', 'bio', 'role', 'email_verified')}),
-    )
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = ("email", "display_name", "role", "is_active", "joined_at")
+    search_fields = ("email", "display_name")
+    list_filter = ("role", "is_active")
 
 
-@admin.register(LoginAttempt)
-class LoginAttemptAdmin(admin.ModelAdmin):
-    list_display = ['username', 'success', 'locked_out', 'ip_address', 'timestamp']
-    list_filter = ['success', 'locked_out']
-    search_fields = ['username', 'ip_address']
-    readonly_fields = ['username', 'ip_address', 'user_agent', 'success', 'locked_out', 'timestamp']
-    ordering = ['-timestamp']
-
-
-@admin.register(EmailVerificationToken)
-class EmailVerificationTokenAdmin(admin.ModelAdmin):
-    list_display = ['user', 'created_at']
-    readonly_fields = ['user', 'token', 'created_at']
+@admin.register(Organization)
+class OrganizationAdmin(admin.ModelAdmin):
+    list_display = ("name", "created_at")
