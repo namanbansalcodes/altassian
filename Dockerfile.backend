@@ -1,0 +1,36 @@
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    DJANGO_SETTINGS_MODULE=altassian_core.settings
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential libpq-dev libjpeg-dev zlib1g-dev curl \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN pip install -U pip && pip install --no-cache-dir \
+    "Django==5.2.*" \
+    "djangorestframework==3.15.*" \
+    "djangorestframework-simplejwt==5.3.*" \
+    "psycopg[binary]==3.2.*" \
+    "markdown-it-py==3.0.*" \
+    "mdit-py-plugins==0.4.*" \
+    "python-decouple==3.8" \
+    "Pillow==10.4.*" \
+    "gunicorn==23.0.*"
+
+COPY altassian_core ./altassian_core
+COPY user_accounts ./user_accounts
+COPY spaces ./spaces
+COPY pages ./pages
+COPY search ./search
+COPY public_api ./public_api
+COPY manage.py ./
+
+RUN python manage.py collectstatic --noinput || true
+
+EXPOSE 8000
+CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn altassian_core.wsgi --bind 0.0.0.0:8000 --workers 3 --access-logfile - --error-logfile -"]

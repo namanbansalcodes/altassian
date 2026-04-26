@@ -26,3 +26,4 @@ node_modules/
 # Worktrees
 .worktrees/
 *.egg-info/
+.env.prod
