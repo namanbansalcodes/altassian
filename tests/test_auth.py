@@ -1,28 +1,133 @@
 import pytest
+from django.core import mail
 
 from user_accounts.authentication import ACCESS_COOKIE, REFRESH_COOKIE
+from user_accounts.otp_models import OneTimeCode
+
+
+def _request_otp(api_client, email):
+    """Trigger an OTP and return the plaintext code."""
+    mail.outbox.clear()
+    r = api_client.post("/api/auth/otp/request", {"email": email}, format="json")
+    assert r.status_code == 200, r.content
+    assert len(mail.outbox) == 1
+    body = mail.outbox[0].body
+    # Extract the 6-digit code from the email body.
+    import re
+    m = re.search(r"\b(\d{6})\b", body)
+    assert m, body
+    return m.group(1)
 
 
 @pytest.mark.django_db
-def test_login_sets_access_and_refresh_cookies(api_client, member_user):
-    r = api_client.post("/api/auth/login", {"email": member_user.email, "password": "testpass123"}, format="json")
+def test_otp_request_sends_email_and_creates_record(api_client):
+    code = _request_otp(api_client, "newcomer@example.com")
+    assert OneTimeCode.objects.filter(email="newcomer@example.com").count() == 1
+    assert len(code) == 6
+
+
+@pytest.mark.django_db
+def test_otp_request_response_does_not_leak_code(api_client):
+    mail.outbox.clear()
+    r = api_client.post("/api/auth/otp/request", {"email": "x@example.com"}, format="json")
+    assert r.status_code == 200
+    body_text = r.content.decode()
+    # No 6-digit code should appear in the JSON response body.
+    import re
+    assert not re.search(r"\b\d{6}\b", body_text)
+
+
+@pytest.mark.django_db
+def test_otp_verify_first_time_creates_user_and_logs_in(api_client):
+    code = _request_otp(api_client, "first@example.com")
+    r = api_client.post(
+        "/api/auth/otp/verify",
+        {"email": "first@example.com", "code": code, "display_name": "First User"},
+        format="json",
+    )
     assert r.status_code == 200, r.content
     assert ACCESS_COOKIE in r.cookies
     assert REFRESH_COOKIE in r.cookies
     assert r.cookies[ACCESS_COOKIE]["httponly"]
-    assert r.cookies[REFRESH_COOKIE]["httponly"]
+    body = r.json()
+    assert body["email"] == "first@example.com"
+    assert body["display_name"] == "First User"
+    assert body["role"] == "member"
 
 
 @pytest.mark.django_db
-def test_login_wrong_password_returns_401(api_client, member_user):
-    r = api_client.post("/api/auth/login", {"email": member_user.email, "password": "wrong"}, format="json")
-    assert r.status_code == 401
+def test_otp_verify_existing_user_logs_in(api_client, member_user):
+    code = _request_otp(api_client, member_user.email)
+    r = api_client.post(
+        "/api/auth/otp/verify",
+        {"email": member_user.email, "code": code},
+        format="json",
+    )
+    assert r.status_code == 200
+    assert r.json()["email"] == member_user.email
+    assert ACCESS_COOKIE in r.cookies
 
 
 @pytest.mark.django_db
-def test_login_unknown_email_returns_401(api_client):
-    r = api_client.post("/api/auth/login", {"email": "noone@example.com", "password": "x"}, format="json")
-    assert r.status_code == 401
+def test_otp_verify_wrong_code_rejected(api_client):
+    _request_otp(api_client, "x@example.com")
+    r = api_client.post(
+        "/api/auth/otp/verify",
+        {"email": "x@example.com", "code": "000000"},
+        format="json",
+    )
+    assert r.status_code == 400
+    assert ACCESS_COOKIE not in r.cookies
+
+
+@pytest.mark.django_db
+def test_otp_code_single_use(api_client):
+    code = _request_otp(api_client, "one@example.com")
+    r1 = api_client.post(
+        "/api/auth/otp/verify",
+        {"email": "one@example.com", "code": code},
+        format="json",
+    )
+    assert r1.status_code == 200
+    # Second verify with the same code must fail.
+    api_client.cookies.clear()
+    r2 = api_client.post(
+        "/api/auth/otp/verify",
+        {"email": "one@example.com", "code": code},
+        format="json",
+    )
+    assert r2.status_code == 400
+
+
+@pytest.mark.django_db
+def test_otp_code_expires(api_client):
+    from datetime import timedelta
+    from django.utils import timezone
+
+    code = _request_otp(api_client, "expire@example.com")
+    otp = OneTimeCode.objects.get(email="expire@example.com")
+    otp.expires_at = timezone.now() - timedelta(minutes=1)
+    otp.save(update_fields=["expires_at"])
+
+    r = api_client.post(
+        "/api/auth/otp/verify",
+        {"email": "expire@example.com", "code": code},
+        format="json",
+    )
+    assert r.status_code == 400
+
+
+@pytest.mark.django_db
+def test_otp_verify_inactive_user_rejected(api_client, member_user):
+    member_user.is_active = False
+    member_user.save(update_fields=["is_active"])
+    code = _request_otp(api_client, member_user.email)
+    r = api_client.post(
+        "/api/auth/otp/verify",
+        {"email": member_user.email, "code": code},
+        format="json",
+    )
+    assert r.status_code == 403
 
 
 @pytest.mark.django_db
@@ -32,16 +137,26 @@ def test_me_requires_auth(api_client):
 
 
 @pytest.mark.django_db
-def test_me_returns_user_after_login(api_client, member_user):
-    api_client.post("/api/auth/login", {"email": member_user.email, "password": "testpass123"}, format="json")
+def test_me_returns_user_after_otp_login(api_client):
+    code = _request_otp(api_client, "alice@example.com")
+    api_client.post(
+        "/api/auth/otp/verify",
+        {"email": "alice@example.com", "code": code},
+        format="json",
+    )
     r = api_client.get("/api/auth/me")
     assert r.status_code == 200
-    assert r.json()["email"] == member_user.email
+    assert r.json()["email"] == "alice@example.com"
 
 
 @pytest.mark.django_db
-def test_logout_clears_cookies(api_client, member_user):
-    api_client.post("/api/auth/login", {"email": member_user.email, "password": "testpass123"}, format="json")
+def test_logout_clears_cookies(api_client):
+    code = _request_otp(api_client, "bye@example.com")
+    api_client.post(
+        "/api/auth/otp/verify",
+        {"email": "bye@example.com", "code": code},
+        format="json",
+    )
     r = api_client.post("/api/auth/logout")
     assert r.status_code == 204
     assert r.cookies[ACCESS_COOKIE].value == ""
@@ -49,8 +164,13 @@ def test_logout_clears_cookies(api_client, member_user):
 
 
 @pytest.mark.django_db
-def test_refresh_rotates_access_cookie(api_client, member_user):
-    api_client.post("/api/auth/login", {"email": member_user.email, "password": "testpass123"}, format="json")
+def test_refresh_rotates_access_cookie(api_client):
+    code = _request_otp(api_client, "rot@example.com")
+    api_client.post(
+        "/api/auth/otp/verify",
+        {"email": "rot@example.com", "code": code},
+        format="json",
+    )
     old_access = api_client.cookies[ACCESS_COOKIE].value
     r = api_client.post("/api/auth/refresh")
     assert r.status_code == 200
@@ -59,9 +179,17 @@ def test_refresh_rotates_access_cookie(api_client, member_user):
 
 
 @pytest.mark.django_db
-def test_refresh_rejects_inactive_user(api_client, member_user):
-    api_client.post("/api/auth/login", {"email": member_user.email, "password": "testpass123"}, format="json")
-    member_user.is_active = False
-    member_user.save(update_fields=["is_active"])
+def test_refresh_rejects_inactive_user(api_client):
+    code = _request_otp(api_client, "inactive@example.com")
+    api_client.post(
+        "/api/auth/otp/verify",
+        {"email": "inactive@example.com", "code": code},
+        format="json",
+    )
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    u = User.objects.get(email="inactive@example.com")
+    u.is_active = False
+    u.save(update_fields=["is_active"])
     r = api_client.post("/api/auth/refresh")
     assert r.status_code == 401

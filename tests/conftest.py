@@ -1,7 +1,16 @@
 import pytest
+from django.core.cache import cache
 from rest_framework.test import APIClient
 
 from tests.factories import AdminFactory, OrganizationFactory, UserFactory
+
+
+@pytest.fixture(autouse=True)
+def reset_throttle_cache():
+    """DRF stores throttle history in the cache. Clear it between tests so OTP rate limit doesn't bleed."""
+    cache.clear()
+    yield
+    cache.clear()
 
 
 @pytest.fixture

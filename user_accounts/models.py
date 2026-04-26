@@ -75,3 +75,4 @@ class CustomUser(AbstractUser):
 
 
 from .invite_models import Invite  # noqa: E402, F401
+from .otp_models import OneTimeCode  # noqa: E402, F401
