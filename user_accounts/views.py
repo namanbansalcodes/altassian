@@ -10,6 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .authentication import ACCESS_COOKIE, REFRESH_COOKIE
 from .serializers import LoginSerializer, UserSerializer
+from altassian_core.throttles import LoginRateThrottle
 
 
 def _set_cookie(response, name: str, value: str, lifetime: int) -> None:
@@ -31,6 +32,7 @@ def _delete_cookie(response, name: str) -> None:
 class LoginView(APIView):
     permission_classes = (AllowAny,)
     authentication_classes: list = []
+    throttle_classes = (LoginRateThrottle,)
 
     def post(self, request):
         s = LoginSerializer(data=request.data)
