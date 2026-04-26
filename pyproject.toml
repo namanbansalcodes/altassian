@@ -35,4 +35,4 @@ select = ["E", "F", "I", "B", "UP"]
 ignore = ["E501"]
 
 [tool.setuptools]
-packages = ["altassian_core", "pages", "search", "spaces", "user_accounts"]
+packages = ["altassian_core", "pages", "public_api", "search", "spaces", "user_accounts"]
