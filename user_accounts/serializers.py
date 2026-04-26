@@ -251,3 +251,15 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
                 {'new_password_confirm': 'Passwords do not match.'}
             )
         return attrs
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ("id", "email", "display_name", "avatar_url", "role", "joined_at")
+        read_only_fields = fields
