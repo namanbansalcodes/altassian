@@ -29,7 +29,7 @@ services:
       - altassian_media:/app/media
       - altassian_static:/app/staticfiles
     ports:
-      - "127.0.0.1:8002:8000"
+      - "8002:8000"
 
   nextjs:
     build:
@@ -40,7 +40,7 @@ services:
     depends_on:
       - django
     ports:
-      - "127.0.0.1:3002:3000"
+      - "3002:3000"
 
 volumes:
   altassian_pgdata:
