@@ -32,3 +32,14 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 class AdminFactory(UserFactory):
     role = User.Role.ADMIN
+
+
+from spaces.models import Space
+
+
+class SpaceFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Space
+
+    slug = factory.Sequence(lambda n: f"space-{n}")
+    name = factory.Sequence(lambda n: f"Space {n}")

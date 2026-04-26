@@ -1,4 +1,8 @@
-# Stub — spaces endpoints added in Phase D.
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
-urlpatterns: list = []
+from .views import SpaceViewSet
+
+router = DefaultRouter(trailing_slash=True)
+router.register("", SpaceViewSet, basename="space")
+
+urlpatterns = router.urls
