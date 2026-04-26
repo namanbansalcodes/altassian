@@ -72,3 +72,6 @@ class CustomUser(AbstractUser):
     @property
     def is_admin(self) -> bool:
         return self.role == self.Role.ADMIN
+
+
+from .invite_models import Invite  # noqa: E402, F401
