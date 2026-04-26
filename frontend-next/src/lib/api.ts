@@ -30,8 +30,10 @@ function server(cookieHeader?: string) {
 }
 
 export const api = {
-  login: (email: string, password: string) =>
-    browser.post("auth/login", {json: {email, password}}).json<User>(),
+  requestOtp: (email: string) =>
+    browser.post("auth/otp/request", {json: {email}}).json<{detail: string}>(),
+  verifyOtp: (email: string, code: string, display_name?: string) =>
+    browser.post("auth/otp/verify", {json: {email, code, display_name}}).json<User>(),
   logout: () => browser.post("auth/logout"),
   me: () => browser.get("auth/me").json<User>(),
 

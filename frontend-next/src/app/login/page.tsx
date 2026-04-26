@@ -9,7 +9,10 @@ export default function LoginPage() {
           Altassian
         </Link>
         <LoginForm />
-        <p className="text-xs text-zinc-500">Invite-only. Ask an admin for access.</p>
+        <p className="text-xs text-zinc-500">
+          New here?{" "}
+          <span className="text-zinc-700">Just use your email — we&apos;ll create your account on first sign-in.</span>
+        </p>
       </div>
     </main>
   );
