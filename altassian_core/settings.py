@@ -34,6 +34,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # Health check first — runs before SecurityMiddleware's host check so GCP LB
+    # probes don't need an allow-list for their per-region IPs.
+    "altassian_core.middleware.HealthCheckBypassMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -130,3 +133,30 @@ DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="hello@altassian.ai")
 
 PUBLIC_BASE_URL = config("PUBLIC_BASE_URL", default="http://localhost:3000")
 INVITE_TTL_DAYS = config("INVITE_TTL_DAYS", default=14, cast=int)
+
+# Django admin lives at $ADMIN_URL_PREFIX/ — env-driven so prod can move it
+# off the guessable /admin/ path. Trailing slash is added automatically.
+ADMIN_URL_PREFIX = config("ADMIN_URL_PREFIX", default="admin")
+
+# Production hardening — gated behind DEBUG=false so dev stays loose.
+if not DEBUG:
+    # We sit behind GCP HTTPS LB; trust X-Forwarded-Proto for is_secure().
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+    # HSTS: 1 year, include subdomains, preload-eligible.
+    SECURE_HSTS_SECONDS = 31_536_000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+    # The LB already does HTTP→HTTPS redirect; SECURE_SSL_REDIRECT off avoids
+    # double-redirect loops if a request slips through HTTP somehow.
+    SECURE_SSL_REDIRECT = False
+
+    SECURE_REFERRER_POLICY = "same-origin"
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+    CSRF_COOKIE_SAMESITE = "Lax"

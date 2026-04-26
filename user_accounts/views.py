@@ -84,6 +84,16 @@ class OtpVerifyView(APIView):
         code = s.validated_data["code"]
         display_name = s.validated_data.get("display_name", "")
 
+        # Reject unknown emails BEFORE consuming the code so the user can re-request
+        # a code for the right address. Public signup is closed.
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response(
+                {"detail": "No account for that email. Ask an admin for access."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         otp = OneTimeCode.consume(email=email, code=code)
         if otp is None:
             return Response(
@@ -91,19 +101,10 @@ class OtpVerifyView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        user, created = User.objects.get_or_create(
-            email=email,
-            defaults={
-                "display_name": display_name or email.split("@")[0],
-                "role": User.Role.MEMBER,
-                "is_active": True,
-            },
-        )
-        if not created and not user.is_active:
+        if not user.is_active:
             return Response({"detail": "Account is inactive."}, status=status.HTTP_403_FORBIDDEN)
-        if created:
-            user.set_unusable_password()
-            user.save(update_fields=["password"])
+        # display_name is ignored for existing users — set via /admin/ if needed.
+        _ = display_name
 
         resp = Response(UserSerializer(user).data)
         _issue_jwt(resp, user)
