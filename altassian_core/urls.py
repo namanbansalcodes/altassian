@@ -9,4 +9,5 @@ urlpatterns = [
     path("api/spaces/", include("spaces.urls")),
     path("api/", include("pages.urls")),
     path("api/search/", include("search.urls")),
+    path("api/public/", include("public_api.urls")),
 ]

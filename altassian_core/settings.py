@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "spaces",
     "pages",
     "search",
+    "public_api",
 ]
 
 MIDDLEWARE = [
