@@ -22,3 +22,6 @@ node_modules/
 *.mo
 /frontend/dist
 /frontend/node_modules
+
+# Worktrees
+.worktrees/
