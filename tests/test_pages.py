@@ -1,7 +1,7 @@
 import pytest
 
 from pages.models import Page
-from tests.factories import PageFactory, SpaceFactory
+from tests.factories import PageFactory, SpaceFactory, UserFactory
 
 
 @pytest.mark.django_db
@@ -96,3 +96,14 @@ def test_page_tree_nested_in_space_detail(member_client, member_user):
     assert pages[0]["title"] == "Root"
     assert len(pages[0]["children"]) == 1
     assert pages[0]["children"][0]["title"] == "Child"
+
+
+@pytest.mark.django_db
+def test_member_can_edit_page_authored_by_other_member(api_client, member_user):
+    other = UserFactory()
+    p = PageFactory(body_md="# original", created_by=other, updated_by=other)
+    api_client.force_authenticate(user=member_user)
+    r = api_client.patch(f"/api/pages/{p.id}/", {"body_md": "# edited by other"}, format="json")
+    assert r.status_code == 200
+    p.refresh_from_db()
+    assert p.body_md == "# edited by other"

@@ -7,7 +7,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Attachment, Comment, Page, PageVersion
-from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (
     AttachmentSerializer,
     CommentSerializer,
@@ -20,7 +19,7 @@ from .serializers import (
 class PageViewSet(viewsets.ModelViewSet):
     queryset = Page.objects.filter(deleted_at__isnull=True)
     serializer_class = PageDetailSerializer
-    permission_classes = (IsAuthenticated, IsAuthorOrAdminOrReadOnly)
+    permission_classes = (IsAuthenticated,)
 
     def perform_create(self, serializer):
         instance = serializer.save(created_by=self.request.user, updated_by=self.request.user)
