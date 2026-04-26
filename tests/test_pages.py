@@ -107,3 +107,28 @@ def test_member_can_edit_page_authored_by_other_member(api_client, member_user):
     assert r.status_code == 200
     p.refresh_from_db()
     assert p.body_md == "# edited by other"
+
+
+@pytest.mark.django_db
+def test_member_cannot_make_page_public(member_client, member_user):
+    p = PageFactory(is_public=False, created_by=member_user, updated_by=member_user)
+    r = member_client.patch(f"/api/pages/{p.id}/", {"is_public": True}, format="json")
+    assert r.status_code == 400
+    p.refresh_from_db()
+    assert p.is_public is False
+
+
+@pytest.mark.django_db
+def test_admin_can_make_page_public(admin_client, admin_user):
+    p = PageFactory(is_public=False, created_by=admin_user, updated_by=admin_user)
+    r = admin_client.patch(f"/api/pages/{p.id}/", {"is_public": True}, format="json")
+    assert r.status_code == 200
+    p.refresh_from_db()
+    assert p.is_public is True
+
+
+@pytest.mark.django_db
+def test_member_can_patch_other_fields_without_touching_is_public(member_client, member_user):
+    p = PageFactory(is_public=False, body_md="# a", created_by=member_user, updated_by=member_user)
+    r = member_client.patch(f"/api/pages/{p.id}/", {"body_md": "# b"}, format="json")
+    assert r.status_code == 200

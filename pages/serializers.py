@@ -30,6 +30,15 @@ class PageDetailSerializer(serializers.ModelSerializer):
             "created_by", "updated_by", "created_at", "updated_at",
         )
 
+    def validate_is_public(self, value):
+        request = self.context.get("request")
+        instance = self.instance
+        # Only admins may flip is_public on or off.
+        was_public = bool(instance.is_public) if instance else False
+        if value != was_public and not (request and request.user.is_authenticated and request.user.is_admin):
+            raise serializers.ValidationError("Only admins can change page visibility.")
+        return value
+
 
 class PageMoveSerializer(serializers.Serializer):
     parent_id = serializers.IntegerField(allow_null=True, required=False)
