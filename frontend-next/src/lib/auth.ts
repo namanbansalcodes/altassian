@@ -1,28 +1,24 @@
-export type Tokens = {
-  access: string;
-  refresh: string;
-};
+import {cookies} from "next/headers";
+import {redirect} from "next/navigation";
+import type {User} from "./types";
+import {ssrApi} from "./api";
 
-export type JwtPayload = {
-  exp?: number;
-  iat?: number;
-  [key: string]: any;
-};
-
-export function parseJwt(token: string): JwtPayload | null {
+/** Get current user during SSR. Redirects to /login on 401. */
+export async function requireUser(): Promise<User> {
+  const cookieHeader = (await cookies()).toString();
   try {
-    const [, payload] = token.split(".");
-    const json = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
-    return JSON.parse(json);
+    return await ssrApi.me(cookieHeader);
   } catch {
-    return null;
+    redirect("/login");
   }
 }
 
-export function msUntilExpiry(token?: string): number | null {
-  if (!token) return null;
-  const p = parseJwt(token);
-  if (!p?.exp) return null;
-  const now = Date.now() / 1000;
-  return Math.max(0, (p.exp - now) * 1000);
+/** Try to get user; returns null instead of redirecting. */
+export async function maybeUser(): Promise<User | null> {
+  const cookieHeader = (await cookies()).toString();
+  try {
+    return await ssrApi.me(cookieHeader);
+  } catch {
+    return null;
+  }
 }
